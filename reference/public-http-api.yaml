@@ -238,6 +238,44 @@ paths:
         '200':
           description: TODO return test outcome and log events.
       description: Test the connection to a particular destination.
+  /kinds/source:
+    get:
+      summary: Get source kinds
+      tags: []
+      responses: {}
+      operationId: get-kinds-source
+      description: Retrieve the available kinds of sources.
+  '/kinds/source/{kind-name}':
+    parameters:
+      - schema:
+          type: string
+        name: kind-name
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses: {}
+      operationId: get-kinds-source-source-id
+  /kinds/destination:
+    get:
+      summary: Get destination kinds
+      tags: []
+      responses: {}
+      operationId: get-kinds-destination
+      description: Retrieve the available kinds of destinations.
+  '/kinds/destination/{kind-name}':
+    parameters:
+      - schema:
+          type: string
+        name: kind-name
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses: {}
+      operationId: get-kinds-destination-destination-id
 components:
   schemas:
     plugin-definition:
