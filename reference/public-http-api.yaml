@@ -2,8 +2,126 @@ openapi: 3.1.0
 info:
   title: public-http-api
   version: '1.0'
+  summary: The Precog public HTTP REST API.
+  description: The Precog public HTTP REST API.
+  contact:
+    url: 'https://precog.com'
+    email: support@precog.com
 servers:
   - url: 'http://localhost:3000'
-paths: {}
+paths:
+  /sources:
+    get:
+      summary: Get Sources
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Source'
+      operationId: get-sources
+      description: Retrieve the configured sources.
+    post:
+      summary: Create Source
+      tags: []
+      operationId: post-sources
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Source'
+        '400':
+          description: Request body malformed.
+        '415':
+          description: Source kind unsupported. <or> Source version unsupported.
+      description: Configure a new source.
+  '/sources/{source-id}':
+    parameters:
+      - schema:
+          type: string
+        name: source-id
+        in: path
+        required: true
+    get:
+      summary: Get a source
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Source'
+        '404':
+          description: Source not found.
+      operationId: get-sources-source-id
+      description: Get a particular source.
 components:
-  schemas: {}
+  schemas:
+    Source:
+      description: A configured source.
+      type: object
+      x-examples:
+        example-1:
+          id: 0
+          name: string
+          kind: string
+          version: string
+          config:
+            - name: string
+              value: 0
+      title: Source
+      examples:
+        - id: 0
+          name: string
+          kind: string
+          version: string
+          config:
+            - name: string
+              value: 0
+      properties:
+        id:
+          type: number
+          readOnly: true
+        name:
+          type: string
+          minLength: 1
+        kind:
+          type: string
+          minLength: 1
+        version:
+          type: string
+          minLength: 1
+        config:
+          type: array
+          uniqueItems: true
+          minItems: 0
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                minLength: 1
+              value:
+                anyOf:
+                  - properties: {}
+                type:
+                  - string
+                  - number
+                  - boolean
+            required:
+              - name
+              - value
+      required:
+        - id
+        - name
+        - kind
+        - version
+        - config
+  responses: {}
