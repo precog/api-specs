@@ -22,7 +22,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Source'
+                  $ref: '#/components/schemas/source'
       operationId: get-sources
       description: Retrieve the configured sources.
     post:
@@ -35,7 +35,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Source'
+                $ref: '#/components/schemas/source'
         '400':
           description: Request body malformed.
         '415':
@@ -57,14 +57,71 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Source'
+                $ref: '#/components/schemas/source'
         '404':
           description: Source not found.
       operationId: get-sources-source-id
       description: Get a particular source.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
+    post:
+      summary: Replace a source config
+      tags: []
+      operationId: post-sources-source-id
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Request body malformed.
+        '404':
+          description: Source not found.
+      description: Replace a source configuration for a particular source.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/source-config'
+  '/sources/{source-id}/renaming':
+    parameters:
+      - schema:
+          type: string
+        name: source-id
+        in: path
+        required: true
+    post:
+      summary: Rename a source.
+      tags: []
+      operationId: post-sources-source-id-renaming
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Request body malformed.
+        '404':
+          description: Source not found.
+      description: Rename a particular source.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                sourceName:
+                  type: string
+                  minLength: 1
+              required:
+                - sourceName
+              x-examples:
+                example-1:
+                  sourceName: string
 components:
   schemas:
-    Source:
+    source:
       description: A configured source.
       type: object
       x-examples:
@@ -103,14 +160,33 @@ components:
           uniqueItems: true
           minItems: 0
           items:
+            $ref: '#/components/schemas/source-config'
+      required:
+        - id
+        - name
+        - kind
+        - version
+        - config
+    source-config:
+      description: ''
+      type: object
+      x-examples:
+        example-1:
+          config:
+            - name: string
+              value: 0
+      properties:
+        config:
+          type: array
+          uniqueItems: true
+          minItems: 1
+          items:
             type: object
             properties:
               name:
                 type: string
                 minLength: 1
               value:
-                anyOf:
-                  - properties: {}
                 type:
                   - string
                   - number
@@ -119,9 +195,5 @@ components:
               - name
               - value
       required:
-        - id
-        - name
-        - kind
-        - version
         - config
   responses: {}
