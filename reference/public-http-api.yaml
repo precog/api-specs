@@ -22,7 +22,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/source'
+                  $ref: '#/components/schemas/plugin-definition'
       operationId: get-sources
       description: Retrieve the configured sources.
     post:
@@ -35,7 +35,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/source'
+                $ref: '#/components/schemas/plugin-definition'
         '400':
           description: Request body malformed.
         '415':
@@ -57,7 +57,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/source'
+                $ref: '#/components/schemas/plugin-definition'
         '404':
           description: Source not found.
       operationId: get-sources-source-id
@@ -84,7 +84,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/source-config'
+              $ref: '#/components/schemas/plugin-definition'
   '/sources/{source-id}/renaming':
     parameters:
       - schema:
@@ -93,7 +93,7 @@ paths:
         in: path
         required: true
     post:
-      summary: Rename a source.
+      summary: Rename a source
       tags: []
       operationId: post-sources-source-id-renaming
       responses:
@@ -119,9 +119,128 @@ paths:
               x-examples:
                 example-1:
                   sourceName: string
+  /destinations:
+    get:
+      summary: Get Destinations
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/plugin-definition'
+      operationId: get-destinations
+      description: Retrieve the configured destinations.
+    post:
+      summary: Create Destination
+      tags: []
+      operationId: post-destinations
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Request body malformed.
+        '415':
+          description: Destination kind unsupported. <or> Destination version unsupported.
+      description: Configure a new destination.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/plugin-definition'
+  '/destinations/{destination-id}':
+    parameters:
+      - schema:
+          type: string
+        name: destination-id
+        in: path
+        required: true
+    get:
+      summary: Get a destination
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/plugin-definition'
+        '404':
+          description: Destination not found.
+      operationId: get-destinations-destination-id
+      description: Get a particular destination.
+    post:
+      summary: Replace a destination config
+      tags: []
+      operationId: post-destinations-destination-id
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Request body malformed.
+        '404':
+          description: Destination not found.
+      description: Replace a destination configuration for a particular destination .
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/plugin-config'
+  '/destinations/{destination-id}/renaming':
+    parameters:
+      - schema:
+          type: string
+        name: destination-id
+        in: path
+        required: true
+    post:
+      summary: Rename a destination
+      tags: []
+      operationId: post-destinations-destination-id-renaming
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Request body malformed.
+        '404':
+          description: Destination not found.
+      description: Rename a particular destination.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                destinationName:
+                  type: string
+                  minLength: 1
+              required:
+                - destinationName
+              x-examples:
+                example-1:
+                  destinationName: string
+  '/destinations/{destination-id}/testing':
+    parameters:
+      - schema:
+          type: string
+        name: destination-id
+        in: path
+        required: true
+    post:
+      summary: Test a destination
+      tags: []
+      operationId: post-destinations-destination-id-testing
+      responses:
+        '200':
+          description: TODO return test outcome and log events.
+      description: Test the connection to a particular destination.
 components:
   schemas:
-    source:
+    plugin-definition:
       description: A configured source.
       type: object
       x-examples:
@@ -160,14 +279,14 @@ components:
           uniqueItems: true
           minItems: 0
           items:
-            $ref: '#/components/schemas/source-config'
+            $ref: '#/components/schemas/plugin-config'
       required:
         - id
         - name
         - kind
         - version
         - config
-    source-config:
+    plugin-config:
       description: ''
       type: object
       x-examples:
