@@ -272,6 +272,138 @@ paths:
       responses: {}
       operationId: get-pipelines-pipeline-id
       description: Get a particular pipeline.
+  '/pipelines/{pipeline-id}/schedule':
+    parameters:
+      - schema:
+          type: string
+        name: pipeline-id
+        in: path
+        required: true
+    get:
+      summary: Get a pipeline schedule
+      tags: []
+      responses: {}
+      operationId: get-pipelines-pipeline-id-schedule
+      description: Get the schedule for a particular pipeline.
+    post:
+      summary: Update a pipeline schedule
+      operationId: post-pipelines-pipeline-id-schedule
+      responses:
+        '200':
+          description: OK
+      description: Update the schedule for a particular pipeline.
+    delete:
+      summary: Delete a pipeline schedule
+      operationId: delete-pipelines-pipeline-id-schedule
+      responses:
+        '200':
+          description: OK
+      description: Delete the schedule for a particular pipeline.
+  '/pipelines/{pipeline-id}/datasets':
+    parameters:
+      - schema:
+          type: string
+        name: pipeline-id
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses: {}
+      operationId: get-pipelines-pipeline-id-datasets
+  '/pipelines/{pipeline-id}/datasets/{dataset-id}':
+    parameters:
+      - schema:
+          type: string
+        name: pipeline-id
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: dataset-id
+        in: path
+        required: true
+    delete:
+      summary: Remove a dataset from a pipeline
+      operationId: delete-pipelines-pipeline-id-datasets-dataset-id
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Add a dataset to a pipeline
+      operationId: post-pipelines-pipeline-id-datasets-dataset-id
+      responses:
+        '200':
+          description: OK
+  '/pipelines/{pipeline-id}/emails':
+    parameters:
+      - schema:
+          type: string
+        name: pipeline-id
+        in: path
+        required: true
+    get:
+      summary: Get pipeline email addresses
+      tags: []
+      responses: {}
+      operationId: get-pipelines-pipeline-id-emails
+  '/pipelines/{pipeline-id}/emails/{email-id}':
+    parameters:
+      - schema:
+          type: string
+        name: pipeline-id
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: email-id
+        in: path
+        required: true
+    delete:
+      summary: Remove an email address from a pipeline
+      operationId: delete-pipelines-pipeline-id-emails-email-id
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Add an email address to a pipeline
+      operationId: post-pipelines-pipeline-id-emails-email-id
+      responses:
+        '200':
+          description: OK
+  '/pipelines/{pipeline-id}/loads':
+    parameters:
+      - schema:
+          type: string
+        name: pipeline-id
+        in: path
+        required: true
+    get:
+      summary: Start a pipeline load
+      tags: []
+      responses: {}
+      operationId: get-pipelines-pipeline-id-loads
+      description: Start a load for this pipeline.
+    delete:
+      summary: Cancel the current load
+      operationId: delete-pipelines-pipeline-id-loads
+      responses:
+        '200':
+          description: OK
+  /datasets:
+    get:
+      summary: Get available datasets
+      tags: []
+      responses: {}
+      operationId: get-datasets
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: source-id
+          required: true
+      description: 'Get all available datasets, filtered by the provided source.'
+    parameters: []
 components:
   schemas:
     plugin:
