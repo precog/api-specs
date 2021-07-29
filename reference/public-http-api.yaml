@@ -85,40 +85,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/plugin-definition'
-  '/sources/{source-id}/renaming':
-    parameters:
-      - schema:
-          type: string
-        name: source-id
-        in: path
-        required: true
-    post:
-      summary: Rename a source
-      tags: []
-      operationId: post-sources-source-id-renaming
-      responses:
-        '204':
-          description: No Content
-        '400':
-          description: Request body malformed.
-        '404':
-          description: Source not found.
-      description: Rename a particular source.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              description: ''
-              type: object
-              properties:
-                sourceName:
-                  type: string
-                  minLength: 1
-              required:
-                - sourceName
-              x-examples:
-                example-1:
-                  sourceName: string
   /destinations:
     get:
       summary: Get Destinations
@@ -189,40 +155,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/plugin-config'
-  '/destinations/{destination-id}/renaming':
-    parameters:
-      - schema:
-          type: string
-        name: destination-id
-        in: path
-        required: true
-    post:
-      summary: Rename a destination
-      tags: []
-      operationId: post-destinations-destination-id-renaming
-      responses:
-        '204':
-          description: No Content
-        '400':
-          description: Request body malformed.
-        '404':
-          description: Destination not found.
-      description: Rename a particular destination.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              description: ''
-              type: object
-              properties:
-                destinationName:
-                  type: string
-                  minLength: 1
-              required:
-                - destinationName
-              x-examples:
-                example-1:
-                  destinationName: string
   '/destinations/{destination-id}/testing':
     parameters:
       - schema:
@@ -242,43 +174,59 @@ paths:
     get:
       summary: Get source kinds
       tags: []
-      responses: {}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/plugin-kind'
       operationId: get-kinds-source
       description: Retrieve the available kinds of sources.
-  '/kinds/source/{kind-name}':
+  '/kinds/{kind-id}':
     parameters:
       - schema:
           type: string
-        name: kind-name
+        name: kind-id
         in: path
         required: true
     get:
-      summary: Your GET endpoint
+      summary: Get plugin schema
       tags: []
-      responses: {}
-      operationId: get-kinds-source-source-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  schema:
+                    $ref: '#/components/schemas/plugin-schema'
+        '404':
+          description: Kind not found.
+      operationId: get-kinds-kind-id
+      description: Get the configuration schema for a particular kind of source.
   /kinds/destination:
     get:
       summary: Get destination kinds
       tags: []
-      responses: {}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/plugin-kind'
       operationId: get-kinds-destination
       description: Retrieve the available kinds of destinations.
-  '/kinds/destination/{kind-name}':
-    parameters:
-      - schema:
-          type: string
-        name: kind-name
-        in: path
-        required: true
-    get:
-      summary: Your GET endpoint
-      tags: []
-      responses: {}
-      operationId: get-kinds-destination-destination-id
 components:
   schemas:
-    plugin-definition:
+    plugin:
       description: A configured source.
       type: object
       x-examples:
@@ -303,9 +251,6 @@ components:
         id:
           type: number
           readOnly: true
-        name:
-          type: string
-          minLength: 1
         kind:
           type: string
           minLength: 1
@@ -313,44 +258,82 @@ components:
           type: string
           minLength: 1
         config:
-          type: array
-          uniqueItems: true
-          minItems: 0
-          items:
-            $ref: '#/components/schemas/plugin-config'
+          $ref: '#/components/schemas/plugin-config'
       required:
         - id
-        - name
         - kind
         - version
         - config
     plugin-config:
       description: ''
+      x-examples:
+        example-1:
+          properties:
+            a.config.field: 0
+            another.config.field: 0
+      examples:
+        - {}
+      type: object
+      properties:
+        a.config.field:
+          $ref: '#/components/schemas/plugin-config-entry'
+        another.config.field:
+          $ref: '#/components/schemas/plugin-config-entry'
+    plugin-schema:
+      description: ''
+      x-examples:
+        example-1:
+          properties:
+            a.config.field: 0
+            another.config.field: 0
+      examples:
+        - {}
+      type: object
+      properties:
+        a.config.field:
+          $ref: '#/components/schemas/plugin-schema-entry'
+        another.config.field:
+          $ref: '#/components/schemas/plugin-schema-entry'
+    plugin-kind:
+      description: ''
       type: object
       x-examples:
         example-1:
-          config:
-            - name: string
-              value: 0
+          kind: string
       properties:
-        config:
-          type: array
-          uniqueItems: true
-          minItems: 1
-          items:
-            type: object
-            properties:
-              name:
-                type: string
-                minLength: 1
-              value:
-                type:
-                  - string
-                  - number
-                  - boolean
-            required:
-              - name
-              - value
+        name:
+          type: string
+          minLength: 1
+        id:
+          type: string
       required:
-        - config
+        - name
+    plugin-schema-entry:
+      description: ''
+      type: object
+      properties:
+        description:
+          type: string
+          minLength: 1
+        sensitive:
+          type: boolean
+      required:
+        - description
+        - sensitive
+      x-examples:
+        example-1:
+          description: string
+          sensitive: true
+    plugin-config-entry:
+      description: ''
+      type: object
+      properties:
+        value:
+          type: string
+          minLength: 1
+      required:
+        - value
+      x-examples:
+        example-1:
+          value: string
   responses: {}
