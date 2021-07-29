@@ -22,7 +22,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/plugin-definition'
+                  $ref: '#/components/schemas/plugin-listing'
       operationId: get-sources
       description: Retrieve the configured sources.
     post:
@@ -35,7 +35,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/plugin-definition'
+                $ref: '#/components/schemas/plugin'
         '400':
           description: Request body malformed.
         '415':
@@ -57,7 +57,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/plugin-definition'
+                $ref: '#/components/schemas/plugin'
         '404':
           description: Source not found.
       operationId: get-sources-source-id
@@ -68,8 +68,15 @@ paths:
             schema:
               type: object
               properties: {}
+  '/sources/{source-id}/configuration':
+    parameters:
+      - schema:
+          type: string
+        name: source-id
+        in: path
+        required: true
     post:
-      summary: Replace a source config
+      summary: Update a source config
       tags: []
       operationId: post-sources-source-id
       responses:
@@ -79,12 +86,15 @@ paths:
           description: Request body malformed.
         '404':
           description: Source not found.
-      description: Replace a source configuration for a particular source.
+      description: Update a source configuration for a particular source.
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/plugin-definition'
+              type: object
+              properties:
+                config:
+                  $ref: '#/components/schemas/plugin-config'
   /destinations:
     get:
       summary: Get Destinations
@@ -97,7 +107,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/plugin-definition'
+                  $ref: '#/components/schemas/plugin-listing'
       operationId: get-destinations
       description: Retrieve the configured destinations.
     post:
@@ -116,7 +126,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/plugin-definition'
+              $ref: '#/components/schemas/plugin'
   '/destinations/{destination-id}':
     parameters:
       - schema:
@@ -133,13 +143,20 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/plugin-definition'
+                $ref: '#/components/schemas/plugin'
         '404':
           description: Destination not found.
       operationId: get-destinations-destination-id
       description: Get a particular destination.
+  '/destinations/{destination-id}/configuration':
+    parameters:
+      - schema:
+          type: string
+        name: destination-id
+        in: path
+        required: true
     post:
-      summary: Replace a destination config
+      summary: Update a destination config
       tags: []
       operationId: post-destinations-destination-id
       responses:
@@ -149,12 +166,15 @@ paths:
           description: Request body malformed.
         '404':
           description: Destination not found.
-      description: Replace a destination configuration for a particular destination .
+      description: Update a destination configuration for a particular destination .
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/plugin-config'
+              type: object
+              properties:
+                config:
+                  $ref: '#/components/schemas/plugin-config'
   '/destinations/{destination-id}/testing':
     parameters:
       - schema:
@@ -224,6 +244,34 @@ paths:
                   $ref: '#/components/schemas/plugin-kind'
       operationId: get-kinds-destination
       description: Retrieve the available kinds of destinations.
+  /pipelines:
+    get:
+      summary: Get pipelines
+      tags: []
+      responses: {}
+      operationId: get-pipelines
+      description: Get all pipelines.
+    post:
+      summary: Create pipeline
+      tags: []
+      operationId: post-pipelines
+      responses:
+        '200':
+          description: OK
+      description: Create a new pipeline.
+  '/pipelines/{pipeline-id}':
+    parameters:
+      - schema:
+          type: string
+        name: pipeline-id
+        in: path
+        required: true
+    get:
+      summary: Get a pipeline
+      tags: []
+      responses: {}
+      operationId: get-pipelines-pipeline-id
+      description: Get a particular pipeline.
 components:
   schemas:
     plugin:
@@ -264,6 +312,41 @@ components:
         - kind
         - version
         - config
+    plugin-listing:
+      description: A configured source.
+      type: object
+      x-examples:
+        example-1:
+          id: 0
+          name: string
+          kind: string
+          version: string
+          config:
+            - name: string
+              value: 0
+      title: Source
+      examples:
+        - id: 0
+          name: string
+          kind: string
+          version: string
+          config:
+            - name: string
+              value: 0
+      properties:
+        id:
+          type: number
+          readOnly: true
+        kind:
+          type: string
+          minLength: 1
+        version:
+          type: string
+          minLength: 1
+      required:
+        - id
+        - kind
+        - version
     plugin-config:
       description: ''
       x-examples:
