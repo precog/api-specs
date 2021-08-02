@@ -198,6 +198,19 @@ paths:
       responses:
         '200':
           description: TODO return test outcome and log events.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  outcome:
+                    type: string
+                  logs:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/log-event'
+        '404':
+          description: Destination not found
       description: Test the connection to a particular destination.
   /kinds/source:
     get:
@@ -253,6 +266,28 @@ paths:
                   $ref: '#/components/schemas/plugin-kind'
       operationId: get-kinds-destination
       description: Retrieve the available kinds of destinations.
+  /datasets:
+    get:
+      summary: Get available datasets
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/dataset'
+      operationId: get-datasets
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: source-id
+          required: true
+      description: 'Get all available datasets, filtered by the provided source.'
+    parameters: []
   /pipelines:
     get:
       summary: Get pipelines
@@ -397,10 +432,16 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/pipeline-status'
         '404':
           description: Pipeline not found
       operationId: get-pipelines-pipeline-id-status
-      description: Get the datasets in the provided pipeline.
+      description: Get the status of the provided pipeline.
   '/pipelines/{pipeline-id}/datasets/{dataset-id}':
     parameters:
       - schema:
@@ -446,6 +487,12 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/email'
         '404':
           description: Pipeline not found
       operationId: get-pipelines-pipeline-id-emails
@@ -460,6 +507,12 @@ paths:
         '404':
           description: Pipeline not found
       description: Add an email address to the pipeline
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/email'
+        description: ''
   '/pipelines/{pipeline-id}/emails/{email-id}':
     parameters:
       - schema:
@@ -502,16 +555,22 @@ paths:
       tags: []
       operationId: post-pipelines-pipeline-id-loads
       responses:
-        '200':
-          description: OK
+        '202':
+          description: Accepted
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/id'
       description: Start a load for this pipeline.
-  /datasets:
+  '/pipelines/{pipeline-id}/loads/current/logs':
+    parameters:
+      - schema:
+          type: string
+        name: pipeline-id
+        in: path
+        required: true
     get:
-      summary: Get available datasets
+      summary: Get pipeline logs for the current load
       tags: []
       responses:
         '200':
@@ -519,18 +578,39 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/dataset'
-      operationId: get-datasets
-      parameters:
-        - schema:
-            type: string
-          in: query
-          name: source-id
-          required: true
-      description: 'Get all available datasets, filtered by the provided source.'
-    parameters: []
+                $ref: '#/components/schemas/log-event'
+        '204':
+          description: A load is not currently running.
+        '404':
+          description: Pipeline not found
+      operationId: get-pipelines-pipeline-id-loads-current-logs
+      description: Get pipeline logs for the current load
+  '/pipelines/{pipeline-id}/loads/{load-id}/logs':
+    parameters:
+      - schema:
+          type: string
+        name: pipeline-id
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: load-id
+        in: path
+        required: true
+    get:
+      summary: Get pipeline logs for a load
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/log-event'
+        '404':
+          description: Pipeline not found <OR> Load not found
+      operationId: get-pipelines-pipeline-id-loads-load-id-logs
+      description: Get pipeline logs for the provided load
 components:
   schemas:
     plugin:
@@ -725,4 +805,26 @@ components:
       properties:
         id:
           type: string
+    email:
+      title: email
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+        email:
+          type: string
+    pipeline-status:
+      title: pipeline-dataset-status
+      type: object
+      properties:
+        datasetId:
+          type: string
+        status:
+          type: string
+        inBand:
+          type: boolean
+    log-event:
+      title: log-event
+      type: string
   responses: {}
