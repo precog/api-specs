@@ -30,17 +30,22 @@ paths:
       tags: []
       operationId: post-sources
       responses:
-        '200':
-          description: OK
+        '201':
+          description: Created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/plugin'
+                $ref: '#/components/schemas/id'
         '400':
           description: Request body malformed.
         '415':
           description: Source kind unsupported. <or> Source version unsupported.
       description: Configure a new source.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/plugin'
   '/sources/{source-id}':
     parameters:
       - schema:
@@ -100,8 +105,8 @@ paths:
       summary: Get Destinations
       tags: []
       responses:
-        '200':
-          description: OK
+        '201':
+          description: Created
           content:
             application/json:
               schema:
@@ -117,6 +122,10 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/id'
         '400':
           description: Request body malformed.
         '415':
@@ -248,7 +257,15 @@ paths:
     get:
       summary: Get pipelines
       tags: []
-      responses: {}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/pipeline'
       operationId: get-pipelines
       description: Get all pipelines.
     post:
@@ -256,9 +273,23 @@ paths:
       tags: []
       operationId: post-pipelines
       responses:
-        '200':
-          description: OK
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/id'
       description: Create a new pipeline.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/pipeline'
+        description: ''
   '/pipelines/{pipeline-id}':
     parameters:
       - schema:
@@ -269,7 +300,15 @@ paths:
     get:
       summary: Get a pipeline
       tags: []
-      responses: {}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pipeline-info'
+        '404':
+          description: Pipeline not found.
       operationId: get-pipelines-pipeline-id
       description: Get a particular pipeline.
   '/pipelines/{pipeline-id}/schedule':
@@ -282,22 +321,45 @@ paths:
     get:
       summary: Get a pipeline schedule
       tags: []
-      responses: {}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/cron-statement'
+        '404':
+          description: Pipeline not found
       operationId: get-pipelines-pipeline-id-schedule
       description: Get the schedule for a particular pipeline.
     post:
       summary: Update a pipeline schedule
+      tags: []
       operationId: post-pipelines-pipeline-id-schedule
       responses:
-        '200':
-          description: OK
+        '204':
+          description: No Content
+        '404':
+          description: Pipeline not found
       description: Update the schedule for a particular pipeline.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/cron-statement'
     delete:
       summary: Delete a pipeline schedule
+      tags: []
       operationId: delete-pipelines-pipeline-id-schedule
       responses:
-        '200':
-          description: OK
+        '204':
+          description: No Content
+        '404':
+          description: Pipeline not found
       description: Delete the schedule for a particular pipeline.
   '/pipelines/{pipeline-id}/datasets':
     parameters:
@@ -307,10 +369,38 @@ paths:
         in: path
         required: true
     get:
-      summary: Your GET endpoint
+      summary: Get the pipeline datasets
       tags: []
-      responses: {}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/dataset'
+        '404':
+          description: Pipeline not found
       operationId: get-pipelines-pipeline-id-datasets
+      description: Get the datasets in the provided pipeline.
+  '/pipelines/{pipeline-id}/status':
+    parameters:
+      - schema:
+          type: string
+        name: pipeline-id
+        in: path
+        required: true
+    get:
+      summary: Get the pipeline status
+      tags: []
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Pipeline not found
+      operationId: get-pipelines-pipeline-id-status
+      description: Get the datasets in the provided pipeline.
   '/pipelines/{pipeline-id}/datasets/{dataset-id}':
     parameters:
       - schema:
@@ -325,16 +415,24 @@ paths:
         required: true
     delete:
       summary: Remove a dataset from a pipeline
+      tags: []
       operationId: delete-pipelines-pipeline-id-datasets-dataset-id
       responses:
-        '200':
-          description: OK
+        '204':
+          description: No Content
+        '404':
+          description: Pipeline not found <OR> Dataset not found
+      description: Delete the provided dataset from the provided pipeline.
     post:
       summary: Add a dataset to a pipeline
+      tags: []
       operationId: post-pipelines-pipeline-id-datasets-dataset-id
       responses:
-        '200':
-          description: OK
+        '204':
+          description: No Content
+        '404':
+          description: Pipeline not found <OR> Dataset not found
+      description: Add the provided dataset to the provided pipeline.
   '/pipelines/{pipeline-id}/emails':
     parameters:
       - schema:
@@ -345,8 +443,23 @@ paths:
     get:
       summary: Get pipeline email addresses
       tags: []
-      responses: {}
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Pipeline not found
       operationId: get-pipelines-pipeline-id-emails
+      description: Get all the email addresses associated with the pipeline.
+    post:
+      summary: Add a pipeline email address
+      tags: []
+      operationId: post-pipelines-pipeline-id-emails
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Pipeline not found
+      description: Add an email address to the pipeline
   '/pipelines/{pipeline-id}/emails/{email-id}':
     parameters:
       - schema:
@@ -361,16 +474,14 @@ paths:
         required: true
     delete:
       summary: Remove an email address from a pipeline
+      tags: []
       operationId: delete-pipelines-pipeline-id-emails-email-id
       responses:
         '200':
           description: OK
-    post:
-      summary: Add an email address to a pipeline
-      operationId: post-pipelines-pipeline-id-emails-email-id
-      responses:
-        '200':
-          description: OK
+        '404':
+          description: Pipeline not found <OR> Email not found
+      description: Delete an email address from a pipeline
   '/pipelines/{pipeline-id}/loads':
     parameters:
       - schema:
@@ -378,23 +489,39 @@ paths:
         name: pipeline-id
         in: path
         required: true
-    get:
-      summary: Start a pipeline load
-      tags: []
-      responses: {}
-      operationId: get-pipelines-pipeline-id-loads
-      description: Start a load for this pipeline.
     delete:
       summary: Cancel the current load
+      tags: []
       operationId: delete-pipelines-pipeline-id-loads
       responses:
         '200':
           description: OK
+      description: Cancel the current load for this pipeline.
+    post:
+      summary: Start a pipeline load
+      tags: []
+      operationId: post-pipelines-pipeline-id-loads
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/id'
+      description: Start a load for this pipeline.
   /datasets:
     get:
       summary: Get available datasets
       tags: []
-      responses: {}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/dataset'
       operationId: get-datasets
       parameters:
         - schema:
@@ -551,4 +678,51 @@ components:
       x-examples:
         example-1:
           value: string
+    pipeline:
+      title: pipeline-summary
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+        name:
+          type: string
+        destinationId:
+          type: string
+    pipeline-info:
+      title: pipeline
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        datasetIds:
+          type: array
+          items:
+            type: string
+        destinationId:
+          type: string
+    cron-statement:
+      title: pipeline-schedule
+      type: object
+      properties:
+        cron:
+          type: string
+    dataset:
+      title: dataset
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        sourceId:
+          type: string
+    id:
+      title: id
+      type: object
+      properties:
+        id:
+          type: string
   responses: {}
