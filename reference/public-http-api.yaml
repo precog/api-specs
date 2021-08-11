@@ -614,64 +614,26 @@ paths:
 components:
   schemas:
     plugin:
-      description: A configured source.
+      description: ''
       type: object
-      x-examples:
-        example-1:
-          id: 0
-          name: string
-          kind: string
-          version: string
-          config:
-            - name: string
-              value: 0
-      title: Source
-      examples:
-        - id: 0
-          name: string
-          kind: string
-          version: string
-          config:
-            - name: string
-              value: 0
+      title: ''
       properties:
         id:
           type: number
           readOnly: true
-        kind:
-          type: string
-          minLength: 1
-        version:
+        kindId:
           type: string
           minLength: 1
         config:
           $ref: '#/components/schemas/plugin-config'
       required:
         - id
-        - kind
-        - version
+        - kindId
         - config
     plugin-listing:
-      description: A configured source.
+      description: ''
       type: object
-      x-examples:
-        example-1:
-          id: 0
-          name: string
-          kind: string
-          version: string
-          config:
-            - name: string
-              value: 0
-      title: Source
-      examples:
-        - id: 0
-          name: string
-          kind: string
-          version: string
-          config:
-            - name: string
-              value: 0
+      title: ''
       properties:
         id:
           type: number
@@ -688,40 +650,25 @@ components:
         - version
     plugin-config:
       description: ''
-      x-examples:
-        example-1:
-          properties:
-            a.config.field: 0
-            another.config.field: 0
-      examples:
-        - {}
       type: object
       properties:
         a.config.field:
           $ref: '#/components/schemas/plugin-config-entry'
         another.config.field:
           $ref: '#/components/schemas/plugin-config-entry'
+      title: ''
     plugin-schema:
       description: ''
-      x-examples:
-        example-1:
-          properties:
-            a.config.field: 0
-            another.config.field: 0
-      examples:
-        - {}
       type: object
       properties:
         a.config.field:
           $ref: '#/components/schemas/plugin-schema-entry'
         another.config.field:
           $ref: '#/components/schemas/plugin-schema-entry'
+      title: ''
     plugin-kind:
       description: ''
       type: object
-      x-examples:
-        example-1:
-          kind: string
       properties:
         name:
           type: string
@@ -730,6 +677,7 @@ components:
           type: string
       required:
         - name
+      title: ''
     plugin-schema-entry:
       description: ''
       type: object
@@ -742,10 +690,7 @@ components:
       required:
         - description
         - sensitive
-      x-examples:
-        example-1:
-          description: string
-          sensitive: true
+      title: ''
     plugin-config-entry:
       description: ''
       type: object
@@ -755,11 +700,8 @@ components:
           minLength: 1
       required:
         - value
-      x-examples:
-        example-1:
-          value: string
     pipeline-listing:
-      title: pipeline-summary
+      title: ''
       type: object
       properties:
         id:
@@ -770,7 +712,7 @@ components:
         destinationId:
           type: string
     pipeline:
-      title: pipeline
+      title: ''
       type: object
       properties:
         id:
@@ -784,13 +726,13 @@ components:
         destinationId:
           type: string
     cron-statement:
-      title: pipeline-schedule
+      title: ''
       type: object
       properties:
         cron:
           type: string
     dataset:
-      title: dataset
+      title: ''
       type: object
       properties:
         id:
@@ -800,13 +742,13 @@ components:
         sourceId:
           type: string
     id:
-      title: id
+      title: ''
       type: object
       properties:
         id:
           type: string
     email:
-      title: email
+      title: ''
       type: object
       properties:
         id:
@@ -815,7 +757,7 @@ components:
         email:
           type: string
     pipeline-status:
-      title: pipeline-dataset-status
+      title: ''
       type: object
       properties:
         datasetId:
@@ -825,6 +767,6 @@ components:
         inBand:
           type: boolean
     log-event:
-      title: log-event
+      title: ''
       type: string
   responses: {}
