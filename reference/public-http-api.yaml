@@ -619,7 +619,7 @@ components:
       title: ''
       properties:
         id:
-          type: number
+          type: string
           readOnly: true
         kindId:
           type: string
@@ -636,18 +636,14 @@ components:
       title: ''
       properties:
         id:
-          type: number
-          readOnly: true
-        kind:
           type: string
-          minLength: 1
-        version:
+          readOnly: true
+        kindId:
           type: string
           minLength: 1
       required:
         - id
-        - kind
-        - version
+        - kindId
     plugin-config:
       description: ''
       type: object
@@ -669,15 +665,15 @@ components:
     plugin-kind:
       description: ''
       type: object
+      title: ''
       properties:
         name:
           type: string
           minLength: 1
-        id:
+        kindId:
           type: string
       required:
         - name
-      title: ''
     plugin-schema-entry:
       description: ''
       type: object
