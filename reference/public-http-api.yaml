@@ -560,8 +560,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/id'
+        '404':
+          description: Pipeline not found.
       description: Start a load for this pipeline.
-  '/pipelines/{pipeline-id}/loads/current/logs':
+  '/pipelines/{pipeline-id}/loads/latest/logs':
     parameters:
       - schema:
           type: string
@@ -569,7 +571,7 @@ paths:
         in: path
         required: true
     get:
-      summary: Get pipeline logs for the current load
+      summary: Get pipeline logs for the latest load
       tags: []
       responses:
         '200':
@@ -579,37 +581,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/log-event'
         '204':
-          description: A load is not currently running.
+          description: This dataset has not yet been loaded
         '404':
-          description: Pipeline not found
-      operationId: get-pipelines-pipeline-id-loads-current-logs
-      description: Get pipeline logs for the current load
-  '/pipelines/{pipeline-id}/loads/{load-id}/logs':
-    parameters:
-      - schema:
-          type: string
-        name: pipeline-id
-        in: path
-        required: true
-      - schema:
-          type: string
-        name: load-id
-        in: path
-        required: true
-    get:
-      summary: Get pipeline logs for a load
-      tags: []
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/log-event'
-        '404':
-          description: Pipeline not found <OR> Load not found
-      operationId: get-pipelines-pipeline-id-loads-load-id-logs
-      description: Get pipeline logs for the provided load
+          description: Pipeline not found <OR> Dataset not found
+      operationId: get-pipelines-pipeline-id-loads-latest-logs
+      description: Get pipeline logs for the latest load and provided dataset
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: dataset-id
+          required: true
 components:
   schemas:
     plugin:
