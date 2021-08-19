@@ -319,8 +319,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties: {}
+              $ref: '#/components/schemas/pipeline'
           application/xml:
             schema:
               $ref: '#/components/schemas/pipeline-listing'
@@ -713,6 +712,7 @@ components:
       properties:
         id:
           type: string
+          readOnly: true
         name:
           type: string
         datasetIds:
