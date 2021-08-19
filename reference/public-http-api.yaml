@@ -646,22 +646,16 @@ components:
         - kindId
     plugin-config:
       description: ''
-      type: object
-      properties:
-        a.config.field:
-          $ref: '#/components/schemas/plugin-config-entry'
-        another.config.field:
-          $ref: '#/components/schemas/plugin-config-entry'
+      type: array
       title: ''
+      items:
+        $ref: '#/components/schemas/plugin-config-entry'
     plugin-schema:
       description: ''
-      type: object
-      properties:
-        a.config.field:
-          $ref: '#/components/schemas/plugin-schema-entry'
-        another.config.field:
-          $ref: '#/components/schemas/plugin-schema-entry'
+      type: array
       title: ''
+      items:
+        $ref: '#/components/schemas/plugin-schema-entry'
     plugin-kind:
       description: ''
       type: object
@@ -677,16 +671,19 @@ components:
     plugin-schema-entry:
       description: ''
       type: object
+      title: ''
       properties:
         description:
           type: string
           minLength: 1
         sensitive:
           type: boolean
+        name:
+          type: string
       required:
         - description
         - sensitive
-      title: ''
+        - name
     plugin-config-entry:
       description: ''
       type: object
@@ -694,8 +691,11 @@ components:
         value:
           type: string
           minLength: 1
+        name:
+          type: string
       required:
         - value
+        - name
     pipeline-listing:
       title: ''
       type: object
