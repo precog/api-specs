@@ -24,7 +24,12 @@ paths:
                 items:
                   $ref: '#/components/schemas/plugin-listing'
       operationId: get-sources
-      description: Retrieve the configured sources.
+      description: 'Retrieve the configured sources, optionally filtering by kind.'
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: kind-id
     post:
       summary: Create Source
       tags: []
@@ -35,7 +40,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/id'
+                $ref: '#/components/schemas/plugin-listing'
         '400':
           description: Request body malformed.
         '415':
@@ -114,7 +119,12 @@ paths:
                 items:
                   $ref: '#/components/schemas/plugin-listing'
       operationId: get-destinations
-      description: Retrieve the configured destinations.
+      description: 'Retrieve the configured destinations, optionally filtering by kind.'
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: kind-id
     post:
       summary: Create Destination
       tags: []
@@ -125,7 +135,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/id'
+                $ref: '#/components/schemas/plugin-listing'
         '400':
           description: Request body malformed.
         '415':
@@ -607,10 +617,14 @@ components:
           minLength: 1
         config:
           $ref: '#/components/schemas/plugin-config'
+        name:
+          type: string
+          readOnly: true
       required:
         - id
         - kindId
         - config
+        - name
     plugin-listing:
       description: ''
       type: object
@@ -622,9 +636,12 @@ components:
         kindId:
           type: string
           minLength: 1
+        name:
+          type: string
       required:
         - id
         - kindId
+        - name
     plugin-config:
       description: ''
       type: array
