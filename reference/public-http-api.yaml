@@ -35,7 +35,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/id'
+                $ref: '#/components/schemas/plugin-listing'
         '400':
           description: Request body malformed.
         '415':
@@ -125,7 +125,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/id'
+                $ref: '#/components/schemas/plugin-listing'
         '400':
           description: Request body malformed.
         '415':
@@ -607,10 +607,13 @@ components:
           minLength: 1
         config:
           $ref: '#/components/schemas/plugin-config'
+        name:
+          type: string
       required:
         - id
         - kindId
         - config
+        - name
     plugin-listing:
       description: ''
       type: object
@@ -622,9 +625,12 @@ components:
         kindId:
           type: string
           minLength: 1
+        name:
+          type: string
       required:
         - id
         - kindId
+        - name
     plugin-config:
       description: ''
       type: array
