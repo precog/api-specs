@@ -619,6 +619,7 @@ components:
           $ref: '#/components/schemas/plugin-config'
         name:
           type: string
+          readOnly: true
       required:
         - id
         - kindId
