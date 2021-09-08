@@ -24,7 +24,12 @@ paths:
                 items:
                   $ref: '#/components/schemas/plugin-listing'
       operationId: get-sources
-      description: Retrieve the configured sources.
+      description: 'Retrieve the configured sources, optionally filtering by kind.'
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: kind-id
     post:
       summary: Create Source
       tags: []
@@ -114,7 +119,12 @@ paths:
                 items:
                   $ref: '#/components/schemas/plugin-listing'
       operationId: get-destinations
-      description: Retrieve the configured destinations.
+      description: 'Retrieve the configured destinations, optionally filtering by kind.'
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: kind-id
     post:
       summary: Create Destination
       tags: []
