@@ -78,6 +78,35 @@ paths:
             schema:
               type: object
               properties: {}
+  '/sources/{source-id}/datasets':
+    parameters:
+      - schema:
+          type: string
+        name: source-id
+        in: path
+        required: true
+    get:
+      summary: Get datasets
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/dataset'
+        '404':
+          description: Source not found.
+      operationId: get-sources-source-id-datasets
+      description: Get all available datasets for the provided source.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
   '/sources/{source-id}/configuration':
     parameters:
       - schema:
@@ -276,28 +305,6 @@ paths:
                   $ref: '#/components/schemas/plugin-kind'
       operationId: get-kinds-destination
       description: Retrieve the available kinds of destinations.
-  /datasets:
-    get:
-      summary: Get available datasets
-      tags: []
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/dataset'
-      operationId: get-datasets
-      parameters:
-        - schema:
-            type: string
-          in: query
-          name: source-id
-          required: true
-      description: 'Get all available datasets, filtered by the provided source.'
-    parameters: []
   /pipelines:
     get:
       summary: Get pipelines
