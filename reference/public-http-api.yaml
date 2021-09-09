@@ -85,10 +85,10 @@ paths:
         name: source-id
         in: path
         required: true
-    post:
+    put:
       summary: Update a source config
       tags: []
-      operationId: post-sources-source-id
+      operationId: put-sources-source-id
       responses:
         '204':
           description: No Content
@@ -174,10 +174,10 @@ paths:
         name: destination-id
         in: path
         required: true
-    post:
+    put:
       summary: Update a destination config
       tags: []
-      operationId: post-destinations-destination-id
+      operationId: put-destinations-destination-id
       responses:
         '204':
           description: No Content
@@ -491,7 +491,8 @@ paths:
         in: path
         required: true
     put:
-      summary: ''
+      summary: Rename a pipelne.
+      tags: []
       operationId: put-pipelines-pipeline-id-rename
       responses:
         '204':
