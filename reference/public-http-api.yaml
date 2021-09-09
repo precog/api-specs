@@ -724,8 +724,6 @@ components:
           readOnly: true
         name:
           type: string
-        destinationId:
-          type: string
     pipeline:
       title: ''
       type: object
@@ -735,10 +733,6 @@ components:
           readOnly: true
         name:
           type: string
-        datasetIds:
-          type: array
-          items:
-            type: string
         destinationId:
           type: string
     cron-statement:
