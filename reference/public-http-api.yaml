@@ -483,6 +483,27 @@ paths:
         '404':
           description: Pipeline not found <OR> Dataset not found
       description: Add the provided dataset to the provided pipeline.
+  '/pipelines/{pipeline-id}/rename':
+    parameters:
+      - schema:
+          type: string
+        name: pipeline-id
+        in: path
+        required: true
+    put:
+      summary: ''
+      operationId: put-pipelines-pipeline-id-rename
+      responses:
+        '204':
+          description: No Content
+        '404':
+          description: Pipeline not found
+      description: Rename a pipeline.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/name'
   '/pipelines/{pipeline-id}/emails':
     parameters:
       - schema:
@@ -742,6 +763,14 @@ components:
       properties:
         id:
           type: string
+    name:
+      title: name
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+        - name
     email:
       title: ''
       type: object
