@@ -247,7 +247,7 @@ paths:
                   logs:
                     type: array
                     items:
-                      $ref: '#/components/schemas/log-event'
+                      type: string
         '404':
           description: Destination not found
       description: Test the connection to a particular destination.
@@ -616,9 +616,9 @@ paths:
         '200':
           description: OK
           content:
-            application/json:
+            text/plain:
               schema:
-                $ref: '#/components/schemas/log-event'
+                type: string
         '204':
           description: This dataset has not yet been loaded
         '404':
@@ -792,7 +792,4 @@ components:
           type: string
         inBand:
           type: boolean
-    log-event:
-      title: ''
-      type: string
   responses: {}
