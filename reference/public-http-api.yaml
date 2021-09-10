@@ -78,6 +78,35 @@ paths:
             schema:
               type: object
               properties: {}
+  '/sources/{source-id}/datasets':
+    parameters:
+      - schema:
+          type: string
+        name: source-id
+        in: path
+        required: true
+    get:
+      summary: Get datasets
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/dataset'
+        '404':
+          description: Source not found.
+      operationId: get-sources-source-id-datasets
+      description: Get all available datasets for the provided source.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
   '/sources/{source-id}/configuration':
     parameters:
       - schema:
@@ -85,10 +114,10 @@ paths:
         name: source-id
         in: path
         required: true
-    post:
+    put:
       summary: Update a source config
       tags: []
-      operationId: post-sources-source-id
+      operationId: put-sources-source-id
       responses:
         '204':
           description: No Content
@@ -174,10 +203,10 @@ paths:
         name: destination-id
         in: path
         required: true
-    post:
+    put:
       summary: Update a destination config
       tags: []
-      operationId: post-destinations-destination-id
+      operationId: put-destinations-destination-id
       responses:
         '204':
           description: No Content
@@ -218,7 +247,7 @@ paths:
                   logs:
                     type: array
                     items:
-                      $ref: '#/components/schemas/log-event'
+                      type: string
         '404':
           description: Destination not found
       description: Test the connection to a particular destination.
@@ -276,28 +305,6 @@ paths:
                   $ref: '#/components/schemas/plugin-kind'
       operationId: get-kinds-destination
       description: Retrieve the available kinds of destinations.
-  /datasets:
-    get:
-      summary: Get available datasets
-      tags: []
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/dataset'
-      operationId: get-datasets
-      parameters:
-        - schema:
-            type: string
-          in: query
-          name: source-id
-          required: true
-      description: 'Get all available datasets, filtered by the provided source.'
-    parameters: []
   /pipelines:
     get:
       summary: Get pipelines
@@ -483,6 +490,28 @@ paths:
         '404':
           description: Pipeline not found <OR> Dataset not found
       description: Add the provided dataset to the provided pipeline.
+  '/pipelines/{pipeline-id}/rename':
+    parameters:
+      - schema:
+          type: string
+        name: pipeline-id
+        in: path
+        required: true
+    put:
+      summary: Rename a pipelne.
+      tags: []
+      operationId: put-pipelines-pipeline-id-rename
+      responses:
+        '204':
+          description: No Content
+        '404':
+          description: Pipeline not found
+      description: Rename a pipeline.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/name'
   '/pipelines/{pipeline-id}/emails':
     parameters:
       - schema:
@@ -587,9 +616,9 @@ paths:
         '200':
           description: OK
           content:
-            application/json:
+            text/plain:
               schema:
-                $ref: '#/components/schemas/log-event'
+                type: string
         '204':
           description: This dataset has not yet been loaded
         '404':
@@ -703,8 +732,6 @@ components:
           readOnly: true
         name:
           type: string
-        destinationId:
-          type: string
     pipeline:
       title: ''
       type: object
@@ -714,10 +741,6 @@ components:
           readOnly: true
         name:
           type: string
-        datasetIds:
-          type: array
-          items:
-            type: string
         destinationId:
           type: string
     cron-statement:
@@ -742,6 +765,14 @@ components:
       properties:
         id:
           type: string
+    name:
+      title: name
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+        - name
     email:
       title: ''
       type: object
@@ -761,7 +792,4 @@ components:
           type: string
         inBand:
           type: boolean
-    log-event:
-      title: ''
-      type: string
   responses: {}
