@@ -691,10 +691,11 @@ components:
         name:
           type: string
           minLength: 1
-        kindId:
+        id:
           type: string
       required:
         - name
+        - id
     plugin-schema-entry:
       description: ''
       type: object
