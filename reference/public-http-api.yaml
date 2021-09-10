@@ -482,6 +482,27 @@ paths:
         '404':
           description: Pipeline not found <OR> Dataset not found
       description: Add the provided dataset to the provided pipeline.
+  '/pipelines/{pipeline-id}/datasets/status':
+    parameters:
+      - schema:
+          type: string
+        name: pipeline-id
+        in: path
+        required: true
+    get:
+      summary: Get the pipeline datasets status
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pipeline-dataset-status'
+        '404':
+          description: Pipeline not found
+      operationId: get-pipelines-pipeline-id-datasets-status
+      description: Get the status of the datasets in the provided pipeline.
   '/pipelines/{pipeline-id}/loads':
     parameters:
       - schema:
@@ -774,7 +795,7 @@ components:
       required:
         - id
     name:
-      title: name
+      title: ''
       type: object
       properties:
         name:
@@ -809,8 +830,42 @@ components:
         - pipelineId
         - previous
         - current
+    dataset-status:
+      title: ''
+      type: object
+      description: ''
+      properties:
+        id:
+          type: string
+        outOfBand:
+          $ref: '#/components/schemas/outofband-state'
+        inBand:
+          $ref: '#/components/schemas/inband-state'
+      required:
+        - id
+    pipeline-dataset-status:
+      title: ''
+      type: object
+      properties:
+        pipelineId:
+          type: string
+        previous:
+          type: array
+          items:
+            $ref: '#/components/schemas/previous-state'
+        current:
+          $ref: '#/components/schemas/current-state'
+        datasets:
+          type: array
+          items:
+            $ref: '#/components/schemas/dataset-status'
+      required:
+        - pipelineId
+        - previous
+        - current
+        - datasets
     previous-state:
-      title: previous-state
+      title: ''
       type: object
       properties:
         state:
@@ -823,8 +878,37 @@ components:
       required:
         - state
         - at
+    outofband-state:
+      title: ''
+      type: object
+      properties:
+        state:
+          type: string
+          enum:
+            - loading
+        at:
+          type: number
+      required:
+        - state
+        - at
+    inband-state:
+      title: ''
+      type: object
+      properties:
+        state:
+          type: string
+          enum:
+            - loading
+            - writing
+            - waiting
+            - written
+        at:
+          type: number
+      required:
+        - state
+        - at
     current-state:
-      title: current-state
+      title: ''
       type: object
       properties:
         state:
