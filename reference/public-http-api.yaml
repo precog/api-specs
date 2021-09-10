@@ -503,7 +503,7 @@ paths:
         '404':
           description: Pipeline not found <OR> Dataset not found
       description: Add the provided dataset to the provided pipeline.
-  '/pipelines/{pipeline-id}/datasets/status':
+  '/pipelines/{pipeline-id}/status':
     parameters:
       - schema:
           type: string
@@ -522,8 +522,8 @@ paths:
                 $ref: '#/components/schemas/pipeline-dataset-status'
         '404':
           description: Pipeline not found
-      operationId: get-pipelines-pipeline-id-datasets-status
-      description: Get the status of the datasets in the provided pipeline.
+      operationId: get-pipelines-pipeline-id-status
+      description: Get the status of the provided pipeline.
   '/pipelines/{pipeline-id}/loads':
     parameters:
       - schema:
