@@ -450,6 +450,27 @@ paths:
           description: Pipeline not found
       operationId: get-pipelines-pipeline-id-datasets
       description: Get the datasets in the provided pipeline.
+  '/pipelines/{pipeline-id}/details':
+    parameters:
+      - schema:
+          type: string
+        name: pipeline-id
+        in: path
+        required: true
+    get:
+      summary: Get pipeline details
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pipeline-details'
+        '404':
+          description: Pipeline not found
+      operationId: get-pipelines-pipeline-id-details
+      description: Get all the details for the provided pipeline.
   '/pipelines/{pipeline-id}/datasets/{dataset-id}':
     parameters:
       - schema:
@@ -921,4 +942,84 @@ components:
       required:
         - state
         - at
+    pipeline-details:
+      title: pipeline-details
+      type: object
+      properties:
+        pipeline:
+          required:
+            - id
+            - name
+          type: object
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+        destination:
+          required:
+            - id
+            - name
+            - kind
+          type: object
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+            kind:
+              type: object
+              required:
+                - id
+                - name
+              properties:
+                id:
+                  type: string
+                name:
+                  type: string
+        datasets:
+          type: array
+          items:
+            type: object
+            properties:
+              source:
+                required:
+                  - id
+                  - name
+                  - kind
+                type: object
+                properties:
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  kind:
+                    type: object
+                    required:
+                      - id
+                      - name
+                    properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
+              dataset:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+                  required:
+                    - id
+                    - name
+            required:
+              - source
+              - dataset
+      required:
+        - pipeline
+        - destination
+        - datasets
   responses: {}
