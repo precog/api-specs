@@ -732,6 +732,9 @@ components:
           readOnly: true
         name:
           type: string
+      required:
+        - id
+        - name
     pipeline:
       title: ''
       type: object
@@ -743,12 +746,18 @@ components:
           type: string
         destinationId:
           type: string
+      required:
+        - id
+        - name
+        - destinationId
     cron-statement:
       title: ''
       type: object
       properties:
         cron:
           type: string
+      required:
+        - cron
     dataset:
       title: ''
       type: object
@@ -759,12 +768,18 @@ components:
           type: string
         sourceId:
           type: string
+      required:
+        - id
+        - name
+        - sourceId
     id:
       title: ''
       type: object
       properties:
         id:
           type: string
+      required:
+        - id
     name:
       title: name
       type: object
@@ -782,6 +797,9 @@ components:
           readOnly: true
         email:
           type: string
+      required:
+        - id
+        - email
     pipeline-status:
       title: ''
       type: object
