@@ -842,9 +842,7 @@ components:
         pipelineId:
           type: string
         previous:
-          type: array
-          items:
-            $ref: '#/components/schemas/previous-state'
+          $ref: '#/components/schemas/previous-state'
         current:
           $ref: '#/components/schemas/current-state'
       required:
