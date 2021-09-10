@@ -236,21 +236,20 @@ paths:
       operationId: post-destinations-destination-id-testing
       responses:
         '200':
-          description: TODO return test outcome and log events.
+          description: OK
           content:
-            application/json:
+            text/plain:
               schema:
-                type: object
-                properties:
-                  outcome:
-                    type: string
-                  logs:
-                    type: array
-                    items:
-                      type: string
+                type: string
         '404':
           description: Destination not found
-      description: Test the connection to a particular destination.
+        '502':
+          description: Connection failed
+          content:
+            text/plain:
+              schema:
+                type: string
+      description: Test the connection to a particular destination. Returns the connection logs upon connection success and connetion failure.
   /kinds/source:
     get:
       summary: Get source kinds
