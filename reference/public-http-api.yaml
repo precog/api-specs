@@ -250,21 +250,6 @@ paths:
               schema:
                 type: string
       description: Test the connection to a particular destination. Returns the connection logs upon connection success and connetion failure.
-  /kinds/source:
-    get:
-      summary: Get source kinds
-      tags: []
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/plugin-kind'
-      operationId: get-kinds-source
-      description: Retrieve the available kinds of sources.
   '/kinds/{kind-id}':
     parameters:
       - schema:
@@ -289,6 +274,21 @@ paths:
           description: Kind not found.
       operationId: get-kinds-kind-id
       description: Get the configuration schema for a particular kind of source.
+  /kinds/source:
+    get:
+      summary: Get source kinds
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/plugin-kind'
+      operationId: get-kinds-source
+      description: Retrieve the available kinds of sources.
   /kinds/destination:
     get:
       summary: Get destination kinds
@@ -340,6 +340,22 @@ paths:
             schema:
               $ref: '#/components/schemas/pipeline-listing'
         description: ''
+  /pipelines/status:
+    parameters: []
+    get:
+      summary: Get the pipeline status
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/pipeline-status'
+      operationId: get-pipelines-status
+      description: Get the status of all the pipelines.
   '/pipelines/{pipeline-id}':
     parameters:
       - schema:
@@ -434,29 +450,6 @@ paths:
           description: Pipeline not found
       operationId: get-pipelines-pipeline-id-datasets
       description: Get the datasets in the provided pipeline.
-  '/pipelines/{pipeline-id}/status':
-    parameters:
-      - schema:
-          type: string
-        name: pipeline-id
-        in: path
-        required: true
-    get:
-      summary: Get the pipeline status
-      tags: []
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/pipeline-status'
-        '404':
-          description: Pipeline not found
-      operationId: get-pipelines-pipeline-id-status
-      description: Get the status of the provided pipeline.
   '/pipelines/{pipeline-id}/datasets/{dataset-id}':
     parameters:
       - schema:
@@ -489,6 +482,35 @@ paths:
         '404':
           description: Pipeline not found <OR> Dataset not found
       description: Add the provided dataset to the provided pipeline.
+  '/pipelines/{pipeline-id}/loads':
+    parameters:
+      - schema:
+          type: string
+        name: pipeline-id
+        in: path
+        required: true
+    delete:
+      summary: Cancel the current load
+      tags: []
+      operationId: delete-pipelines-pipeline-id-loads
+      responses:
+        '200':
+          description: OK
+      description: Cancel the current load for this pipeline.
+    post:
+      summary: Start a pipeline load
+      tags: []
+      operationId: post-pipelines-pipeline-id-loads
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/id'
+        '404':
+          description: Pipeline not found.
+      description: Start a load for this pipeline.
   '/pipelines/{pipeline-id}/rename':
     parameters:
       - schema:
@@ -572,35 +594,6 @@ paths:
         '404':
           description: Pipeline not found <OR> Email not found
       description: Delete an email address from a pipeline
-  '/pipelines/{pipeline-id}/loads':
-    parameters:
-      - schema:
-          type: string
-        name: pipeline-id
-        in: path
-        required: true
-    delete:
-      summary: Cancel the current load
-      tags: []
-      operationId: delete-pipelines-pipeline-id-loads
-      responses:
-        '200':
-          description: OK
-      description: Cancel the current load for this pipeline.
-    post:
-      summary: Start a pipeline load
-      tags: []
-      operationId: post-pipelines-pipeline-id-loads
-      responses:
-        '202':
-          description: Accepted
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/id'
-        '404':
-          description: Pipeline not found.
-      description: Start a load for this pipeline.
   '/pipelines/{pipeline-id}/loads/latest/logs':
     parameters:
       - schema:
@@ -804,10 +797,44 @@ components:
       title: ''
       type: object
       properties:
-        datasetId:
+        pipelineId:
           type: string
-        status:
+        previous:
+          type: array
+          items:
+            $ref: '#/components/schemas/previous-state'
+        current:
+          $ref: '#/components/schemas/current-state'
+      required:
+        - pipelineId
+        - previous
+        - current
+    previous-state:
+      title: previous-state
+      type: object
+      properties:
+        state:
           type: string
-        inBand:
-          type: boolean
+          enum:
+            - succeeded
+            - failed
+        at:
+          type: number
+      required:
+        - state
+        - at
+    current-state:
+      title: current-state
+      type: object
+      properties:
+        state:
+          type: string
+          enum:
+            - loading
+            - not loading
+        at:
+          type: number
+      required:
+        - state
+        - at
   responses: {}
