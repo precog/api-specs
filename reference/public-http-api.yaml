@@ -847,7 +847,6 @@ components:
           $ref: '#/components/schemas/current-state'
       required:
         - pipelineId
-        - previous
         - current
     dataset-status:
       title: ''
@@ -939,7 +938,6 @@ components:
           type: number
       required:
         - state
-        - at
     pipeline-details:
       title: pipeline-details
       type: object
