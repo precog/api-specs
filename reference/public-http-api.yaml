@@ -938,6 +938,7 @@ components:
           type: number
       required:
         - state
+        - at
     pipeline-details:
       title: pipeline-details
       type: object
