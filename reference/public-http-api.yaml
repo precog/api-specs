@@ -447,9 +447,30 @@ paths:
                 items:
                   $ref: '#/components/schemas/dataset'
         '404':
-          description: Pipeline not found
+          description: Pipeline not found.
       operationId: get-pipelines-pipeline-id-datasets
       description: Get the datasets in the provided pipeline.
+    patch:
+      summary: ''
+      operationId: patch-pipelines-pipeline-id-datasets
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Pipeline not found. <or> Datasets not found.
+          content:
+            application/json:
+              schema:
+                type: array
+                description: The datasets that were not found.
+                items:
+                  $ref: '#/components/schemas/id'
+      description: Add or remove datasets from the provided pipeline.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/dataset-update'
   '/pipelines/{pipeline-id}/details':
     parameters:
       - schema:
@@ -471,38 +492,6 @@ paths:
           description: Pipeline not found
       operationId: get-pipelines-pipeline-id-details
       description: Get all the details for the provided pipeline.
-  '/pipelines/{pipeline-id}/datasets/{dataset-id}':
-    parameters:
-      - schema:
-          type: string
-        name: pipeline-id
-        in: path
-        required: true
-      - schema:
-          type: string
-        name: dataset-id
-        in: path
-        required: true
-    delete:
-      summary: Remove a dataset from a pipeline
-      tags: []
-      operationId: delete-pipelines-pipeline-id-datasets-dataset-id
-      responses:
-        '204':
-          description: No Content
-        '404':
-          description: Pipeline not found <OR> Dataset not found
-      description: Delete the provided dataset from the provided pipeline.
-    post:
-      summary: Add a dataset to a pipeline
-      tags: []
-      operationId: post-pipelines-pipeline-id-datasets-dataset-id
-      responses:
-        '204':
-          description: No Content
-        '404':
-          description: Pipeline not found <OR> Dataset not found
-      description: Add the provided dataset to the provided pipeline.
   '/pipelines/{pipeline-id}/status':
     parameters:
       - schema:
@@ -1019,4 +1008,20 @@ components:
         - pipeline
         - destination
         - datasets
+    dataset-update:
+      title: dataset-update
+      type: object
+      properties:
+        action:
+          type: string
+          enum:
+            - add
+            - remove
+        datasetIds:
+          type: array
+          items:
+            type: string
+      required:
+        - action
+        - datasetIds
   responses: {}
