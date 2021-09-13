@@ -236,36 +236,20 @@ paths:
       operationId: post-destinations-destination-id-testing
       responses:
         '200':
-          description: TODO return test outcome and log events.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  outcome:
-                    type: string
-                  logs:
-                    type: array
-                    items:
-                      type: string
-        '404':
-          description: Destination not found
-      description: Test the connection to a particular destination.
-  /kinds/source:
-    get:
-      summary: Get source kinds
-      tags: []
-      responses:
-        '200':
           description: OK
           content:
-            application/json:
+            text/plain:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/plugin-kind'
-      operationId: get-kinds-source
-      description: Retrieve the available kinds of sources.
+                type: string
+        '404':
+          description: Destination not found
+        '502':
+          description: Connection failed
+          content:
+            text/plain:
+              schema:
+                type: string
+      description: Test the connection to a particular destination. Returns the connection logs upon connection success and connetion failure.
   '/kinds/{kind-id}':
     parameters:
       - schema:
@@ -290,6 +274,21 @@ paths:
           description: Kind not found.
       operationId: get-kinds-kind-id
       description: Get the configuration schema for a particular kind of source.
+  /kinds/source:
+    get:
+      summary: Get source kinds
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/plugin-kind'
+      operationId: get-kinds-source
+      description: Retrieve the available kinds of sources.
   /kinds/destination:
     get:
       summary: Get destination kinds
@@ -341,6 +340,22 @@ paths:
             schema:
               $ref: '#/components/schemas/pipeline-listing'
         description: ''
+  /pipelines/status:
+    parameters: []
+    get:
+      summary: Get the pipeline status
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/pipeline-status'
+      operationId: get-pipelines-status
+      description: Get the status of all the pipelines.
   '/pipelines/{pipeline-id}':
     parameters:
       - schema:
@@ -435,7 +450,7 @@ paths:
           description: Pipeline not found
       operationId: get-pipelines-pipeline-id-datasets
       description: Get the datasets in the provided pipeline.
-  '/pipelines/{pipeline-id}/status':
+  '/pipelines/{pipeline-id}/details':
     parameters:
       - schema:
           type: string
@@ -443,7 +458,7 @@ paths:
         in: path
         required: true
     get:
-      summary: Get the pipeline status
+      summary: Get pipeline details
       tags: []
       responses:
         '200':
@@ -451,13 +466,11 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/pipeline-status'
+                $ref: '#/components/schemas/pipeline-details'
         '404':
           description: Pipeline not found
-      operationId: get-pipelines-pipeline-id-status
-      description: Get the status of the provided pipeline.
+      operationId: get-pipelines-pipeline-id-details
+      description: Get all the details for the provided pipeline.
   '/pipelines/{pipeline-id}/datasets/{dataset-id}':
     parameters:
       - schema:
@@ -490,6 +503,56 @@ paths:
         '404':
           description: Pipeline not found <OR> Dataset not found
       description: Add the provided dataset to the provided pipeline.
+  '/pipelines/{pipeline-id}/status':
+    parameters:
+      - schema:
+          type: string
+        name: pipeline-id
+        in: path
+        required: true
+    get:
+      summary: Get the pipeline datasets status
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pipeline-dataset-status'
+        '404':
+          description: Pipeline not found
+      operationId: get-pipelines-pipeline-id-status
+      description: Get the status of the provided pipeline.
+  '/pipelines/{pipeline-id}/loads':
+    parameters:
+      - schema:
+          type: string
+        name: pipeline-id
+        in: path
+        required: true
+    delete:
+      summary: Cancel the current load
+      tags: []
+      operationId: delete-pipelines-pipeline-id-loads
+      responses:
+        '200':
+          description: OK
+      description: Cancel the current load for this pipeline.
+    post:
+      summary: Start a pipeline load
+      tags: []
+      operationId: post-pipelines-pipeline-id-loads
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/id'
+        '404':
+          description: Pipeline not found.
+      description: Start a load for this pipeline.
   '/pipelines/{pipeline-id}/rename':
     parameters:
       - schema:
@@ -573,35 +636,6 @@ paths:
         '404':
           description: Pipeline not found <OR> Email not found
       description: Delete an email address from a pipeline
-  '/pipelines/{pipeline-id}/loads':
-    parameters:
-      - schema:
-          type: string
-        name: pipeline-id
-        in: path
-        required: true
-    delete:
-      summary: Cancel the current load
-      tags: []
-      operationId: delete-pipelines-pipeline-id-loads
-      responses:
-        '200':
-          description: OK
-      description: Cancel the current load for this pipeline.
-    post:
-      summary: Start a pipeline load
-      tags: []
-      operationId: post-pipelines-pipeline-id-loads
-      responses:
-        '202':
-          description: Accepted
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/id'
-        '404':
-          description: Pipeline not found.
-      description: Start a load for this pipeline.
   '/pipelines/{pipeline-id}/loads/latest/logs':
     parameters:
       - schema:
@@ -691,10 +725,11 @@ components:
         name:
           type: string
           minLength: 1
-        kindId:
+        id:
           type: string
       required:
         - name
+        - id
     plugin-schema-entry:
       description: ''
       type: object
@@ -732,6 +767,9 @@ components:
           readOnly: true
         name:
           type: string
+      required:
+        - id
+        - name
     pipeline:
       title: ''
       type: object
@@ -743,12 +781,18 @@ components:
           type: string
         destinationId:
           type: string
+      required:
+        - id
+        - name
+        - destinationId
     cron-statement:
       title: ''
       type: object
       properties:
         cron:
           type: string
+      required:
+        - cron
     dataset:
       title: ''
       type: object
@@ -759,14 +803,20 @@ components:
           type: string
         sourceId:
           type: string
+      required:
+        - id
+        - name
+        - sourceId
     id:
       title: ''
       type: object
       properties:
         id:
           type: string
+      required:
+        - id
     name:
-      title: name
+      title: ''
       type: object
       properties:
         name:
@@ -782,14 +832,191 @@ components:
           readOnly: true
         email:
           type: string
+      required:
+        - id
+        - email
     pipeline-status:
       title: ''
       type: object
       properties:
-        datasetId:
+        pipelineId:
           type: string
-        status:
+        previous:
+          $ref: '#/components/schemas/previous-state'
+        current:
+          $ref: '#/components/schemas/current-state'
+      required:
+        - pipelineId
+        - current
+    dataset-status:
+      title: ''
+      type: object
+      description: ''
+      properties:
+        id:
           type: string
+        outOfBand:
+          $ref: '#/components/schemas/outofband-state'
         inBand:
-          type: boolean
+          $ref: '#/components/schemas/inband-state'
+      required:
+        - id
+    pipeline-dataset-status:
+      title: ''
+      type: object
+      properties:
+        pipelineId:
+          type: string
+        previous:
+          type: array
+          items:
+            $ref: '#/components/schemas/previous-state'
+        current:
+          $ref: '#/components/schemas/current-state'
+        datasets:
+          type: array
+          items:
+            $ref: '#/components/schemas/dataset-status'
+      required:
+        - pipelineId
+        - previous
+        - current
+        - datasets
+    previous-state:
+      title: ''
+      type: object
+      properties:
+        state:
+          type: string
+          enum:
+            - succeeded
+            - failed
+        at:
+          type: number
+      required:
+        - state
+        - at
+    outofband-state:
+      title: ''
+      type: object
+      properties:
+        state:
+          type: string
+          enum:
+            - loading
+        at:
+          type: number
+      required:
+        - state
+        - at
+    inband-state:
+      title: ''
+      type: object
+      properties:
+        state:
+          type: string
+          enum:
+            - loading
+            - writing
+            - waiting
+            - written
+        at:
+          type: number
+      required:
+        - state
+        - at
+    current-state:
+      title: ''
+      type: object
+      properties:
+        state:
+          type: string
+          enum:
+            - loading
+            - not loading
+        at:
+          type: number
+      required:
+        - state
+        - at
+    pipeline-details:
+      title: pipeline-details
+      type: object
+      properties:
+        pipeline:
+          required:
+            - id
+            - name
+          type: object
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+        destination:
+          required:
+            - id
+            - name
+            - kind
+          type: object
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+            kind:
+              type: object
+              required:
+                - id
+                - name
+              properties:
+                id:
+                  type: string
+                name:
+                  type: string
+        datasets:
+          type: array
+          items:
+            type: object
+            properties:
+              source:
+                required:
+                  - id
+                  - name
+                  - kind
+                type: object
+                properties:
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  kind:
+                    type: object
+                    required:
+                      - id
+                      - name
+                    properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
+              dataset:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+                  required:
+                    - id
+                    - name
+            required:
+              - source
+              - dataset
+      required:
+        - pipeline
+        - destination
+        - datasets
   responses: {}
