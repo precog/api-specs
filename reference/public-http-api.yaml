@@ -41,14 +41,14 @@ paths:
       responses:
         '201':
           description: Created
-        '400':
-          description: Request body malformed.
-        '401':
-          description: Unauthorized
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/plugin-listing'
+        '400':
+          description: Request body malformed.
+        '401':
+          description: Unauthorized
         '415':
           description: Source kind unsupported. <or> Source version unsupported.
       description: Configure a new source.
