@@ -39,6 +39,8 @@ paths:
       tags: []
       operationId: post-sources
       responses:
+        '201':
+          description: Created
         '400':
           description: Request body malformed.
         '401':
@@ -409,56 +411,6 @@ paths:
           description: Pipeline not found.
       operationId: get-pipelines-pipeline-id
       description: Get a particular pipeline.
-  '/pipelines/{pipeline-id}/schedule':
-    parameters:
-      - schema:
-          type: string
-        name: pipeline-id
-        in: path
-        required: true
-    get:
-      summary: Get a pipeline schedule
-      tags: []
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/cron-statement'
-        '404':
-          description: Pipeline not found
-      operationId: get-pipelines-pipeline-id-schedule
-      description: Get the schedule for a particular pipeline.
-    post:
-      summary: Update a pipeline schedule
-      tags: []
-      operationId: post-pipelines-pipeline-id-schedule
-      responses:
-        '204':
-          description: No Content
-        '404':
-          description: Pipeline not found
-      description: Update the schedule for a particular pipeline.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/cron-statement'
-    delete:
-      summary: Delete a pipeline schedule
-      tags: []
-      operationId: delete-pipelines-pipeline-id-schedule
-      responses:
-        '204':
-          description: No Content
-        '404':
-          description: Pipeline not found
-      description: Delete the schedule for a particular pipeline.
   '/pipelines/{pipeline-id}/datasets':
     parameters:
       - schema:
@@ -611,67 +563,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/name'
-  '/pipelines/{pipeline-id}/emails':
-    parameters:
-      - schema:
-          type: string
-        name: pipeline-id
-        in: path
-        required: true
-    get:
-      summary: Get pipeline email addresses
-      tags: []
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/email'
-        '404':
-          description: Pipeline not found
-      operationId: get-pipelines-pipeline-id-emails
-      description: Get all the email addresses associated with the pipeline.
-    post:
-      summary: Add a pipeline email address
-      tags: []
-      operationId: post-pipelines-pipeline-id-emails
-      responses:
-        '200':
-          description: OK
-        '404':
-          description: Pipeline not found
-      description: Add an email address to the pipeline
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/email'
-        description: ''
-  '/pipelines/{pipeline-id}/emails/{email-id}':
-    parameters:
-      - schema:
-          type: string
-        name: pipeline-id
-        in: path
-        required: true
-      - schema:
-          type: string
-        name: email-id
-        in: path
-        required: true
-    delete:
-      summary: Remove an email address from a pipeline
-      tags: []
-      operationId: delete-pipelines-pipeline-id-emails-email-id
-      responses:
-        '200':
-          description: OK
-        '404':
-          description: Pipeline not found <OR> Email not found
-      description: Delete an email address from a pipeline
   '/pipelines/{pipeline-id}/loads/latest/logs':
     parameters:
       - schema:
@@ -823,14 +714,6 @@ components:
         - id
         - name
         - destinationId
-    cron-statement:
-      title: ''
-      type: object
-      properties:
-        cron:
-          type: string
-      required:
-        - cron
     dataset:
       title: ''
       type: object
@@ -861,18 +744,6 @@ components:
           type: string
       required:
         - name
-    email:
-      title: ''
-      type: object
-      properties:
-        id:
-          type: string
-          readOnly: true
-        email:
-          type: string
-      required:
-        - id
-        - email
     pipeline-status:
       title: ''
       type: object
