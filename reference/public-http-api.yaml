@@ -562,7 +562,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/name'
+              $ref: '#/components/schemas/pipeline-name'
   '/pipelines/{pipeline-id}/loads/latest/logs':
     parameters:
       - schema:
@@ -606,7 +606,6 @@ components:
           readOnly: true
         kindId:
           type: string
-          minLength: 1
         config:
           $ref: '#/components/schemas/plugin-config'
         name:
@@ -627,7 +626,6 @@ components:
           readOnly: true
         kindId:
           type: string
-          minLength: 1
         name:
           type: string
       required:
@@ -653,7 +651,6 @@ components:
       properties:
         name:
           type: string
-          minLength: 1
         id:
           type: string
       required:
@@ -666,7 +663,6 @@ components:
       properties:
         description:
           type: string
-          minLength: 1
         sensitive:
           type: boolean
         name:
@@ -681,7 +677,6 @@ components:
       properties:
         value:
           type: string
-          minLength: 1
         name:
           type: string
       required:
@@ -708,8 +703,10 @@ components:
           readOnly: true
         name:
           type: string
+          minLength: 1
         destinationId:
           type: string
+          minLength: 1
       required:
         - id
         - name
@@ -736,12 +733,13 @@ components:
           type: string
       required:
         - id
-    name:
+    pipeline-name:
       title: ''
       type: object
       properties:
         name:
           type: string
+          minLength: 1
       required:
         - name
     pipeline-status:
