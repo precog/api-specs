@@ -50,7 +50,7 @@ paths:
         '401':
           description: Unauthorized
         '415':
-          description: Source kind unsupported. <or> Source version unsupported.
+          description: Source kind unsupported.
       description: Configure a new source.
       requestBody:
         content:
@@ -184,7 +184,7 @@ paths:
         '401':
           description: Unauthorized
         '415':
-          description: Destination kind unsupported. <or> Destination version unsupported.
+          description: Destination kind unsupported.
       description: Configure a new destination.
       requestBody:
         content:
@@ -256,7 +256,13 @@ paths:
       operationId: post-destinations-destination-id-testing
       responses:
         '200':
-          description: OK
+          description: Connection failed
+          content:
+            text/plain:
+              schema:
+                type: string
+        '201':
+          description: Connection succeeded
           content:
             text/plain:
               schema:
@@ -265,12 +271,6 @@ paths:
           description: Unauthorized
         '404':
           description: Destination not found
-        '502':
-          description: Connection failed
-          content:
-            text/plain:
-              schema:
-                type: string
       description: Test the connection to a particular destination. Returns the connection logs upon connection success and connetion failure.
   '/kinds/{kind-id}':
     parameters:
@@ -594,6 +594,68 @@ paths:
           in: query
           name: dataset-id
           required: true
+  /stripe/check:
+    post:
+      summary: Check Stripe subscription status
+      tags: []
+      operationId: post-stripe-check
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/url'
+                  - $ref: '#/components/schemas/error-unavailable'
+        '204':
+          description: Valid Subscription
+        '401':
+          description: Unauthorized
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                successUrl:
+                  type: string
+                cancelUrl:
+                  type: string
+              required:
+                - successUrl
+                - cancelUrl
+      description: Check the Stripe subscription status
+  /stripe/session:
+    post:
+      summary: Create Stripe session
+      tags: []
+      operationId: post-stripe-session
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/url'
+                  - $ref: '#/components/schemas/error-unavailable'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Stripe customer not found
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                returnUrl:
+                  type: string
+              required:
+                - returnUrl
+      description: Create a Stripe customer portal session
+    parameters: []
 components:
   schemas:
     plugin:
@@ -942,6 +1004,32 @@ components:
       required:
         - action
         - datasetIds
+    error-unavailable:
+      title: error-unavailable
+      type: object
+      properties:
+        error:
+          type: object
+          required:
+            - type
+            - details
+          properties:
+            type:
+              type: string
+              enum:
+                - unavailable
+            details:
+              type: string
+      required:
+        - error
+    url:
+      title: url
+      type: object
+      properties:
+        url:
+          type: string
+      required:
+        - url
   responses: {}
   securitySchemes:
     BearerAuth:
