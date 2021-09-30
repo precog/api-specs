@@ -618,13 +618,11 @@ paths:
             schema:
               type: object
               properties:
-                successUrl:
+                returnUrl:
                   type: string
-                cancelUrl:
-                  type: string
+                  minLength: 1
               required:
-                - successUrl
-                - cancelUrl
+                - returnUrl
       description: Check the Stripe subscription status
   /stripe/session:
     post:
@@ -652,6 +650,7 @@ paths:
               properties:
                 returnUrl:
                   type: string
+                  minLength: 1
               required:
                 - returnUrl
       description: Create a Stripe customer portal session
