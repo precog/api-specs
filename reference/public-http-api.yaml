@@ -706,6 +706,7 @@ components:
           minLength: 1
         destinationId:
           type: string
+          minLength: 1
       required:
         - id
         - name
