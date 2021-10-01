@@ -698,6 +698,7 @@ components:
           readOnly: true
         auth:
           $ref: '#/components/schemas/auth-oauth2'
+          writeOnly: true
       required:
         - id
         - kindId
