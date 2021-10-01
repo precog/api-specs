@@ -487,8 +487,8 @@ paths:
       tags: []
       operationId: patch-pipelines-pipeline-id-datasets
       responses:
-        '200':
-          description: OK
+        '204':
+          description: No Content
         '400':
           description: Bad Request
           content:
