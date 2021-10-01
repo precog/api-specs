@@ -1141,7 +1141,7 @@ components:
         type:
           type: string
           enum:
-            - oauth 2.0 code authorization
+            - OAuth 2.0 code authorization
         details:
           type: object
           required:
@@ -1160,7 +1160,7 @@ components:
         type:
           type: string
           enum:
-            - oauth 2.0 code authorization
+            - OAuth 2.0 code authorization
         details:
           type: object
           required:
