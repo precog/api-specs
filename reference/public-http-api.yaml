@@ -46,7 +46,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/plugin-listing'
         '400':
-          description: Request body malformed.
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-400'
         '401':
           description: Unauthorized
         '415':
@@ -132,7 +136,11 @@ paths:
         '204':
           description: No Content
         '400':
-          description: Request body malformed.
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-400'
         '401':
           description: Unauthorized
         '404':
@@ -180,7 +188,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/plugin-listing'
         '400':
-          description: Request body malformed.
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-400'
         '401':
           description: Unauthorized
         '415':
@@ -229,7 +241,11 @@ paths:
         '204':
           description: No Content
         '400':
-          description: Request body malformed.
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-400'
         '401':
           description: Unauthorized
         '404':
@@ -360,6 +376,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/id'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-400'
       description: Create a new pipeline.
       requestBody:
         content:
@@ -553,6 +575,12 @@ paths:
       responses:
         '204':
           description: No Content
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-400'
         '401':
           description: Unauthorized
         '404':
@@ -610,6 +638,12 @@ paths:
                   - $ref: '#/components/schemas/error-unavailable'
         '204':
           description: Valid Subscription
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-400'
         '401':
           description: Unauthorized
       requestBody:
@@ -638,6 +672,12 @@ paths:
                 oneOf:
                   - $ref: '#/components/schemas/url'
                   - $ref: '#/components/schemas/error-unavailable'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-400'
         '401':
           description: Unauthorized
         '404':
@@ -1017,6 +1057,25 @@ components:
               type: string
               enum:
                 - unavailable
+            details:
+              type: string
+      required:
+        - error
+    error-400:
+      title: error-400
+      type: object
+      properties:
+        error:
+          type: object
+          required:
+            - type
+            - details
+          properties:
+            type:
+              type: string
+              enum:
+                - invalid JSON
+                - field missing
             details:
               type: string
       required:
