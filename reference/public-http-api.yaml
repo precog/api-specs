@@ -8,7 +8,7 @@ info:
     url: 'https://precog.com'
     email: support@precog.com
 servers:
-  - url: 'http://localhost:3000'
+  - url: 'http://localhost:30000'
 security:
   - BearerAuth: []
 paths:
@@ -570,10 +570,12 @@ paths:
       tags: []
       operationId: delete-pipelines-pipeline-id-loads
       responses:
-        '200':
-          description: OK
+        '204':
+          description: No Content
         '401':
           description: Unauthorized
+        '404':
+          description: Not Found
       description: Cancel the current load for this pipeline.
     post:
       summary: Start a pipeline load
