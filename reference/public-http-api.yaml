@@ -92,12 +92,6 @@ paths:
           description: Source not found.
       operationId: get-sources-source-id
       description: Get a particular source.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties: {}
   '/sources/{source-id}/datasets':
     parameters:
       - schema:
@@ -123,12 +117,6 @@ paths:
           description: Source not found.
       operationId: get-sources-source-id-datasets
       description: Get all available datasets for the provided source.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties: {}
   '/sources/{source-id}/configuration':
     parameters:
       - schema:
