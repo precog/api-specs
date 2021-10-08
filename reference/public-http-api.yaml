@@ -412,9 +412,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/pipeline'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/pipeline-listing'
         description: ''
   /pipelines/status:
     parameters: []
