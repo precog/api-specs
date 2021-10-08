@@ -179,8 +179,8 @@ paths:
       summary: Get Destinations
       tags: []
       responses:
-        '201':
-          description: Created
+        '200':
+          description: OK
           content:
             application/json:
               schema:
@@ -201,8 +201,8 @@ paths:
       tags: []
       operationId: post-destinations
       responses:
-        '200':
-          description: OK
+        '201':
+          description: Created
           content:
             application/json:
               schema:
@@ -215,7 +215,7 @@ paths:
                 $ref: '#/components/schemas/error-400'
         '401':
           description: Unauthorized
-        '415':
+        '422':
           description: Destination kind unsupported.
       description: Configure a new destination.
       requestBody:
