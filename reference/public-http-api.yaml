@@ -61,7 +61,7 @@ paths:
                 $ref: '#/components/schemas/error-400'
         '401':
           description: Unauthorized
-        '415':
+        '422':
           description: Source kind unsupported.
       description: Configure a new source.
       requestBody:
