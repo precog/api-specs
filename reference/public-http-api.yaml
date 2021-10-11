@@ -8,7 +8,7 @@ info:
     url: 'https://precog.com'
     email: support@precog.com
 servers:
-  - url: 'http://localhost:3000'
+  - url: 'http://localhost:30000'
 security:
   - BearerAuth: []
 paths:
@@ -61,7 +61,7 @@ paths:
                 $ref: '#/components/schemas/error-400'
         '401':
           description: Unauthorized
-        '415':
+        '422':
           description: Source kind unsupported.
       description: Configure a new source.
       requestBody:
@@ -92,12 +92,6 @@ paths:
           description: Source not found.
       operationId: get-sources-source-id
       description: Get a particular source.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties: {}
   '/sources/{source-id}/datasets':
     parameters:
       - schema:
@@ -123,12 +117,6 @@ paths:
           description: Source not found.
       operationId: get-sources-source-id-datasets
       description: Get all available datasets for the provided source.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties: {}
   '/sources/{source-id}/configuration':
     parameters:
       - schema:
@@ -179,8 +167,8 @@ paths:
       summary: Get Destinations
       tags: []
       responses:
-        '201':
-          description: Created
+        '200':
+          description: OK
           content:
             application/json:
               schema:
@@ -201,8 +189,8 @@ paths:
       tags: []
       operationId: post-destinations
       responses:
-        '200':
-          description: OK
+        '201':
+          description: Created
           content:
             application/json:
               schema:
@@ -215,7 +203,7 @@ paths:
                 $ref: '#/components/schemas/error-400'
         '401':
           description: Unauthorized
-        '415':
+        '422':
           description: Destination kind unsupported.
       description: Configure a new destination.
       requestBody:
@@ -383,9 +371,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/pipeline'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/pipeline-listing'
         description: ''
   /pipelines/status:
     parameters: []
@@ -541,10 +526,12 @@ paths:
       tags: []
       operationId: delete-pipelines-pipeline-id-loads
       responses:
-        '200':
-          description: OK
+        '204':
+          description: No Content
         '401':
           description: Unauthorized
+        '404':
+          description: Not Found
       description: Cancel the current load for this pipeline.
     post:
       summary: Start a pipeline load
