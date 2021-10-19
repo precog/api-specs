@@ -249,7 +249,7 @@ paths:
                 type: object
                 properties:
                   schema:
-                    $ref: '#/components/schemas/connector-schema'
+                    $ref: '#/components/schemas/kind-schema'
                   auth:
                     $ref: '#/components/schemas/auth-schema-oauth2'
                 required:
@@ -719,12 +719,12 @@ components:
       title: ''
       items:
         $ref: '#/components/schemas/connector-config-entry'
-    connector-schema:
+    kind-schema:
       description: ''
       type: array
       title: ''
       items:
-        $ref: '#/components/schemas/connector-schema-entry'
+        $ref: '#/components/schemas/kind-schema-entry'
     connector-kind:
       description: ''
       type: object
@@ -737,7 +737,7 @@ components:
       required:
         - name
         - id
-    connector-schema-entry:
+    kind-schema-entry:
       description: ''
       type: object
       title: ''
