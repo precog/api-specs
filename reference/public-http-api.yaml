@@ -496,18 +496,6 @@ paths:
         name: pipeline-id
         in: path
         required: true
-    delete:
-      summary: Cancel the current load
-      tags: []
-      operationId: delete-pipelines-pipeline-id-loads
-      responses:
-        '204':
-          description: No Content
-        '401':
-          description: Unauthorized
-        '404':
-          description: Not Found
-      description: Cancel the current load for this pipeline.
     post:
       summary: Start a pipeline load
       tags: []
