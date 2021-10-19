@@ -24,7 +24,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/plugin-listing'
+                  $ref: '#/components/schemas/connector-listing'
         '401':
           description: Unauthorized
       operationId: get-sources
@@ -44,7 +44,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/plugin-listing'
+                $ref: '#/components/schemas/connector-listing'
         '400':
           description: Bad Request
           content:
@@ -70,7 +70,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/plugin'
+              $ref: '#/components/schemas/connector'
   '/sources/{source-id}':
     parameters:
       - schema:
@@ -87,7 +87,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/plugin'
+                $ref: '#/components/schemas/connector'
         '401':
           description: Unauthorized
         '404':
@@ -131,7 +131,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/plugin-listing'
+                  $ref: '#/components/schemas/connector-listing'
         '401':
           description: Unauthorized
       operationId: get-destinations
@@ -151,7 +151,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/plugin-listing'
+                $ref: '#/components/schemas/connector-listing'
         '400':
           description: Bad Request
           content:
@@ -171,7 +171,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/plugin'
+              $ref: '#/components/schemas/connector'
   '/destinations/{destination-id}':
     parameters:
       - schema:
@@ -188,7 +188,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/plugin'
+                $ref: '#/components/schemas/connector'
         '401':
           description: Unauthorized
         '404':
@@ -229,7 +229,7 @@ paths:
               type: object
               properties:
                 config:
-                  $ref: '#/components/schemas/plugin-config'
+                  $ref: '#/components/schemas/connector-config'
   '/kinds/{kind-id}':
     parameters:
       - schema:
@@ -238,7 +238,7 @@ paths:
         in: path
         required: true
     get:
-      summary: Get plugin schema
+      summary: Get connector schema
       tags: []
       responses:
         '200':
@@ -249,7 +249,7 @@ paths:
                 type: object
                 properties:
                   schema:
-                    $ref: '#/components/schemas/plugin-schema'
+                    $ref: '#/components/schemas/connector-schema'
                   auth:
                     $ref: '#/components/schemas/auth-schema-oauth2'
                 required:
@@ -272,7 +272,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/plugin-kind'
+                  $ref: '#/components/schemas/connector-kind'
         '401':
           description: Unauthorized
       operationId: get-kinds-source
@@ -289,7 +289,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/plugin-kind'
+                  $ref: '#/components/schemas/connector-kind'
         '401':
           description: Unauthorized
       operationId: get-kinds-destination
@@ -674,7 +674,7 @@ paths:
     parameters: []
 components:
   schemas:
-    plugin:
+    connector:
       description: ''
       type: object
       title: ''
@@ -685,7 +685,7 @@ components:
         kindId:
           type: string
         config:
-          $ref: '#/components/schemas/plugin-config'
+          $ref: '#/components/schemas/connector-config'
         name:
           type: string
           readOnly: true
@@ -697,7 +697,7 @@ components:
         - kindId
         - config
         - name
-    plugin-listing:
+    connector-listing:
       description: ''
       type: object
       title: ''
@@ -713,19 +713,19 @@ components:
         - id
         - kindId
         - name
-    plugin-config:
+    connector-config:
       description: ''
       type: array
       title: ''
       items:
-        $ref: '#/components/schemas/plugin-config-entry'
-    plugin-schema:
+        $ref: '#/components/schemas/connector-config-entry'
+    connector-schema:
       description: ''
       type: array
       title: ''
       items:
-        $ref: '#/components/schemas/plugin-schema-entry'
-    plugin-kind:
+        $ref: '#/components/schemas/connector-schema-entry'
+    connector-kind:
       description: ''
       type: object
       title: ''
@@ -737,7 +737,7 @@ components:
       required:
         - name
         - id
-    plugin-schema-entry:
+    connector-schema-entry:
       description: ''
       type: object
       title: ''
@@ -752,7 +752,7 @@ components:
         - description
         - sensitive
         - name
-    plugin-config-entry:
+    connector-config-entry:
       description: ''
       type: object
       properties:
