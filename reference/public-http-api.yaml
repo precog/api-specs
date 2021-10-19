@@ -437,7 +437,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error-message'
-      description: Add or remove datasets from the provided pipeline.
+      description: Add datasets to the provided pipeline.
       requestBody:
         content:
           application/json:
@@ -1015,7 +1015,6 @@ components:
           type: string
           enum:
             - add
-            - remove
         datasetIds:
           type: array
           items:
