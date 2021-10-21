@@ -829,13 +829,11 @@ components:
       properties:
         pipelineId:
           type: string
-        previous:
-          $ref: '#/components/schemas/previous-state'
-        current:
-          $ref: '#/components/schemas/current-state'
+        state:
+          $ref: '#/components/schemas/pipeline-load-state'
       required:
         - pipelineId
-        - current
+        - state
     dataset-status:
       title: ''
       type: object
@@ -855,22 +853,16 @@ components:
       properties:
         pipelineId:
           type: string
-        previous:
-          type: array
-          items:
-            $ref: '#/components/schemas/previous-state'
-        current:
-          $ref: '#/components/schemas/current-state'
+        state:
+          $ref: '#/components/schemas/pipeline-load-state'
         datasets:
           type: array
           items:
             $ref: '#/components/schemas/dataset-status'
       required:
         - pipelineId
-        - previous
-        - current
         - datasets
-    previous-state:
+    pipeline-load-state:
       title: ''
       type: object
       properties:
@@ -879,6 +871,8 @@ components:
           enum:
             - succeeded
             - failed
+            - loading
+            - accepted
         at:
           type: number
       required:
@@ -908,20 +902,6 @@ components:
             - writing
             - waiting
             - written
-        at:
-          type: number
-      required:
-        - state
-        - at
-    current-state:
-      title: ''
-      type: object
-      properties:
-        state:
-          type: string
-          enum:
-            - loading
-            - not loading
         at:
           type: number
       required:
