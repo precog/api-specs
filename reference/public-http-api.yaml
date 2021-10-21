@@ -25,6 +25,12 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/connector-listing'
+              examples:
+                example-1:
+                  value:
+                    id: '1'
+                    kindId: '12'
+                    name: 'Shop name: MyShop'
         '401':
           description: Unauthorized
       operationId: get-sources
@@ -132,6 +138,12 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/connector-listing'
+              examples:
+                example-1:
+                  value:
+                    - id: string
+                      kindId: string
+                      name: string
         '401':
           description: Unauthorized
       operationId: get-destinations
@@ -273,6 +285,35 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/connector-kind'
+              examples:
+                example-1:
+                  value:
+                    - id: '1'
+                      name: Active Campaign
+                    - id: '2'
+                      name: Ariba Analytics
+                    - id: '3'
+                      name: Bing Ads
+                    - id: '4'
+                      name: Chargeback
+                    - id: '5'
+                      name: Clockify
+                    - id: '6'
+                      name: Everflow
+                    - id: '7'
+                      name: Facebook Ads
+                    - id: '8'
+                      name: Google Ads
+                    - id: '9'
+                      name: Gravity Forms
+                    - id: '10'
+                      name: Hubspot
+                    - id: '11'
+                      name: Salesforce
+                    - id: '12'
+                      name: Shopify
+                    - id: '13'
+                      name: WooCommerce
         '401':
           description: Unauthorized
       operationId: get-kinds-source
