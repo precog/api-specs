@@ -872,7 +872,7 @@ components:
             - succeeded
             - failed
             - loading
-            - never loading
+            - accepted
         at:
           type: number
       required:
