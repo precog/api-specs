@@ -28,7 +28,7 @@ paths:
               examples:
                 example-1:
                   value:
-                    id: '1'
+                  - id: '1'
                     kindId: '12'
                     name: 'Shop name: MyShop'
         '401':
