@@ -927,6 +927,7 @@ components:
           type: string
           enum:
             - loading
+            - accepted
         at:
           type: number
       required:
