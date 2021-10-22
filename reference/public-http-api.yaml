@@ -465,13 +465,6 @@ paths:
           description: Unauthorized
         '404':
           description: Pipeline not found. <or> Datasets not found.
-          content:
-            application/json:
-              schema:
-                type: array
-                description: The datasets that were not found.
-                items:
-                  $ref: '#/components/schemas/id'
         '422':
           description: Semantic error.
           content:
