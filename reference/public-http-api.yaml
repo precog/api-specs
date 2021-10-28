@@ -28,9 +28,9 @@ paths:
               examples:
                 example-1:
                   value:
-                  - id: '1'
-                    kindId: '12'
-                    name: 'Shop name: MyShop'
+                    - id: '1'
+                      kindId: '12'
+                      name: 'Shop name: MyShop'
         '401':
           description: Unauthorized
       operationId: get-sources
@@ -1084,6 +1084,7 @@ components:
           enum:
             - loading
             - accepted
+            - failed
         at:
           type: number
       required:
@@ -1100,6 +1101,7 @@ components:
             - writing
             - waiting
             - written
+            - failed
         at:
           type: number
       required:
