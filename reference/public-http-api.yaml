@@ -28,9 +28,9 @@ paths:
               examples:
                 example-1:
                   value:
-                  - id: '1'
-                    kindId: '12'
-                    name: 'Shop name: MyShop'
+                    - id: '1'
+                      kindId: '12'
+                      name: 'Shop name: MyShop'
         '401':
           description: Unauthorized
       operationId: get-sources
@@ -698,12 +698,8 @@ paths:
       tags: []
       operationId: post-pipelines-pipeline-id-loads
       responses:
-        '202':
-          description: Accepted
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/id'
+        '204':
+          description: No Content
         '401':
           description: Unauthorized
         '404':
