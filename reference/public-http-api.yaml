@@ -700,6 +700,8 @@ paths:
       responses:
         '204':
           description: No Content
+        '401':
+          description: Unauthorized
         '404':
           description: Pipeline not found.
       description: Start a load for this pipeline.
