@@ -451,6 +451,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error-message'
+        '401':
+          description: Unauthorized
         '422':
           description: Semantic error.
           content:
