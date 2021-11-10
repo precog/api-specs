@@ -484,15 +484,15 @@ paths:
                 example-1:
                   value:
                     - pipelineId: '1'
-                      state:
+                      status:
                         at: 1632428787341
                         state: loading
                     - pipelineId: '3'
-                      state:
+                      status:
                         at: 1632128787341
                         state: succeeded
                     - pipelineId: '4'
-                      state:
+                      status:
                         at: 1631251787341
                         state: failed
         '401':
@@ -668,11 +668,8 @@ paths:
                 example-1:
                   value:
                     pipelineId: string
-                    previous:
-                      - state: succeeded
-                        at: 0
-                    current:
-                      state: loading
+                    status:
+                      state: succeeded
                       at: 0
                     datasets:
                       - id: string
@@ -1024,11 +1021,11 @@ components:
       properties:
         pipelineId:
           type: string
-        state:
+        status:
           $ref: '#/components/schemas/pipeline-load-state'
       required:
         - pipelineId
-        - state
+        - status
     dataset-status:
       title: ''
       type: object
