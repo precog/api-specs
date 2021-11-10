@@ -484,15 +484,15 @@ paths:
                 example-1:
                   value:
                     - pipelineId: '1'
-                      status:
+                      state:
                         at: 1632428787341
                         state: loading
                     - pipelineId: '3'
-                      status:
+                      state:
                         at: 1632128787341
                         state: succeeded
                     - pipelineId: '4'
-                      status:
+                      state:
                         at: 1631251787341
                         state: failed
         '401':
@@ -668,8 +668,11 @@ paths:
                 example-1:
                   value:
                     pipelineId: string
-                    status:
-                      state: succeeded
+                    previous:
+                      - state: succeeded
+                        at: 0
+                    current:
+                      state: loading
                       at: 0
                     datasets:
                       - id: string
@@ -1021,11 +1024,11 @@ components:
       properties:
         pipelineId:
           type: string
-        status:
+        state:
           $ref: '#/components/schemas/pipeline-load-state'
       required:
         - pipelineId
-        - status
+        - state
     dataset-status:
       title: ''
       type: object
@@ -1045,7 +1048,7 @@ components:
       properties:
         pipelineId:
           type: string
-        state:
+        status:
           $ref: '#/components/schemas/pipeline-load-state'
         datasets:
           type: array
@@ -1077,8 +1080,10 @@ components:
         state:
           type: string
           enum:
-            - loading
             - accepted
+            - staging
+            - scheming
+            - empty
             - failed
         at:
           type: number
@@ -1092,7 +1097,8 @@ components:
         state:
           type: string
           enum:
-            - loading
+            - discovered
+            - staging
             - writing
             - waiting
             - written
