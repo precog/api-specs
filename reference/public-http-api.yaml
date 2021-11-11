@@ -1048,7 +1048,7 @@ components:
       properties:
         pipelineId:
           type: string
-        state:
+        status:
           $ref: '#/components/schemas/pipeline-load-state'
         datasets:
           type: array
@@ -1080,8 +1080,10 @@ components:
         state:
           type: string
           enum:
-            - loading
             - accepted
+            - staging
+            - scheming
+            - empty
             - failed
         at:
           type: number
@@ -1095,7 +1097,8 @@ components:
         state:
           type: string
           enum:
-            - loading
+            - discovered
+            - staging
             - writing
             - waiting
             - written
