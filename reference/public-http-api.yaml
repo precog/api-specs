@@ -1024,11 +1024,11 @@ components:
       properties:
         pipelineId:
           type: string
-        state:
+        status:
           $ref: '#/components/schemas/pipeline-load-state'
       required:
         - pipelineId
-        - state
+        - status
     dataset-status:
       title: ''
       type: object
