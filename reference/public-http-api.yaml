@@ -668,12 +668,9 @@ paths:
                 example-1:
                   value:
                     pipelineId: string
-                    previous:
+                    status:
                       - state: succeeded
                         at: 0
-                    current:
-                      state: loading
-                      at: 0
                     datasets:
                       - id: string
                         outOfBand:
