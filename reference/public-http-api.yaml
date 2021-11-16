@@ -484,15 +484,15 @@ paths:
                 example-1:
                   value:
                     - pipelineId: '1'
-                      state:
+                      status:
                         at: 1632428787341
                         state: loading
                     - pipelineId: '3'
-                      state:
+                      status:
                         at: 1632128787341
                         state: succeeded
                     - pipelineId: '4'
-                      state:
+                      status:
                         at: 1631251787341
                         state: failed
         '401':
@@ -667,20 +667,17 @@ paths:
               examples:
                 example-1:
                   value:
-                    pipelineId: string
-                    previous:
-                      - state: succeeded
-                        at: 0
-                    current:
-                      state: loading
+                    pipelineId: '1'
+                    status:
+                      state: succeeded
                       at: 0
                     datasets:
                       - id: string
                         outOfBand:
-                          state: loading
+                          state: staging
                           at: 0
                         inBand:
-                          state: loading
+                          state: staging
                           at: 0
         '401':
           description: Unauthorized
