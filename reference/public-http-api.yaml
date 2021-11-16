@@ -758,11 +758,9 @@ paths:
         '200':
           description: OK
           content:
-            application/json:
+            text/plain:
               schema:
-                type: array
-                items:
-                  type: string
+                type: string
         '204':
           description: This dataset has not yet been loaded
         '401':
