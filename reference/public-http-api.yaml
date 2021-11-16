@@ -697,8 +697,12 @@ paths:
       tags: []
       operationId: post-pipelines-pipeline-id-loads
       responses:
+        '202':
+          description: Accepted - there are in-band datasets and a load has been scheduled to start
         '204':
-          description: No Content
+          description: No Content - there are no in-band datasets
+        '400':
+          description: Bad Request - there are no datasets in pipeline
         '401':
           description: Unauthorized
         '404':
