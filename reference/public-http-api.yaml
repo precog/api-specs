@@ -164,6 +164,8 @@ paths:
                     - id: '11'
                       name: Recurring application charges
                       sourceId: '1'
+        '204':
+          description: Dataset hasn't been discovered yet
         '401':
           description: Unauthorized
         '404':
