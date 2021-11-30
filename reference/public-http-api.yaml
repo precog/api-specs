@@ -879,13 +879,16 @@ components:
       properties:
         id:
           type: string
+          minLength: 1
           readOnly: true
         kindId:
           type: string
+          minLength: 1
         config:
           $ref: '#/components/schemas/connector-config'
         name:
           type: string
+          minLength: 1
           readOnly: true
         auth:
           $ref: '#/components/schemas/auth-oauth2'
@@ -902,11 +905,14 @@ components:
       properties:
         id:
           type: string
+          minLength: 1
           readOnly: true
         kindId:
           type: string
+          minLength: 1
         name:
           type: string
+          minLength: 1
       required:
         - id
         - kindId
@@ -930,8 +936,10 @@ components:
       properties:
         name:
           type: string
+          minLength: 1
         id:
           type: string
+          minLength: 1
       required:
         - name
         - id
@@ -946,6 +954,7 @@ components:
           type: boolean
         name:
           type: string
+          minLength: 1
       required:
         - description
         - sensitive
@@ -958,6 +967,7 @@ components:
           type: string
         name:
           type: string
+          minLength: 1
       required:
         - value
         - name
@@ -967,9 +977,11 @@ components:
       properties:
         id:
           type: string
+          minLength: 1
           readOnly: true
         name:
           type: string
+          minLength: 1
       required:
         - id
         - name
@@ -979,6 +991,7 @@ components:
       properties:
         id:
           type: string
+          minLength: 1
           readOnly: true
         name:
           type: string
@@ -996,10 +1009,13 @@ components:
       properties:
         id:
           type: string
+          minLength: 1
         name:
           type: string
+          minLength: 1
         sourceId:
           type: string
+          minLength: 1
       required:
         - id
         - name
@@ -1027,6 +1043,7 @@ components:
       properties:
         pipelineId:
           type: string
+          minLength: 1
         status:
           $ref: '#/components/schemas/pipeline-load-state'
       required:
@@ -1039,6 +1056,7 @@ components:
       properties:
         id:
           type: string
+          minLength: 1
         outOfBand:
           $ref: '#/components/schemas/outofband-state'
         inBand:
@@ -1051,6 +1069,7 @@ components:
       properties:
         pipelineId:
           type: string
+          minLength: 1
         status:
           $ref: '#/components/schemas/pipeline-load-state'
         datasets:
@@ -1123,8 +1142,10 @@ components:
           properties:
             id:
               type: string
+              minLength: 1
             name:
               type: string
+              minLength: 1
         destination:
           required:
             - id
@@ -1134,8 +1155,10 @@ components:
           properties:
             id:
               type: string
+              minLength: 1
             name:
               type: string
+              minLength: 1
             kind:
               type: object
               required:
@@ -1144,10 +1167,13 @@ components:
               properties:
                 id:
                   type: string
+                  minLength: 1
                 name:
                   type: string
+                  minLength: 1
         datasets:
           type: array
+          uniqueItems: true
           items:
             type: object
             properties:
@@ -1160,8 +1186,10 @@ components:
                 properties:
                   id:
                     type: string
+                    minLength: 1
                   name:
                     type: string
+                    minLength: 1
                   kind:
                     type: object
                     required:
@@ -1170,17 +1198,23 @@ components:
                     properties:
                       id:
                         type: string
+                        minLength: 1
                       name:
                         type: string
+                        minLength: 1
               dataset:
                 type: array
+                uniqueItems: true
+                minItems: 1
                 items:
                   type: object
                   properties:
                     id:
                       type: string
+                      minLength: 1
                     name:
                       type: string
+                      minLength: 1
                   required:
                     - id
                     - name
@@ -1201,8 +1235,10 @@ components:
             - add
         datasetIds:
           type: array
+          uniqueItems: true
           items:
             type: string
+            minLength: 1
       required:
         - action
         - datasetIds
@@ -1218,6 +1254,7 @@ components:
           properties:
             type:
               type: string
+              minLength: 1
             details:
               type: string
       required:
@@ -1228,6 +1265,7 @@ components:
       properties:
         url:
           type: string
+          minLength: 1
       required:
         - url
     auth-schema-oauth2:
