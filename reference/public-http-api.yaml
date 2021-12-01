@@ -794,26 +794,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/pipeline-schedule'
-            application/xml:
-              schema:
-                type: object
-                properties: {}
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error-message'
         '401':
           description: Unauthorized
         '404':
           description: Pipeline not found
-        '422':
-          description: Semantic error.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error-message'
       description: Get the pipeline schedule.
   '/pipelines/{pipeline-id}/loads/latest/logs':
     parameters:
