@@ -785,6 +785,7 @@ paths:
         description: A list of cron expressions. An empty list means that the pipeline will not be loaded on a schedule.
     get:
       summary: Get the pipeline schedule
+      tags: []
       operationId: get-pipelines-pipeline-id-schedule
       responses:
         '200':
