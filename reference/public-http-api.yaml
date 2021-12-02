@@ -77,6 +77,25 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/connector'
+  '/sources/{source-id}/refresh':
+    parameters:
+      - schema:
+          type: string
+        name: source-id
+        in: path
+        required: true
+    put:
+      summary: Request source refresh
+      tags: [ ]
+      responses:
+        '202':
+          description: Accepted
+        '401':
+          description: Unauthorized
+        '404':
+          description: Source not found.
+      operationId: refresh-source-by-id
+      description: Refresh a particular source.
   '/sources/{source-id}':
     parameters:
       - schema:
