@@ -84,7 +84,7 @@ paths:
         name: source-id
         in: path
         required: true
-    put:
+    post:
       summary: Request source refresh
       tags: [ ]
       responses:
