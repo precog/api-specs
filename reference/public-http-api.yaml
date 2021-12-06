@@ -1303,6 +1303,12 @@ components:
             required:
               - source
               - dataset
+        schedule:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
+            minLength: 1
       required:
         - pipeline
         - destination
