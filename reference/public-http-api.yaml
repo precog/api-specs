@@ -1150,8 +1150,7 @@ components:
       description: ''
       properties:
         id:
-          type:
-            $ref: '#/components/schemas/dataset-id'
+          $ref: '#/components/schemas/dataset-id'
         outOfBand:
           $ref: '#/components/schemas/outofband-state'
         inBand:
