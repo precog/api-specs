@@ -818,7 +818,7 @@ paths:
         '404':
           description: Pipeline not found
       description: Get the pipeline schedule.
-  '/pipelines/{pipeline-id}/notification/email':
+  '/pipelines/{pipeline-id}/notification':
     parameters:
       - schema:
           type: string
@@ -828,7 +828,7 @@ paths:
     put:
       summary: Set email addresses to be notified on pipeline events.
       tags: []
-      operationId: put-pipelines-pipeline-id-notification-email
+      operationId: put-pipelines-pipeline-id-notification
       responses:
         '204':
           description: No Content
@@ -853,19 +853,19 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/pipeline-notification-email'
+              $ref: '#/components/schemas/pipeline-notification'
         description: A list of email addresses. An empty list means that email notifications are disabled for the pipeline.
     get:
       summary: Get email addresses associated with the pipeline
       tags: []
-      operationId: get-pipelines-pipeline-id-notification-email
+      operationId: get-pipelines-pipeline-id-notification
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/pipeline-notification-email'
+                $ref: '#/components/schemas/pipeline-notification'
         '401':
           description: Unauthorized
         '404':
@@ -1172,7 +1172,7 @@ components:
             type: string
       required:
         - schedule
-    pipeline-notification-email:
+    pipeline-notification:
       title: ''
       type: object
       properties:
@@ -1372,7 +1372,7 @@ components:
           items:
             type: string
             minLength: 1
-        emailNotifications:
+        notifications:
           type: array
           uniqueItems: true
           items:
@@ -1383,7 +1383,7 @@ components:
         - destination
         - datasets
         - schedule
-        - emailNotifications
+        - notifications
     dataset-update:
       title: dataset-update
       type: object
