@@ -577,7 +577,7 @@ paths:
     patch:
       summary: ''
       tags: []
-      operationId: patch-pipelines-pipeline-id-datasetsdatasets
+      operationId: patch-pipelines-pipeline-id-datasets
       responses:
         '204':
           description: No Content
