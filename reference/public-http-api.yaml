@@ -773,7 +773,7 @@ paths:
         in: path
         required: true
     put:
-      summary: Schedule a pipelne.
+      summary: Schedule a pipeline.
       tags: []
       operationId: put-pipelines-pipeline-id-schedule
       responses:
@@ -818,6 +818,59 @@ paths:
         '404':
           description: Pipeline not found
       description: Get the pipeline schedule.
+  '/pipelines/{pipeline-id}/notification':
+    parameters:
+      - schema:
+          type: string
+        name: pipeline-id
+        in: path
+        required: true
+    put:
+      summary: Set email addresses to be notified on pipeline events.
+      tags: []
+      operationId: put-pipelines-pipeline-id-notification
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Pipeline not found
+        '422':
+          description: Semantic error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
+      description: Set email addresses to be notified on pipeline events.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/pipeline-notification'
+        description: A list of email addresses. An empty list means that email notifications are disabled for the pipeline.
+    get:
+      summary: Get email addresses associated with the pipeline
+      tags: []
+      operationId: get-pipelines-pipeline-id-notification
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pipeline-notification'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Pipeline not found
+      description: Get email addresses associated with the pipeline.
   '/pipelines/{pipeline-id}/loads/latest/logs':
     parameters:
       - schema:
@@ -1119,6 +1172,16 @@ components:
             type: string
       required:
         - schedule
+    pipeline-notification:
+      title: ''
+      type: object
+      properties:
+        emails:
+          type: array
+          items:
+            type: string
+      required:
+        - emails
     pipeline-status:
       title: ''
       type: object
@@ -1309,11 +1372,18 @@ components:
           items:
             type: string
             minLength: 1
+        notifications:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
+            minLength: 1
       required:
         - pipeline
         - destination
         - datasets
         - schedule
+        - notifications
     dataset-update:
       title: dataset-update
       type: object
