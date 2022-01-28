@@ -86,7 +86,7 @@ paths:
         required: true
     post:
       summary: Request source refresh
-      tags: [ ]
+      tags: []
       responses:
         '202':
           description: Accepted
@@ -597,12 +597,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error-message'
-      description: Add datasets to the provided pipeline.
+      description: Add (or remove) datasets to (or from) the provided pipeline.
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/dataset-update'
+            examples:
+              example-1:
+                value:
+                  action: add
+                  datasetIds:
+                    - string
   '/pipelines/{pipeline-id}/details':
     parameters:
       - schema:
@@ -662,6 +668,8 @@ paths:
                     pipeline:
                       id: '1'
                       name: Ecommerce
+                    schedule:
+                      - '*/5 * * * *'
         '401':
           description: Unauthorized
         '404':
@@ -1392,6 +1400,7 @@ components:
           type: string
           enum:
             - add
+            - remove
         datasetIds:
           type: array
           uniqueItems: true
