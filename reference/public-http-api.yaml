@@ -670,6 +670,8 @@ paths:
                       name: Ecommerce
                     schedule:
                       - '*/5 * * * *'
+                    notifications:
+                      - josie@email.com
         '401':
           description: Unauthorized
         '404':
