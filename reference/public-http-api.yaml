@@ -1073,7 +1073,7 @@ components:
         id:
           type: string
           minLength: 1
-        svg:
+        image:
           type: string
       required:
         - name
