@@ -345,6 +345,18 @@ paths:
                     $ref: '#/components/schemas/auth-schema-oauth2'
                 required:
                   - schema
+              examples:
+                example-1:
+                  value:
+                    schema:
+                      - description: string
+                        sensitive: true
+                        name: string
+                        type: text
+                    auth:
+                      type: OAuth 2.0 code authorization
+                      details:
+                        uri: string
         '401':
           description: Unauthorized
         '404':
@@ -1094,10 +1106,16 @@ components:
         name:
           type: string
           minLength: 1
+        type:
+          type: string
+          enum:
+            - text
+            - file
       required:
         - description
         - sensitive
         - name
+        - type
     connector-config-entry:
       description: ''
       type: object
