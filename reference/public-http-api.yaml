@@ -342,7 +342,7 @@ paths:
                   schema:
                     $ref: '#/components/schemas/kind-schema'
                   auth:
-                    $ref: '#/components/schemas/auth-schema-oauth2'
+                    $ref: '#/components/schemas/auth-schema'
                 required:
                   - schema
         '401':
@@ -1028,7 +1028,7 @@ components:
           minLength: 1
           readOnly: true
         auth:
-          $ref: '#/components/schemas/auth-oauth2'
+          $ref: '#/components/schemas/auth'
           writeOnly: true
       required:
         - id
@@ -1442,45 +1442,84 @@ components:
           minLength: 1
       required:
         - url
-    auth-schema-oauth2:
-      title: auth-schema-oauth2
+
+    auth-schema-oauth2-details:
+      title: auth-schema-oauth2-details
       type: object
       properties:
-        type:
+        uri:
           type: string
-          enum:
-            - OAuth 2.0 code authorization
-        details:
-          type: object
-          required:
-            - uri
-          properties:
-            uri:
+          minLength: 1
+      required:
+        - uri
+
+    auth-schema-google-service-account-details:
+      title: auth-schema-google-service-account-details
+      type: object
+      properties:
+        scopes:
+          type: array
+            uniqueItems: true
+            items:
               type: string
               minLength: 1
       required:
-        - type
-        - details
-    auth-oauth2:
-      title: auth-oauth2
+        - scopes
+
+    auth-schema:
+      title: auth-schema
       type: object
       properties:
         type:
           type: string
           enum:
             - OAuth 2.0 code authorization
+            - Google Service Account Key authorization
         details:
-          type: object
-          required:
-            - authCode
-            - redirectUri
-          properties:
-            authCode:
-              type: string
-              minLength: 1
-            redirectUri:
-              type: string
-              minLength: 1
+          oneOf:
+            - $ref: '#/components/schemas/auth-schema-oauth2-details'
+            - $ref: '#/components/schemas/auth-schema-google-service-account-details'
+      required:
+        - type
+        - details
+
+    auth-oauth2-details:
+      title: auth-oauth2-details
+      type: object
+      properties:
+        authCode:
+          type: string
+          minLength: 1
+        redirectUri:
+          type: string
+          minLength: 1
+      required:
+        - authCode
+        - redirectUri
+
+    auth-google-service-account-details:
+      title: auth-google-service-account-details
+      type: object
+      properties:
+        keyFile:
+          type: string
+          minLength: 1
+      required:
+        - keyFile
+
+    auth:
+      title: auth
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - OAuth 2.0 code authorization
+            - Google Service Account Key authorization
+        details:
+          oneOf:
+            - $ref: '#/components/schemas/auth-oauth2-details'
+            - $ref: '#/components/schemas/auth-google-service-account-details'
       required:
         - type
         - details
