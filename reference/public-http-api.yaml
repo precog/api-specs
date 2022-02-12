@@ -1459,10 +1459,10 @@ components:
       properties:
         scopes:
           type: array
-            uniqueItems: true
-            items:
-              type: string
-              minLength: 1
+          uniqueItems: true
+          items:
+            type: string
+            minLength: 1
       required:
         - scopes
 
