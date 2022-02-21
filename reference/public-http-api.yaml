@@ -191,6 +191,41 @@ paths:
           description: Source not found.
       operationId: get-sources-source-id-datasets
       description: Get all available datasets for the provided source.
+  '/sources/{source-id}/authentication':
+    parameters:
+      - schema:
+          type: string
+        name: source-id
+        in: path
+        required: true
+    put:
+      summary: Reauthenticate a source
+      tags: []
+      operationId: put-sources-source-id-authentication
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Source not found.
+        '422':
+          description: Semantic Error
+      description: Change the authentication used by the source.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                auth:
+                  $ref: '#/components/schemas/auth'
   /destinations:
     get:
       summary: Get Destinations
@@ -312,7 +347,7 @@ paths:
           description: Destination not found.
         '422':
           description: Semantic Error
-      description: Update a destination configuration for a particular destination .
+      description: Update a destination configuration for a particular destination.
       requestBody:
         content:
           application/json:
@@ -321,6 +356,41 @@ paths:
               properties:
                 config:
                   $ref: '#/components/schemas/connector-config'
+  '/destinations/{destination-id}/authentication':
+    parameters:
+      - schema:
+          type: string
+        name: destination-id
+        in: path
+        required: true
+    put:
+      summary: Reauthenticate a destination
+      tags: []
+      operationId: put-destinations-destination-id-authentication
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Destination not found.
+        '422':
+          description: Semantic Error
+      description: Change the authentication used by the destination.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                auth:
+                  $ref: '#/components/schemas/auth'
   '/kinds/{kind-id}':
     parameters:
       - schema:
