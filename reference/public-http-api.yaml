@@ -128,6 +128,43 @@ paths:
           description: Source not found.
       operationId: get-sources-source-id
       description: Get a particular source.
+    put:
+      summary: Redefine a source
+      tags: []
+      operationId: put-sources-source-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connector-listing'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
+        '401':
+          description: Unauthorized
+        '422':
+          description: Source kind unsupported or other semantic error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
+        '502':
+          description: Problematic Request to External Server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
+      description: Redefine an existing source.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/connector'
   '/sources/{source-id}/datasets':
     parameters:
       - schema:
@@ -286,6 +323,43 @@ paths:
           description: Destination not found.
       operationId: get-destinations-destination-id
       description: Get a particular destination.
+    put:
+      summary: Redefine a destination
+      tags: []
+      operationId: put-destinations-destination-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connector-listing'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
+        '401':
+          description: Unauthorized
+        '422':
+          description: Destination kind unsupported or other semantic error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
+        '502':
+          description: Problematic Request to External Server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
+      description: Redefine an existing destination.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/connector'
   '/destinations/{destination-id}/configuration':
     parameters:
       - schema:
