@@ -147,6 +147,8 @@ paths:
                 $ref: '#/components/schemas/error-message'
         '401':
           description: Unauthorized
+        '404':
+          description: Source not found.
         '422':
           description: Source kind unsupported or other semantic error.
           content:
@@ -342,6 +344,8 @@ paths:
                 $ref: '#/components/schemas/error-message'
         '401':
           description: Unauthorized
+        '404':
+          description: Destination not found.
         '422':
           description: Destination kind unsupported or other semantic error.
           content:
