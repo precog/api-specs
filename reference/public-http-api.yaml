@@ -594,6 +594,15 @@ paths:
           description: Pipeline not found.
       operationId: get-pipelines-pipeline-id
       description: Get a particular pipeline.
+    delete:
+      summary: ''
+      operationId: delete-pipelines-pipeline-id
+      responses:
+        '204':
+          description: No Content
+        '404':
+          description: Not Found
+      description: Deletes the given pipeline
   '/pipelines/{pipeline-id}/datasets':
     parameters:
       - schema:
