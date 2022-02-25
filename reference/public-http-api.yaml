@@ -764,13 +764,16 @@ paths:
       summary: Get pipeline logs for the latest load
       tags: []
       responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
         '204':
           description: This dataset has not yet been loaded
-          content:
-            text/plain:
-              schema:
-                type: object
-                properties: {}
         '401':
           description: Unauthorized
         '404':
