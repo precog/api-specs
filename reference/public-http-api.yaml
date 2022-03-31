@@ -1146,6 +1146,8 @@ components:
         name:
           type: string
           minLength: 1
+        exampleValue:
+          type: string
       required:
         - description
         - sensitive
