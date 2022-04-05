@@ -596,6 +596,7 @@ paths:
       description: Get a particular pipeline.
     delete:
       summary: ''
+      tags: []
       operationId: delete-pipelines-pipeline-id
       responses:
         '204':
@@ -966,6 +967,28 @@ paths:
           in: query
           name: dataset-id
           required: true
+  /log:
+    post:
+      summary: Log a message
+      tags: []
+      operationId: post-log
+      responses:
+        '204':
+          description: No Content - logged
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
+        '401':
+          description: Unauthorized
+      description: Log a message
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/log-message'
   /stripe/check:
     post:
       summary: Check Stripe subscription status
@@ -1495,7 +1518,24 @@ components:
           minLength: 1
       required:
         - url
-
+    log-message:
+      title: log-message
+      type: object
+      properties:
+        level:
+          type: string
+          enum:
+            - error
+            - warn
+            - info
+            - debug
+            - trace
+        message:
+          type: string
+      required:
+        - level
+        - message
+      examples: []
     auth-schema-oauth2-details:
       title: auth-schema-oauth2-details
       type: object
@@ -1505,7 +1545,6 @@ components:
           minLength: 1
       required:
         - uri
-
     auth-schema-google-service-account-details:
       title: auth-schema-google-service-account-details
       type: object
@@ -1518,7 +1557,6 @@ components:
             minLength: 1
       required:
         - scopes
-
     auth-schema:
       title: auth-schema
       type: object
@@ -1535,7 +1573,6 @@ components:
       required:
         - type
         - details
-
     auth-oauth2-details:
       title: auth-oauth2-details
       type: object
@@ -1549,7 +1586,6 @@ components:
       required:
         - authCode
         - redirectUri
-
     auth-google-service-account-details:
       title: auth-google-service-account-details
       type: object
@@ -1559,7 +1595,6 @@ components:
           minLength: 1
       required:
         - keyFile
-
     auth:
       title: auth
       type: object
