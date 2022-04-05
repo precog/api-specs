@@ -596,6 +596,7 @@ paths:
       description: Get a particular pipeline.
     delete:
       summary: ''
+      tags: []
       operationId: delete-pipelines-pipeline-id
       responses:
         '204':
