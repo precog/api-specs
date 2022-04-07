@@ -1343,8 +1343,11 @@ components:
             - scheming
             - empty
             - failed
+            - errored
         at:
           type: number
+        errorMessage:
+          type: string
       required:
         - state
         - at
@@ -1361,8 +1364,11 @@ components:
             - waiting
             - written
             - failed
+            - errored
         at:
           type: number
+        errorMessage:
+          type: string
       required:
         - state
         - at
