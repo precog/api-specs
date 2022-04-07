@@ -1324,6 +1324,7 @@ components:
           enum:
             - succeeded
             - failed
+            - errored
             - loading
             - accepted
         at:
@@ -1346,7 +1347,7 @@ components:
             - errored
         at:
           type: number
-        errorMessage:
+        message:
           type: string
       required:
         - state
@@ -1367,7 +1368,7 @@ components:
             - errored
         at:
           type: number
-        errorMessage:
+        message:
           type: string
       required:
         - state
