@@ -791,9 +791,46 @@ paths:
           description: Bad Request - there are no datasets in pipeline
         '401':
           description: Unauthorized
+        '402':
+          description: Payment Required - trial period has expired and there is no active subscription
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    required:
+                      - type
+                      - details
+                    properties:
+                      type:
+                        type: string
+                        minLength: 1
+                      details:
+                        type: string
+                  url:
+                    type: string
+                required:
+                  - error
         '404':
           description: Pipeline not found.
+        '502':
+          description: Problematic Request to External Server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
       description: Start a load for this pipeline.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                returnUrl:
+                  type: string
+        description: ''
   '/pipelines/{pipeline-id}/rename':
     parameters:
       - schema:
@@ -1000,7 +1037,15 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/url'
+                type: object
+                properties:
+                  trialEndsAt:
+                    type: number
+                  url:
+                    type: string
+                required:
+                  - trialEndsAt
+                  - url
         '204':
           description: Valid Subscription
         '400':
@@ -1023,6 +1068,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error-message'
+      description: Check the Stripe subscription status
       requestBody:
         content:
           application/json:
@@ -1031,10 +1077,8 @@ paths:
               properties:
                 returnUrl:
                   type: string
-                  minLength: 1
               required:
                 - returnUrl
-      description: Check the Stripe subscription status
   /stripe/session:
     post:
       summary: Create Stripe session
