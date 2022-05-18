@@ -51,6 +51,45 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/action-required'
+  /admin/tenants/{tenant-id}/pipelines/{pipeline-id}/datasets/{dataset-id}/rediscover:
+    parameters:
+      - schema:
+          type: string
+        name: tenant-id
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: pipeline-id
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: dataset-id
+        in: path
+        required: true
+    post:
+      summary: Transition specified dataset status of a pipeline to "accepted"
+      tags: []
+      operationId: rediscover
+      responses:
+        '204':
+          description: Status of dataset has been transitioned successfully
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
+        '401':
+          description: Unauthorized
+        '422':
+          description: Semantic error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
+      description: Transition a dataset status to "accepted".
 
 components:
   schemas:
