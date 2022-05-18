@@ -45,7 +45,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error-message'
-      description: Transition a dataset status to "action required" (error).
+      description: Transition specified dataset statuses of a pipeline to "action required" (error). 
+
+        The supplied message will be assigned to the primary dataset. 
+        If the transitioning of the primary dataset fails then the complete operation will fail accordingly.
+
+        The secondary datasets will be transitioned on a "best effort" basis; they won't fail the complete operation
+        if any of them fails to transition for some reason. Also secondary datasets will not have any message assigned to them.
+
       requestBody:
         content:
           application/json:
