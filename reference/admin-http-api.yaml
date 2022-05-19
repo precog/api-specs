@@ -25,7 +25,16 @@ paths:
         in: path
         required: true
     post:
-      summary: Transition specified dataset statuses of a pipeline to "action required"
+      summary: Notify that action is required for one or more datasets of a pipeline.
+      description: 
+        Notify that action is required for one or more datasets of a pipeline
+        by transitioning specified dataset statuses to "error". 
+
+        The supplied message will be assigned to the primary dataset. 
+        If the transitioning of the primary dataset fails then the complete operation will fail accordingly.
+
+        The secondary datasets will be transitioned on a "best effort" basis; they won't fail the complete operation
+        if any of them fails to transition for some reason. Also secondary datasets will not have any message assigned to them.
       tags: []
       operationId: action-required
       responses:
@@ -45,19 +54,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error-message'
-      description: Transition specified dataset statuses of a pipeline to "action required" (error). 
-
-        The supplied message will be assigned to the primary dataset. 
-        If the transitioning of the primary dataset fails then the complete operation will fail accordingly.
-
-        The secondary datasets will be transitioned on a "best effort" basis; they won't fail the complete operation
-        if any of them fails to transition for some reason. Also secondary datasets will not have any message assigned to them.
 
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/action-required'
+
   /admin/tenants/{tenant-id}/pipelines/{pipeline-id}/datasets/{dataset-id}/rediscover:
     parameters:
       - schema:
@@ -76,7 +79,10 @@ paths:
         in: path
         required: true
     post:
-      summary: Transition specified dataset status of a pipeline to "accepted"
+      summary: Rediscover the schema of a dataset.
+      description: 
+        Rediscover the schema of a dataset
+        by transitioning specified dataset status of a pipeline to "accepted".
       tags: []
       operationId: rediscover
       responses:
@@ -96,7 +102,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error-message'
-      description: Transition a dataset status to "accepted".
 
 components:
   schemas:
