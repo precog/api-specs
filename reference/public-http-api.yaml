@@ -1184,7 +1184,10 @@ components:
       type: array
       title: ''
       items:
-        $ref: '#/components/schemas/kind-schema-entry'
+        oneOf:
+          - $ref: '#/components/schemas/kind-schema-input-entry'
+          - $ref: '#/components/schemas/kind-schema-upload-entry'
+          - $ref: '#/components/schemas/kind-schema-dropdown-entry'
     connector-kind:
       description: ''
       type: object
@@ -1201,7 +1204,7 @@ components:
       required:
         - name
         - id
-    kind-schema-entry:
+    kind-schema-input-field:
       description: ''
       type: object
       title: ''
@@ -1219,6 +1222,63 @@ components:
         - description
         - sensitive
         - name
+    kind-schema-upload-field:
+      description: ''
+      type: object
+      title: ''
+      properties:
+        name:
+          type: string
+          minLength: 1
+        description:
+          type: string
+      required:
+        - description
+        - name
+    kind-schema-dropdown-field:
+      description: ''
+      type: object
+      title: ''
+      properties:
+        name:
+          type: string
+          minLength: 1
+        description:
+          type: string
+        values:
+          type: array
+          minLength: 1
+          uniqueItems: true
+          items:
+            type: string
+      required:
+        - description
+        - name
+        - values
+    kind-schema-input-entry:
+      title: ''
+      type: object
+      properties:
+        input:
+          $ref: '#/components/schemas/kind-schema-input-field'
+      required:
+        - input
+    kind-schema-upload-entry:
+      title: ''
+      type: object
+      properties:
+        upload:
+          $ref: '#/components/schemas/kind-schema-upload-field'
+      required:
+        - upload
+    kind-schema-dropdown-entry:
+      title: ''
+      type: object
+      properties:
+        input:
+          $ref: '#/components/schemas/kind-schema-dropdown-field'
+      required:
+        - input
     connector-config-entry:
       description: ''
       type: object
