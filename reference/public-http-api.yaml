@@ -1218,10 +1218,10 @@ components:
           minLength: 1
         exampleValue:
           type: string
-        required:
-          - description
-          - sensitive
-          - name
+      required:
+        - description
+        - sensitive
+        - name
     kind-schema-upload-field:
       description: ''
       type: object
@@ -1232,9 +1232,9 @@ components:
           minLength: 1
         description:
           type: string
-        required:
-          - description
-          - name
+      required:
+        - description
+        - name
     kind-schema-dropdown-field:
       description: ''
       type: object
@@ -1249,10 +1249,10 @@ components:
           type: array
             items:
               type: string
-        required:
-          - description
-          - name
-          - values
+      required:
+        - description
+        - name
+        - values
     kind-schema-input-entry:
       title: ''
       type: object
