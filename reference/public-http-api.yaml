@@ -1187,6 +1187,7 @@ components:
         oneOf:
           - $ref: '#/components/schemas/kind-schema-input-entry'
           - $ref: '#/components/schemas/kind-schema-upload-entry'
+          - $ref: '#/components/schemas/kind-schema-dropdown-entry'
     connector-kind:
       description: ''
       type: object
@@ -1234,6 +1235,24 @@ components:
         required:
           - description
           - name
+    kind-schema-dropdown-field:
+      description: ''
+      type: object
+      title: ''
+      properties:
+        name:
+          type: string
+          minLength: 1
+        description:
+          type: string
+        values:
+          type: array
+            items:
+              type: string
+        required:
+          - description
+          - name
+          - values
     kind-schema-input-entry:
       title: ''
       type: object
@@ -1250,6 +1269,14 @@ components:
           $ref: '#/components/schemas/kind-schema-upload-field'
       required:
         - upload
+    kind-schema-dropdown-entry:
+      title: ''
+      type: object
+      properties:
+        input:
+          $ref: '#/components/schemas/kind-schema-dropdown-field'
+      required:
+        - input
     connector-config-entry:
       description: ''
       type: object
