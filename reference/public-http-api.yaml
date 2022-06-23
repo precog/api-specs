@@ -1201,7 +1201,7 @@ components:
       required:
         - name
         - id
-    kind-schema-entry:
+    kind-schema-input-field-entry:
       description: ''
       type: object
       title: ''
@@ -1215,10 +1215,35 @@ components:
           minLength: 1
         exampleValue:
           type: string
+        required:
+          - description
+          - sensitive
+          - name
+    kind-schema-uploadable-field-entry:
+      description: ''
+      type: object
+      title: ''
+      properties:
+        description:
+          type: string
+        required:
+          - description
+    kind-schema-entry:
+      title: ''
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - input
+            - upload
+        field:
+          oneOf:
+            - $ref: '#/components/schemas/kind-schema-input-field-entry'
+            - $ref: '#/components/schemas/kind-schema-uploadable-field-entry'
       required:
-        - description
-        - sensitive
-        - name
+        - type
+        - details
     connector-config-entry:
       description: ''
       type: object
