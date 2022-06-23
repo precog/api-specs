@@ -1186,7 +1186,7 @@ components:
       items:
         oneOf:
           - $ref: '#/components/schemas/kind-schema-input-entry'
-          - $ref: '#/components/schemas/kind-schema-uploadable-entry'
+          - $ref: '#/components/schemas/kind-schema-upload-entry'
     connector-kind:
       description: ''
       type: object
@@ -1221,15 +1221,19 @@ components:
           - description
           - sensitive
           - name
-    kind-schema-uploadable-field:
+    kind-schema-upload-field:
       description: ''
       type: object
       title: ''
       properties:
+        name:
+          type: string
+          minLength: 1
         description:
           type: string
         required:
           - description
+          - name
     kind-schema-input-entry:
       title: ''
       type: object
