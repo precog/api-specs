@@ -1159,10 +1159,10 @@ components:
                 - properties: {}
                   behavior: Read Only
                   enum:
-                    - Ready
-                    - InputRequired
-                    - Loading
-                    - Pending
+                    - ready
+                    - input-required
+                    - loading
+                    - pending
               type: string
             message:
               type: string
