@@ -1149,6 +1149,24 @@ components:
         auth:
           $ref: '#/components/schemas/auth'
           writeOnly: true
+        status:
+          type: object
+          required:
+            - type
+          properties:
+            type:
+              oneOf:
+                - properties: {}
+                  behavior: Read Only
+                  enum:
+                    - Ready
+                    - InputRequired
+                    - Loading
+                    - Pending
+              type: string
+            message:
+              type: string
+
       required:
         - id
         - kindId
