@@ -1151,13 +1151,13 @@ components:
           writeOnly: true
         status:
           type: object
+          behavior: Read Only
           required:
             - type
           properties:
             type:
               oneOf:
                 - properties: {}
-                  behavior: Read Only
                   enum:
                     - ready
                     - input-required
@@ -1166,7 +1166,6 @@ components:
               type: string
             message:
               type: string
-
       required:
         - id
         - kindId
