@@ -1162,7 +1162,7 @@ components:
                     - ready
                     - input-required
                     - loading
-                    - pending
+                    - processing
               type: string
             message:
               type: string
