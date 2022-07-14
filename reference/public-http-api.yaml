@@ -103,7 +103,7 @@ paths:
         name: source-id
         in: path
         required: true
-    post:
+    put:
       summary: Authenticate a source that needs authentication
       tags: []
       responses:
