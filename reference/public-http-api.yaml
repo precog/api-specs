@@ -1184,6 +1184,7 @@ components:
           behavior: Read Only
           required:
             - type
+            - at
           properties:
             type:
               oneOf:
@@ -1197,6 +1198,8 @@ components:
               type: string
             message:
               type: string
+            at:
+              type: number
       required:
         - id
         - kindId
