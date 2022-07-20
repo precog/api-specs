@@ -96,6 +96,36 @@ paths:
           description: Source not found.
       operationId: refresh-source-by-id
       description: Refresh a particular source.
+  '/sources/{source-id}/auth':
+    parameters:
+      - schema:
+          type: string
+        name: source-id
+        in: path
+        required: true
+    put:
+      summary: Authenticate a source that needs authentication
+      tags: []
+      responses:
+        '202':
+          description: Accepted. Authentication attempt has been made. The source status will reflect the outcome of this operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connector'
+        '400': 
+          description: The authentication values you provided are incompatible with the authentication strategy of the source's kind
+        '401':
+          description: Unauthorized
+        '404':
+          description: Source not found.
+      operationId: auth-source-by-id
+      description: Authenticate a source. If the source is already authenticated - the authentication details are overwritten.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/auth'
   '/sources/{source-id}':
     parameters:
       - schema:
@@ -1149,11 +1179,33 @@ components:
         auth:
           $ref: '#/components/schemas/auth'
           writeOnly: true
+        status:
+          type: object
+          behavior: Read Only
+          required:
+            - type
+            - at
+          properties:
+            type:
+              oneOf:
+                - properties: {}
+                  enum:
+                    - ready
+                    - input-required
+                    - authentication-required
+                    - loading
+                    - processing
+              type: string
+            message:
+              type: string
+            at:
+              type: number
       required:
         - id
         - kindId
         - config
         - name
+        - status
     connector-listing:
       description: ''
       type: object
