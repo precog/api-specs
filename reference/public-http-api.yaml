@@ -113,7 +113,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/connector'
-        '400': 
+        '400':
           description: The authentication values you provided are incompatible with the authentication strategy of the source's kind
         '401':
           description: Unauthorized
@@ -618,6 +618,8 @@ paths:
                     destinationId: '1'
                     id: '1'
                     name: Ecommerce
+                    columnNameStrategy:
+                      tableNamePostfix: true
         '401':
           description: Unauthorized
         '404':
@@ -1371,6 +1373,14 @@ components:
         destinationId:
           type: string
           minLength: 1
+        columnNameStrategy:
+          type: object
+          minLength: 1
+          properties:
+            tableNamePostfix: 
+              type: boolean
+          required:
+            - tableNamePostfix
       required:
         - id
         - name
@@ -1534,10 +1544,10 @@ components:
       type: object
       properties:
         pipeline:
+          type: object
           required:
             - id
             - name
-          type: object
           properties:
             id:
               type: string
@@ -1545,12 +1555,17 @@ components:
             name:
               type: string
               minLength: 1
+            columnNameStrategy:
+              type: object
+              properties:
+                tableNamePostfix:
+                  type: boolean
         destination:
+          type: object
           required:
             - id
             - name
             - kind
-          type: object
           properties:
             id:
               type: string
@@ -1577,11 +1592,11 @@ components:
             type: object
             properties:
               source:
+                type: object
                 required:
                   - id
                   - name
                   - kind
-                type: object
                 properties:
                   id:
                     type: string
