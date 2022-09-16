@@ -152,6 +152,9 @@ paths:
                     id: '1'
                     kindId: '12'
                     name: 'Shop name: MyShop'
+                    status: 
+                      type: 'ready'
+                      at: 42
         '401':
           description: Unauthorized
         '404':
@@ -349,6 +352,9 @@ paths:
                     id: '1'
                     kindId: '14'
                     name: 'Account: Precog, Database: Raw, Region: west-us-2.azure'
+                    status: 
+                      type: 'ready'
+                      at: 42
         '401':
           description: Unauthorized
         '404':
