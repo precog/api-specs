@@ -152,8 +152,8 @@ paths:
                     id: '1'
                     kindId: '12'
                     name: 'Shop name: MyShop'
-                    status: 
-                      type: 'ready'
+                    status:
+                      type: ready
                       at: 42
         '401':
           description: Unauthorized
@@ -352,8 +352,8 @@ paths:
                     id: '1'
                     kindId: '14'
                     name: 'Account: Precog, Database: Raw, Region: west-us-2.azure'
-                    status: 
-                      type: 'ready'
+                    status:
+                      type: ready
                       at: 42
         '401':
           description: Unauthorized
@@ -761,6 +761,8 @@ paths:
                     pipeline:
                       id: '1'
                       name: Ecommerce
+                      columnNameStrategy:
+                        tableNamePostfix: false
                     schedule:
                       - '*/5 * * * *'
                     notifications:
@@ -1391,6 +1393,7 @@ components:
         - id
         - name
         - destinationId
+        - columnNameStrategy
     dataset:
       title: ''
       type: object
@@ -1554,6 +1557,7 @@ components:
           required:
             - id
             - name
+            - columnNameStrategy
           properties:
             id:
               type: string
@@ -1563,6 +1567,8 @@ components:
               minLength: 1
             columnNameStrategy:
               type: object
+              required:
+                - tableNamePostfix
               properties:
                 tableNamePostfix:
                   type: boolean
