@@ -1,0 +1,119 @@
+openapi: 3.1.0
+info:
+  title: metadata-http-api
+  version: '1.0'
+  summary: The Precog metadata HTTP REST API.
+  description: The Precog metadata HTTP REST API.
+  contact:
+    url: 'https://precog.com'
+    email: support@precog.com
+servers:
+  - url: 'http://localhost:30000'
+security:
+  - BearerAuth: []
+paths:
+  '/pipelines/{pipeline-id}/metadata':
+    parameters:
+      - schema:
+          type: string
+        name: pipeline-id
+        in: path
+        required: true
+    get:
+      summary: Get metadata related to this pipeline
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pipeline-metadata'
+              examples:
+                example-1:
+                  value:
+                    metadata:
+                      - datasetId: '133425/example'
+                        tables:
+                          - tableName: example
+                            columns:
+                              - columnName: foo
+                                columnType: string
+                              - columnName: bar
+                                columnType: decimal
+                          - tableName: sample
+                            columns:
+                              - columnName: qux
+                                columnType: long
+                              - columnName: corge
+                                columnType: boolean
+        '401':
+          description: Unauthorized
+        '404':
+          description: Pipeline not found.
+      operationId: get-pipelines-pipeline-id-metadata
+      description: Get metadata for a particular particular pipeline.
+components:
+  schemas:
+    pipeline-metadata:
+      description: 'Tables in this pipeline'
+      type: object
+      title: 'Pipeline metadata'
+      properties:
+        metadata:
+          type: array
+          title: 'Datasets'
+          items:
+            $ref: '#/components/schemas/dataset-metadata'
+    dataset-metadata:
+      description: 'Dataset tables'
+      type: object
+      title: 'Dataset tables'
+      properties:
+        datasetId:
+          type: string
+          minLength: 1
+        tables:
+          type: array
+          title: 'Datasets'
+          items:
+            $ref: '#/components/schemas/table'
+    table:
+      description: 'Table schema'
+      type: object
+      title: 'Table schema'
+      properties:
+        tableName:
+          type: string
+          minLength: 1
+        columns:
+          type: array
+          title: 'Columns'
+          items:
+            $ref: '#/components/schemas/column'
+    column:
+      description: 'Column'
+      type: object
+      title: 'Column'
+      properties:
+        columnName:
+          type: string
+          minLength: 1
+        columnType:
+          type:
+            oneOf:
+              - properties: {}
+                enum:
+                  - boolean
+                  - long
+                  - double
+                  - decimal
+                  - localTime
+                  - localDatetime
+                  - localDate
+                  - offsetDatetime
+                  - string
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
