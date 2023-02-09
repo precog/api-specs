@@ -36,12 +36,14 @@ paths:
                       - datasetId: '133425/example'
                         tables:
                           - tableName: example
+                            primaryKey: [ foo ]
                             columns:
                               - columnName: foo
                                 columnType: string
                               - columnName: bar
                                 columnType: decimal
                           - tableName: sample
+                            primaryKey: [ qux, corge ]
                             columns:
                               - columnName: qux
                                 columnType: long
@@ -86,6 +88,11 @@ components:
         tableName:
           type: string
           minLength: 1
+        primaryKey:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
         columns:
           type: array
           title: 'Columns'
