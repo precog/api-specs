@@ -40,6 +40,7 @@ paths:
                             columns:
                               - columnName: foo
                                 columnType: string
+                                maxObservedStringLength: 42
                               - columnName: bar
                                 columnType: decimal
                           - tableName: sample
@@ -102,6 +103,9 @@ components:
       description: 'Column'
       type: object
       title: 'Column'
+      required:
+        - columnName
+        - columnType
       properties:
         columnName:
           type: string
@@ -120,6 +124,8 @@ components:
                   - localDate
                   - offsetDatetime
                   - string
+        maxObservedStringLength:
+          type: integer
   securitySchemes:
     BearerAuth:
       type: http
