@@ -1389,6 +1389,9 @@ components:
           properties:
             tableNamePostfix:
               type: boolean
+        loadParameters:
+          type: object
+          $ref: '#/components/schemas/initial-load-params'
       required:
         - id
         - name
@@ -1547,6 +1550,24 @@ components:
       required:
         - state
         - at
+    initial-load-params:
+      title: initial-load-params
+      type: object
+      properties:
+        initialWrite:
+          type: boolean
+        sampleParameters:
+          $ref: '#/components/schemas/initial-load-params-message-limit'
+      required:
+        - initialWrite
+    initial-load-params-message-limit:
+      title: initial-load-params-message-limit
+      type: object
+      properties:
+        maxMessages:
+          type: number
+      required:
+        - maxMessages
     pipeline-details:
       title: pipeline-details
       type: object
@@ -1678,6 +1699,9 @@ components:
           items:
             type: string
             minLength: 1
+        loadParameters:
+          type: object
+          $ref: '#/components/schemas/initial-load-params'
       required:
         - action
         - datasetIds
