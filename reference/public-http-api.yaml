@@ -1389,9 +1389,6 @@ components:
           properties:
             tableNamePostfix:
               type: boolean
-        loadParameters:
-          type: object
-          $ref: '#/components/schemas/initial-load-params'
       required:
         - id
         - name
