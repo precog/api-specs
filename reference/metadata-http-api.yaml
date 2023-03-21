@@ -36,19 +36,26 @@ paths:
                       - datasetId: '133425/example'
                         tables:
                           - tableName: example
-                            primaryKey: [ foo ]
+                            primaryKey: [ id ]
                             columns:
-                              - columnName: foo
+                              - columnName: id
                                 columnType: string
                                 maxObservedStringLength: 42
-                              - columnName: bar
+                              - columnName: foo
                                 columnType: decimal
-                          - tableName: sample
-                            primaryKey: [ qux, corge ]
+                          - tableName: example_items
+                            primaryKey: [ id_example, array_index ]
+                            foreignKeys: 
+                              example: 
+                                - local: [ id_example ]
+                                - reference: [ id ]
                             columns:
-                              - columnName: qux
+                              - columnName: id_example
+                                columnType: string
+                                maxObservedStringLength: 42
+                              - columnName: array_index
                                 columnType: long
-                              - columnName: corge
+                              - columnName: bar
                                 columnType: boolean
         '401':
           description: Unauthorized
@@ -94,11 +101,30 @@ components:
           uniqueItems: true
           items:
             type: string
+        foreignKeys:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/foreignKey'
         columns:
           type: array
           title: 'Columns'
           items:
             $ref: '#/components/schemas/column'
+    foreignKey:
+      description: 'Foreign key'
+      type: object
+      required:
+        - local
+        - reference
+      properties:
+        local:
+          type: array
+          items: string
+          minLength: 1
+        reference:
+          type: array
+          items: string
+          minLength: 1
     column:
       description: 'Column'
       type: object
