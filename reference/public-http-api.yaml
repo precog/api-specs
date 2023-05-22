@@ -200,6 +200,29 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/connector'
+  '/sources/{source-id}/pipelines/{pipeline-id}':
+    delete:
+      summary: Delete a source
+      tags: []
+      responses:
+        '204':
+          description: deleted
+        '401':
+          description: Unauthorized
+        '404':
+          description: Source not found, pipeline not found or source not found in pipeline.
+        '422':
+          description: 'if force = false: source is used in other pipeline.'
+      parameters:
+        - schema:
+            type: boolean
+          in: query
+          name: force
+          required: false
+      operationId: delete-sources-source-id-pipelines-pipeline-id
+      description: 
+        Delete the specified source and remove datasets using this source from specified pipeline.
+        If force = true, then remove datasets using this source from all pipelines.
   '/sources/{source-id}/datasets':
     parameters:
       - schema:
