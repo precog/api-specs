@@ -1693,6 +1693,7 @@ components:
           enum:
             - add
             - remove
+            - renew
         datasetIds:
           type: array
           uniqueItems: true
