@@ -1553,6 +1553,9 @@ components:
       properties:
         initialWrite:
           type: boolean
+        readRequired:
+          type: boolean
+          default: false
         sampleParameters:
           $ref: '#/components/schemas/initial-load-params-message-limit'
       required:
@@ -1690,6 +1693,7 @@ components:
           enum:
             - add
             - remove
+            - renew
         datasetIds:
           type: array
           uniqueItems: true
