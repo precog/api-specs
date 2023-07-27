@@ -1573,6 +1573,7 @@ components:
             - failed
             - errored
             - aborted
+            - aborting
         at:
           type: number
         message:
@@ -1595,6 +1596,7 @@ components:
             - failed
             - errored
             - aborted
+            - aborting
         at:
           type: number
         message:
