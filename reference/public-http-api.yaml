@@ -1572,6 +1572,7 @@ components:
             - empty
             - failed
             - errored
+            - aborted
         at:
           type: number
         message:
@@ -1593,6 +1594,7 @@ components:
             - written
             - failed
             - errored
+            - aborted
         at:
           type: number
         message:
