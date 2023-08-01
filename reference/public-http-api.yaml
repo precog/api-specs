@@ -299,6 +299,23 @@ paths:
           description: Source not found.
       operationId: get-sources-source-id-datasets
       description: Get all available datasets for the provided source.
+  /datasets/{dataset-id}/abort-loading:
+    parameters:
+      - name: dataset-id
+        schema:
+          type: string
+        in: path
+        required: true
+    post:
+      summary: Abort the loading of the given dataset in all loads
+      tags: []
+      responses:
+        '202':
+          description: The request to abort the dataset has been accepted. Use pipeline and pipeline load dataset status to monitor the progress of this dataset in loads/pipelines which this dataset is a part of.
+        '404':
+          description: The provided dataset does not exist in the system
+      description: Abort the loading of the given dataset in all loads
+      operationId: abort-loading-for-dataset
   /destinations:
     get:
       summary: Get Destinations
@@ -1555,6 +1572,8 @@ components:
             - empty
             - failed
             - errored
+            - aborted
+            - aborting
         at:
           type: number
         message:
@@ -1576,6 +1595,8 @@ components:
             - written
             - failed
             - errored
+            - aborted
+            - aborting
         at:
           type: number
         message:
