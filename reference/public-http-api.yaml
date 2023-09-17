@@ -1751,6 +1751,7 @@ components:
             - add
             - remove
             - renew
+            - abort
         datasetIds:
           type: array
           uniqueItems: true
