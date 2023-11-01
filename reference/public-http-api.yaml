@@ -1255,12 +1255,16 @@ components:
                   enum:
                     - ready
                     - input-required
+                    - user-action
                     - authentication-required
                     - loading
                     - processing
               type: string
             message:
               type: string
+            action:
+              type: object
+              $ref: '#/components/schemas/action'
             at:
               type: number
       required:
@@ -1578,6 +1582,9 @@ components:
           type: number
         message:
           type: string
+        action:
+          type: object
+          $ref: '#/components/schemas/action'
       required:
         - state
         - at
@@ -1601,9 +1608,25 @@ components:
           type: number
         message:
           type: string
+        action:
+          type: object
+          $ref: '#/components/schemas/action'
       required:
         - state
         - at
+    action:
+      title: action
+      type: object
+      properties:
+        type: string
+        enum:
+          - oauth2-request-authorization
+        url: string
+        fieldName: string
+      required:
+        - type
+        - url
+        - fieldName
     initial-load-params:
       title: initial-load-params
       type: object
