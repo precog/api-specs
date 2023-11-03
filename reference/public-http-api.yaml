@@ -211,8 +211,7 @@ paths:
         '404':
           description: Source not found
       operationId: delete-sources-source-id
-      description: 
-        Delete the specified source and remove datasets using this source from all pipelines.
+      description: Delete the specified source and remove datasets using this source from all pipelines.
   '/sources/{source-id}/pipelines/{pipeline-id}':
     delete:
       summary: Delete a source
@@ -223,7 +222,7 @@ paths:
         '401':
           description: Unauthorized
         '404':
-          description: Source not found, pipeline not found or source not found in pipeline.
+          description: 'Source not found, pipeline not found or source not found in pipeline.'
         '422':
           description: 'if force = false: source is used in other pipeline.'
       parameters:
@@ -233,9 +232,7 @@ paths:
           name: force
           required: false
       operationId: delete-sources-source-id-pipelines-pipeline-id
-      description: 
-        Delete the specified source and remove datasets using this source from specified pipeline.
-        If force = true, then remove datasets using this source from all pipelines.
+      description: 'Delete the specified source and remove datasets using this source from specified pipeline. If force = true, then remove datasets using this source from all pipelines.'
   '/sources/{source-id}/datasets':
     parameters:
       - schema:
@@ -299,7 +296,7 @@ paths:
           description: Source not found.
       operationId: get-sources-source-id-datasets
       description: Get all available datasets for the provided source.
-  /datasets/{dataset-id}/abort-loading:
+  '/datasets/{dataset-id}/abort-loading':
     parameters:
       - name: dataset-id
         schema:
@@ -1263,7 +1260,6 @@ components:
             message:
               type: string
             action:
-              type: object
               $ref: '#/components/schemas/action'
             at:
               type: number
@@ -1583,7 +1579,6 @@ components:
         message:
           type: string
         action:
-          type: object
           $ref: '#/components/schemas/action'
       required:
         - state
@@ -1609,7 +1604,6 @@ components:
         message:
           type: string
         action:
-          type: object
           $ref: '#/components/schemas/action'
       required:
         - state
@@ -1618,11 +1612,14 @@ components:
       title: action
       type: object
       properties:
-        type: string
-        enum:
-          - oauth2-request-authorization
-        url: string
-        fieldName: string
+        type:
+          type: string
+          enum:
+            - oauth2-request-authorization
+        url:
+          type: string
+        fieldName:
+          type: string
       required:
         - type
         - url
