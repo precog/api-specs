@@ -1063,37 +1063,6 @@ paths:
         '404':
           description: Pipeline not found
       description: Get email addresses associated with the pipeline.
-  '/pipelines/{pipeline-id}/loads/latest/logs':
-    parameters:
-      - schema:
-          type: string
-        name: pipeline-id
-        in: path
-        required: true
-    get:
-      summary: Get pipeline logs for the latest load
-      tags: []
-      responses:
-        '200':
-          description: OK
-          content:
-            text/plain:
-              schema:
-                type: string
-        '204':
-          description: This dataset has not yet been loaded
-        '401':
-          description: Unauthorized
-        '404':
-          description: Pipeline not found <OR> Dataset not found
-      operationId: get-pipelines-pipeline-id-loads-latest-logs
-      description: Get pipeline logs for the latest load and provided dataset
-      parameters:
-        - schema:
-            type: string
-          in: query
-          name: dataset-id
-          required: true
   /log:
     post:
       summary: Log a message
