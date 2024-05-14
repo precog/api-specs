@@ -1584,6 +1584,7 @@ components:
           type: string
           enum:
             - accepted
+            - rejected
             - staging
             - scheming
             - empty
