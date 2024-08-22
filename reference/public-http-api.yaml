@@ -1536,6 +1536,7 @@ components:
           type: string
           enum:
             - accepted
+            - out-of-band-errored
             - staging
             - scheming
             - empty
