@@ -881,28 +881,6 @@ paths:
           description: Bad Request - there are no datasets in pipeline
         '401':
           description: Unauthorized
-        '402':
-          description: Payment Required - trial period has expired and there is no active subscription
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: object
-                    required:
-                      - type
-                      - details
-                    properties:
-                      type:
-                        type: string
-                        minLength: 1
-                      details:
-                        type: string
-                  url:
-                    type: string
-                required:
-                  - error
         '404':
           description: Pipeline not found.
         '502':
