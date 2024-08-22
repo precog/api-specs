@@ -1602,6 +1602,9 @@ components:
         readRequired:
           type: boolean
           default: false
+        reusePreviousSchema:
+          type: boolean
+          default: false
         sampleParameters:
           $ref: '#/components/schemas/initial-load-params-message-limit'
       required:
