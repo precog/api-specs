@@ -890,15 +890,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/error-message'
       description: Start a load for this pipeline.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                returnUrl:
-                  type: string
-        description: ''
   '/pipelines/{pipeline-id}/rename':
     parameters:
       - schema:
