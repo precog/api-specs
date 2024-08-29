@@ -1185,6 +1185,156 @@ paths:
                 - returnUrl
       description: Create a Stripe customer portal session
     parameters: []
+  /issues/:
+    post:
+      summary: Create issue
+      operationId: post-issues
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                required:
+                  - id
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
+        '401':
+          description: Unauthorized
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                pipelineId:
+                  type: string
+                datasetId:
+                  type: string
+                description:
+                  oneOf:
+                    - properties:
+                        type:
+                          type: string
+                          enum:
+                            - missingRows
+                            - duplicateRows
+                      required:
+                        - type
+                    - properties:
+                        type:
+                          type: string
+                          enum:
+                            - missingColumns
+                        names:
+                          type: array
+                          minItems: 1
+                          uniqueItems: true
+                          items:
+                            type: string
+                      required:
+                        - type
+                        - names
+                  type: object
+              required:
+                - pipelineId
+                - datasetId
+                - description
+        description: ''
+      description: Creates a new issue for engineering to look into
+  '/issues/{issue-id}/assets':
+    parameters:
+      - schema:
+          type: string
+        name: issue-id
+        in: path
+        required: true
+    post:
+      summary: Attach asset to issue
+      operationId: post-issues-issue-id-assets
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
+        '401':
+          description: Unauthorized
+      description: 'Attaches an asset to an issue - data examples, screenshots, etc.'
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties: {}
+        description: Uploaded file data. Content-Type and Filename headers are required in the file data.
+  '/issues/{issue-id}/respond':
+    parameters:
+      - schema:
+          type: string
+        name: issue-id
+        in: path
+        required: true
+    put:
+      summary: Respond to issue
+      operationId: put-issues-issue-id-respond
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
+        '401':
+          description: Unauthorized
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                response:
+                  type: string
+              required:
+                - response
+        description: ''
+      description: Marks an issue as having been responded to by an engineer.
+  '/issues/{issue-id}/approve':
+    parameters:
+      - schema:
+          type: string
+        name: issue-id
+        in: path
+        required: true
+    put:
+      summary: Approve issue
+      operationId: put-issues-issue-id-approve
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
+        '401':
+          description: Unauthorized
+      description: Marks an issue resolution as accepted by the customer.
 components:
   schemas:
     connector:
