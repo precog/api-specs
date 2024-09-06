@@ -1261,7 +1261,7 @@ paths:
                     kindId:
                       type: string
                       minLength: 1
-                    docsURI:
+                    docsURL:
                       type: string
                     usecase:
                       type: string
@@ -1282,11 +1282,11 @@ paths:
                         - connector-request
                     productName:
                       type: string
-                    productURI:
+                    productURL:
                       type: string
-                    loginURI:
+                    loginURL:
                       type: string
-                    docsURI:
+                    docsURL:
                       type: string
                     credentials:
                       type: string
@@ -1300,8 +1300,8 @@ paths:
                   required:
                     - category
                     - productName
-                    - productURI
-                    - loginURI
+                    - productURL
+                    - loginURL
                     - credentials
                     - usecase
                     - datasets
