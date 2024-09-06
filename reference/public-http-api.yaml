@@ -1213,41 +1213,99 @@ paths:
         content:
           application/json:
             schema:
+              oneOf:
+                - properties:
+                    category:
+                      type: string
+                      enum:
+                        - data
+                    pipelineId:
+                      type: string
+                    datasetId:
+                      type: string
+                    description:
+                      oneOf:
+                        - properties:
+                            type:
+                              type: string
+                              enum:
+                                - missingRows
+                                - duplicateRows
+                          required:
+                            - type
+                        - properties:
+                            type:
+                              type: string
+                              enum:
+                                - missingColumns
+                            names:
+                              type: array
+                              minItems: 1
+                              uniqueItems: true
+                              items:
+                                type: string
+                          required:
+                            - type
+                            - names
+                      type: object
+                  required:
+                    - category
+                    - pipelineId
+                    - datasetId
+                    - description
+                - properties:
+                    category:
+                      type: string
+                      enum:
+                        - dataset-request
+                    kindId:
+                      type: string
+                      minLength: 1
+                    docsURI:
+                      type: string
+                    usecase:
+                      type: string
+                    datasets:
+                      type: array
+                      uniqueItems: true
+                      items:
+                        type: string
+                  required:
+                    - category
+                    - kindId
+                    - usecase
+                    - datasets
+                - properties:
+                    category:
+                      type: string
+                      enum:
+                        - connector-request
+                    productName:
+                      type: string
+                    productURI:
+                      type: string
+                    loginURI:
+                      type: string
+                    docsURI:
+                      type: string
+                    credentials:
+                      type: string
+                    usecase:
+                      type: string
+                    datasets:
+                      type: array
+                      uniqueItems: true
+                      items:
+                        type: string
+                  required:
+                    - category
+                    - productName
+                    - productURI
+                    - loginURI
+                    - credentials
+                    - usecase
+                    - datasets
               type: object
-              properties:
-                pipelineId:
-                  type: string
-                datasetId:
-                  type: string
-                description:
-                  oneOf:
-                    - properties:
-                        type:
-                          type: string
-                          enum:
-                            - missingRows
-                            - duplicateRows
-                      required:
-                        - type
-                    - properties:
-                        type:
-                          type: string
-                          enum:
-                            - missingColumns
-                        names:
-                          type: array
-                          minItems: 1
-                          uniqueItems: true
-                          items:
-                            type: string
-                      required:
-                        - type
-                        - names
-                  type: object
-              required:
-                - pipelineId
-                - datasetId
-                - description
         description: ''
       description: Creates a new issue for engineering to look into
   '/issues/{issue-id}/assets':
