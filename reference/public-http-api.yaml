@@ -1279,7 +1279,7 @@ paths:
                     category:
                       type: string
                       enum:
-                        - connector-request
+                        - source-request
                     productName:
                       type: string
                     productURL:
