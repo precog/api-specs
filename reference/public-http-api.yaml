@@ -1418,15 +1418,13 @@ components:
           writeOnly: true
         status:
           type: object
-          behavior: Read Only
           required:
             - type
             - at
           properties:
             type:
               oneOf:
-                - properties: {}
-                  enum:
+                - enum:
                     - ready
                     - input-required
                     - user-action
@@ -1439,7 +1437,8 @@ components:
             action:
               $ref: '#/components/schemas/action'
             at:
-              type: number
+              $ref: '#/components/schemas/epoch-millis'
+          readOnly: true
       required:
         - id
         - kindId
@@ -1701,8 +1700,22 @@ components:
           $ref: '#/components/schemas/outofband-state'
         inBand:
           $ref: '#/components/schemas/inband-state'
+        telemetry:
+          $ref: '#/components/schemas/dataset-telemetry'
       required:
         - id
+    dataset-telemetry:
+      title: dataset-telemetry
+      type: object
+      properties:
+        at:
+          $ref: '#/components/schemas/epoch-millis'
+        bytesStaged:
+          type: integer
+        ratelimitReset:
+          $ref: '#/components/schemas/epoch-millis'
+      required:
+        - at
     pipeline-dataset-status:
       title: ''
       type: object
@@ -1732,7 +1745,7 @@ components:
             - loading
             - accepted
         at:
-          type: number
+          $ref: '#/components/schemas/epoch-millis'
       required:
         - state
         - at
@@ -1752,7 +1765,7 @@ components:
             - aborted
             - aborting
         at:
-          type: number
+          $ref: '#/components/schemas/epoch-millis'
         message:
           type: string
         action:
@@ -1777,7 +1790,7 @@ components:
             - aborted
             - aborting
         at:
-          type: number
+          $ref: '#/components/schemas/epoch-millis'
         message:
           type: string
         action:
@@ -2083,6 +2096,11 @@ components:
       required:
         - type
         - details
+    epoch-millis:
+      type: integer
+      title: epoch-millis
+      minimum: 0
+      example: 1742922912239
   responses: {}
   securitySchemes:
     BearerAuth:
