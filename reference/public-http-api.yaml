@@ -1826,6 +1826,9 @@ components:
         reusePreviousSchema:
           type: boolean
           default: false
+        reuseDetectedPK:
+          type: boolean
+          default: false
         sampleParameters:
           $ref: '#/components/schemas/initial-load-params-message-limit'
       required:
