@@ -79,7 +79,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/source-dataset-properties'
+                $ref: '#/components/schemas/source-datasets-properties'
               examples:
                 example-1:
                   value:
@@ -210,7 +210,7 @@ components:
                   - string
         maxObservedStringLength:
           type: integer
-    source-dataset-properties:
+    source-datasets-properties:
       description: 'Datasets properties used in the in-band datasets in this source'
       type: object
       title: 'Source datasets properties'

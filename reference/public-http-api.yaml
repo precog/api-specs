@@ -1831,6 +1831,8 @@ components:
           default: false
         sampleParameters:
           $ref: '#/components/schemas/initial-load-params-message-limit'
+        datasetProperties:
+          $ref: '#/components/schemas/datasets-properties'
       required:
         - initialWrite
     initial-load-params-message-limit:
@@ -2104,6 +2106,59 @@ components:
       title: epoch-millis
       minimum: 0
       example: 1742922912239
+    datasets-properties:
+      description: 'Datasets properties to be used for the initial load of this source'
+      type: object
+      title: 'Datasets properties'
+      properties:
+        sourceId:
+          type: string
+        datasetProperties:
+          type: array
+          title: 'Datasets properties'
+          items:
+            $ref: '#/components/schemas/dataset-properties'
+    dataset-properties:
+      description: 'Dataset properties to be used for a particular dataset'
+      type: object
+      title: 'Source dataset properties'
+      properties:
+        name:
+          type: string
+          minLength: 1
+        properties:
+          type: array
+          title: 'Dataset properties'
+          items:
+            $ref: '#/components/schemas/dataset-property'
+    dataset-property:
+      description: One dataset property for a given dataset in a given source
+      oneOf:
+        - $ref: '#/components/schemas/primary-key-property'
+        # TODO add all properties here
+    primary-key-property:
+      description: Primary key for a given dataset
+      type: object
+      title: Dataset properties
+      properties:
+        primaryKey:
+          type: object
+          description: A primary key property
+          properties:
+            type:
+              oneOf:
+                - type: string
+                  enum: [strict, optional]
+                  description: Indicates whether the key is strict or optional
+            components:
+              type: array
+              title: Primary key components
+              items:
+                type: string
+                minLength: 1
+          required: [type, components]
+      required: [primaryKey]
+      additionalProperties: false
   responses: {}
   securitySchemes:
     BearerAuth:
