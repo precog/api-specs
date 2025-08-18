@@ -63,6 +63,64 @@ paths:
           description: Pipeline not found.
       operationId: get-pipelines-pipeline-id-metadata
       description: Get metadata for a particular particular pipeline.
+  '/sources/{source-id}/dataset-properties':
+    parameters:
+      - schema:
+          type: string
+        name: source-id
+        in: path
+        required: true
+    get:
+      summary: Get dataset properties related to the in-band datasets present in this source
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/source-dataset-properties'
+              examples:
+                example-1:
+                  value:
+                    sourceId: a864cb9a-7be2-11f0-aa5e-2a65c4d820c0
+                    datasetProperties:
+                      - name: 70c7b714-7be3-11f0-a48c-2a65c4d820c0:/Question Bank
+                        properties:
+                          - primaryKey:
+                              type: strict
+                              components:
+                                - $.data.results[:_].questionId
+                                - $.data.results[:_].questionBankId
+                      - name: 70c7b714-7be3-11f0-a48c-2a65c4d820c0:/Survey Categories
+                        properties:
+                          - primaryKey:
+                              type: strict
+                              components:
+                                - $.data.results[:_].surveyCategoryId
+                                - $.data.results[:_].surveyId
+                      - name: 70c7b714-7be3-11f0-a48c-2a65c4d820c0:/Survey Templates
+                        properties:
+                          - primaryKey:
+                              type: strict
+                              components:
+                                - $.data.results[:_].surveyTemplateId
+                                - $.data.results[:_].surveyId
+                                - $.data.results[:_].id
+                      - name: 70c7b714-7be3-11f0-a48c-2a65c4d820c0:/Surveys
+                        properties:
+                          - primaryKey:
+                              type: strict
+                              components:
+                                - $.data.id
+        '422':
+          description: Returned when the source does not have any in-band datasets
+        '401':
+          description: Unauthorized
+        '404':
+          description: Source not found.
+      operationId: get-source-id-dataset-properties
+      description: Get dataset properties for datasets in a particular source.
 components:
   schemas:
     pipeline-metadata:
@@ -152,6 +210,59 @@ components:
                   - string
         maxObservedStringLength:
           type: integer
+    source-dataset-properties:
+      description: 'Datasets properties used in the in-band datasets in this source'
+      type: object
+      title: 'Source datasets properties'
+      properties:
+        sourceId:
+          type: string
+        datasetProperties:
+          type: array
+          title: 'Datasets properties'
+          items:
+            $ref: '#/components/schemas/dataset-properties'
+    dataset-properties:
+      description: 'Dataset properties for a particular dataset in a source'
+      type: object
+      title: 'Source dataset properties'
+      properties:
+        name:
+          type: string
+          minLength: 1
+        properties:
+          type: array
+          title: 'Dataset properties'
+          items:
+            $ref: '#/components/schemas/dataset-property'
+    dataset-property:
+      description: One dataset property for a given dataset in a given source
+      oneOf:
+        - $ref: '#/components/schemas/primary-key-property'
+    primary-key-property:
+      description: Primary key for a given dataset
+      type: object
+      title: Source dataset properties
+      properties:
+        primaryKey:
+          type: object
+          description: A primary key property
+          properties:
+            type:
+              oneOf:
+                - type: string
+                  enum: [strict, optional]
+                  description: Indicates whether the key is strict or optional
+            components:
+              type: array
+              title: Primary key components
+              items:
+                type: string
+                minLength: 1
+          required: [type, components]
+      required: [primaryKey]
+      additionalProperties: false
+
   securitySchemes:
     BearerAuth:
       type: http
