@@ -63,15 +63,15 @@ paths:
           description: Pipeline not found.
       operationId: get-pipelines-pipeline-id-metadata
       description: Get metadata for a particular particular pipeline.
-  '/sources/{source-id}/dataset-properties':
+  '/pipelines/{pipeline-id}/dataset-properties':
     parameters:
       - schema:
           type: string
-        name: source-id
+        name: pipeline-id
         in: path
         required: true
     get:
-      summary: Get dataset properties related to the in-band datasets present in this source
+      summary: Get dataset properties related to the in-band datasets present in this pipeline
       tags: []
       responses:
         '200':
@@ -79,11 +79,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/source-datasets-properties'
+                $ref: '#/components/schemas/pipeline-datasets-properties'
               examples:
                 example-1:
                   value:
-                    sourceId: a864cb9a-7be2-11f0-aa5e-2a65c4d820c0
+                    pipelineId: a864cb9a-7be2-11f0-aa5e-2a65c4d820c0
                     datasetProperties:
                       - name: 70c7b714-7be3-11f0-a48c-2a65c4d820c0:/Question Bank
                         properties:
@@ -114,13 +114,13 @@ paths:
                               components:
                                 - $.data.id
         '422':
-          description: Returned when the source does not have any in-band datasets
+          description: Returned when the pipeline does not have any in-band datasets
         '401':
           description: Unauthorized
         '404':
-          description: Source not found.
-      operationId: get-source-id-dataset-properties
-      description: Get dataset properties for datasets in a particular source.
+          description: Pipeline not found.
+      operationId: get-pipeline-id-dataset-properties
+      description: Get dataset properties for datasets in a particular pipeline.
 components:
   schemas:
     pipeline-metadata:
@@ -210,12 +210,12 @@ components:
                   - string
         maxObservedStringLength:
           type: integer
-    source-datasets-properties:
-      description: 'Datasets properties used in the in-band datasets in this source'
+    pipeline-datasets-properties:
+      description: 'Datasets properties used in the in-band datasets in this pipeline'
       type: object
-      title: 'Source datasets properties'
+      title: 'Pipeline datasets properties'
       properties:
-        sourceId:
+        pipelineId:
           type: string
         datasetProperties:
           type: array
@@ -223,9 +223,9 @@ components:
           items:
             $ref: '#/components/schemas/dataset-properties'
     dataset-properties:
-      description: 'Dataset properties for a particular dataset in a source'
+      description: 'Dataset properties for a particular dataset in a pipeline'
       type: object
-      title: 'Source dataset properties'
+      title: 'pipeline dataset properties'
       properties:
         name:
           type: string
@@ -236,13 +236,13 @@ components:
           items:
             $ref: '#/components/schemas/dataset-property'
     dataset-property:
-      description: One dataset property for a given dataset in a given source
+      description: One dataset property for a given dataset in a given pipeline
       oneOf:
         - $ref: '#/components/schemas/primary-key-property'
     primary-key-property:
       description: Primary key for a given dataset
       type: object
-      title: Source dataset properties
+      title: pipeline dataset properties
       properties:
         primaryKey:
           type: object

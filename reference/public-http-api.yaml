@@ -2107,7 +2107,7 @@ components:
       minimum: 0
       example: 1742922912239
     datasets-properties:
-      description: 'Datasets properties to be used for the initial load of this source'
+      description: 'Datasets properties to be used for the initial load of this pipeline'
       type: object
       title: 'Datasets properties'
       properties:
@@ -2121,7 +2121,7 @@ components:
     dataset-properties:
       description: 'Dataset properties to be used for a particular dataset'
       type: object
-      title: 'Source dataset properties'
+      title: 'Pipeline dataset properties'
       properties:
         name:
           type: string
@@ -2132,10 +2132,9 @@ components:
           items:
             $ref: '#/components/schemas/dataset-property'
     dataset-property:
-      description: One dataset property for a given dataset in a given source
+      description: One dataset property for a given dataset in a given pipeline
       oneOf:
         - $ref: '#/components/schemas/primary-key-property'
-        # TODO add all properties here
     primary-key-property:
       description: Primary key for a given dataset
       type: object
