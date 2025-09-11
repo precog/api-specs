@@ -2,7 +2,6 @@ openapi: 3.1.0
 info:
   title: public-http-api
   version: '1.0'
-  summary: The Precog public HTTP REST API.
   description: The Precog public HTTP REST API.
   contact:
     url: 'https://precog.com'
@@ -226,6 +225,16 @@ paths:
         '422':
           description: 'if force = false: source is used in other pipeline.'
       parameters:
+        - schema:
+            type: string
+          name: source-id
+          in: path
+          required: true
+        - schema:
+            type: string
+          name: pipeline-id
+          in: path
+          required: true
         - schema:
             type: boolean
           in: query
@@ -1827,12 +1836,9 @@ components:
           type: boolean
           default: false
         reusePreviousPrimaryKey:
-          type: boolean
-          default: false
+          $ref: '#/components/schemas/reuse-previous-primary-key'
         sampleParameters:
           $ref: '#/components/schemas/initial-load-params-message-limit'
-        datasetProperties:
-          $ref: '#/components/schemas/datasets-properties'
       required:
         - initialWrite
     initial-load-params-message-limit:
@@ -1843,6 +1849,58 @@ components:
           type: number
       required:
         - maxMessages
+    primary-key-property:
+      description: Primary key for a given dataset
+      type: object
+      title: pipeline dataset properties
+      properties:
+        primaryKey:
+          type: object
+          description: A primary key property
+          properties:
+            type:
+              oneOf:
+                - type: string
+                  enum: [strict, optional]
+                  description: Indicates whether the key is strict or optional
+            components:
+              type: array
+              title: Primary key components
+              items:
+                type: string
+                minLength: 1
+          required: [type, components]
+      required: [primaryKey]
+      additionalProperties: false
+    reuse-previous-primary-key:
+      description: Legacy boolean or new strategy object.
+      oneOf:
+        - type: object
+          required: [type]
+          properties:
+            type:
+              type: string
+              enum: [detect-anew]
+        - type: object
+          required: [type]
+          properties:
+            type:
+              type: string
+              enum: [reuse-previous]
+        - type: object
+          required: [type, primaryKey]
+          properties:
+            type:
+              type: string
+              enum: [use-provided]
+            primaryKey:
+              $ref: '#/components/schemas/primary-key-property'
+        - type: boolean
+      examples:
+        - { "type": "detect-anew" }
+        - { "type": "reuse-previous" }
+        - { "type": "use-provided", "primaryKey": { "type": "strict", "components": ["$.path.to.id"] } }
+        - true
     pipeline-details:
       title: pipeline-details
       type: object
@@ -1961,27 +2019,38 @@ components:
         - notifications
     dataset-update:
       title: dataset-update
+      oneOf:
+        - $ref: '#/components/schemas/dataset-update-new'
+        - $ref: '#/components/schemas/dataset-update-legacy'
+    dataset-update-new:
       type: object
+      required: [action, dataset]
       properties:
         action:
           type: string
-          enum:
-            - add
-            - remove
-            - renew
-            - abort
+          enum: [add, remove, renew, abort]
+        dataset:
+          type: object
+          minProperties: 1
+          additionalProperties:
+            $ref: '#/components/schemas/initial-load-params'
+    dataset-update-legacy:
+      deprecated: true
+      type: object
+      required: [action, datasetIds]
+      properties:
+        action:
+          type: string
+          enum: [add, remove, renew, abort]
         datasetIds:
           type: array
+          description: List of dataset IDs to affect.
           uniqueItems: true
           items:
             type: string
             minLength: 1
         loadParameters:
-          type: object
           $ref: '#/components/schemas/initial-load-params'
-      required:
-        - action
-        - datasetIds
     error-message:
       title: error-message
       type: object
@@ -2106,58 +2175,6 @@ components:
       title: epoch-millis
       minimum: 0
       example: 1742922912239
-    datasets-properties:
-      description: 'Datasets properties to be used for the initial load of this pipeline'
-      type: object
-      title: 'Datasets properties'
-      properties:
-        sourceId:
-          type: string
-        datasetProperties:
-          type: array
-          title: 'Datasets properties'
-          items:
-            $ref: '#/components/schemas/dataset-properties'
-    dataset-properties:
-      description: 'Dataset properties to be used for a particular dataset'
-      type: object
-      title: 'Pipeline dataset properties'
-      properties:
-        name:
-          type: string
-          minLength: 1
-        properties:
-          type: array
-          title: 'Dataset properties'
-          items:
-            $ref: '#/components/schemas/dataset-property'
-    dataset-property:
-      description: One dataset property for a given dataset in a given pipeline
-      oneOf:
-        - $ref: '#/components/schemas/primary-key-property'
-    primary-key-property:
-      description: Primary key for a given dataset
-      type: object
-      title: Dataset properties
-      properties:
-        primaryKey:
-          type: object
-          description: A primary key property
-          properties:
-            type:
-              oneOf:
-                - type: string
-                  enum: [strict, optional]
-                  description: Indicates whether the key is strict or optional
-            components:
-              type: array
-              title: Primary key components
-              items:
-                type: string
-                minLength: 1
-          required: [type, components]
-      required: [primaryKey]
-      additionalProperties: false
   responses: {}
   securitySchemes:
     BearerAuth:
