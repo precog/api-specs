@@ -63,6 +63,60 @@ paths:
           description: Pipeline not found.
       operationId: get-pipelines-pipeline-id-metadata
       description: Get metadata for a particular particular pipeline.
+  '/pipelines/{pipeline-id}/dataset-properties':
+    parameters:
+      - schema:
+          type: string
+        name: pipeline-id
+        in: path
+        required: true
+    get:
+      summary: Get dataset properties related to the in-band datasets present in this pipeline
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pipeline-datasets-properties'
+              examples:
+                example-1:
+                  value:
+                    pipelineId: a864cb9a-7be2-11f0-aa5e-2a65c4d820c0
+                    datasetProperties:
+                      "70c7b714-7be3-11f0-a48c-2a65c4d820c0:/Question Bank":
+                        primaryKey:
+                          type: strict
+                          components:
+                            - $.data.results[:_].questionId
+                            - $.data.results[:_].questionBankId
+                      "70c7b714-7be3-11f0-a48c-2a65c4d820c0:/Survey Categories":
+                        primaryKey:
+                          type: strict
+                          components:
+                            - $.data.results[:_].surveyCategoryId
+                            - $.data.results[:_].surveyId
+                      "70c7b714-7be3-11f0-a48c-2a65c4d820c0:/Survey Templates":
+                        primaryKey:
+                          type: strict
+                          components:
+                            - $.data.results[:_].surveyTemplateId
+                            - $.data.results[:_].surveyId
+                            - $.data.results[:_].id
+                      "70c7b714-7be3-11f0-a48c-2a65c4d820c0:/Surveys":
+                        primaryKey:
+                          type: strict
+                          components:
+                            - $.data.id
+        '422':
+          description: Returned when the pipeline does not have any in-band datasets
+        '401':
+          description: Unauthorized
+        '404':
+          description: Pipeline not found.
+      operationId: get-pipeline-id-dataset-properties
+      description: Get dataset properties for datasets in a particular pipeline.
 components:
   schemas:
     pipeline-metadata:
@@ -119,12 +173,14 @@ components:
       properties:
         local:
           type: array
-          items: string
-          minLength: 1
+          items:
+            type: string
+            minLength: 1
         reference:
           type: array
-          items: string
-          minLength: 1
+          items:
+            type: string
+            minLength: 1
     column:
       description: 'Column'
       type: object
@@ -137,21 +193,64 @@ components:
           type: string
           minLength: 1
         columnType:
-          type:
-            oneOf:
-              - properties: {}
-                enum:
-                  - boolean
-                  - long
-                  - double
-                  - decimal
-                  - localTime
-                  - localDatetime
-                  - localDate
-                  - offsetDatetime
-                  - string
+          oneOf:
+            - properties: {}
+              enum:
+                - boolean
+                - long
+                - double
+                - decimal
+                - localTime
+                - localDatetime
+                - localDate
+                - offsetDatetime
+                - string
         maxObservedStringLength:
           type: integer
+    pipeline-datasets-properties:
+      description: 'Datasets properties used in the in-band datasets in this pipeline'
+      type: object
+      title: 'Pipeline datasets properties'
+      properties:
+        pipelineId:
+          type: string
+        datasetProperties:
+          type: object
+          title: 'Datasets properties'
+          additionalProperties:
+            $ref: '#/components/schemas/dataset-properties'
+      required: [pipelineId, datasetProperties]
+    dataset-properties:
+      description: 'Dataset properties for a particular dataset in a pipeline'
+      type: object
+      title: 'pipeline dataset properties'
+      properties:
+        primaryKey:
+          $ref: '#/components/schemas/primary-key-property'
+    primary-key-property:
+      description: Primary key for a given dataset
+      type: object
+      title: pipeline dataset properties
+      properties:
+        primaryKey:
+          type: object
+          description: A primary key property
+          properties:
+            type:
+              oneOf:
+                - type: string
+                  enum: [strict, optional]
+                  description: Indicates whether the key is strict or optional
+            components:
+              type: array
+              title: Primary key components
+              items:
+                type: string
+                minLength: 1
+          required: [type, components]
+      required: [primaryKey]
+      additionalProperties: false
+
   securitySchemes:
     BearerAuth:
       type: http

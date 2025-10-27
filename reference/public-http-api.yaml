@@ -2,7 +2,6 @@ openapi: 3.1.0
 info:
   title: public-http-api
   version: '1.0'
-  summary: The Precog public HTTP REST API.
   description: The Precog public HTTP REST API.
   contact:
     url: 'https://precog.com'
@@ -226,6 +225,16 @@ paths:
         '422':
           description: 'if force = false: source is used in other pipeline.'
       parameters:
+        - schema:
+            type: string
+          name: source-id
+          in: path
+          required: true
+        - schema:
+            type: string
+          name: pipeline-id
+          in: path
+          required: true
         - schema:
             type: boolean
           in: query
@@ -1827,8 +1836,7 @@ components:
           type: boolean
           default: false
         reusePreviousPrimaryKey:
-          type: boolean
-          default: false
+          $ref: '#/components/schemas/reuse-previous-primary-key'
         sampleParameters:
           $ref: '#/components/schemas/initial-load-params-message-limit'
       required:
@@ -1841,6 +1849,58 @@ components:
           type: number
       required:
         - maxMessages
+    primary-key-property:
+      description: Primary key for a given dataset
+      type: object
+      title: pipeline dataset properties
+      properties:
+        primaryKey:
+          type: object
+          description: A primary key property
+          properties:
+            type:
+              oneOf:
+                - type: string
+                  enum: [strict, optional]
+                  description: Indicates whether the key is strict or optional
+            components:
+              type: array
+              title: Primary key components
+              items:
+                type: string
+                minLength: 1
+          required: [type, components]
+      required: [primaryKey]
+      additionalProperties: false
+    reuse-previous-primary-key:
+      description: Legacy boolean or new strategy object.
+      oneOf:
+        - type: object
+          required: [type]
+          properties:
+            type:
+              type: string
+              enum: [detect-anew]
+        - type: object
+          required: [type]
+          properties:
+            type:
+              type: string
+              enum: [reuse-previous]
+        - type: object
+          required: [type, primaryKey]
+          properties:
+            type:
+              type: string
+              enum: [use-provided]
+            primaryKey:
+              $ref: '#/components/schemas/primary-key-property'
+        - type: boolean
+      examples:
+        - { "type": "detect-anew" }
+        - { "type": "reuse-previous" }
+        - { "type": "use-provided", "primaryKey": { "type": "strict", "components": ["$.path.to.id"] } }
+        - true
     pipeline-details:
       title: pipeline-details
       type: object
@@ -1959,27 +2019,38 @@ components:
         - notifications
     dataset-update:
       title: dataset-update
+      oneOf:
+        - $ref: '#/components/schemas/dataset-update-new'
+        - $ref: '#/components/schemas/dataset-update-legacy'
+    dataset-update-new:
       type: object
+      required: [action, dataset]
       properties:
         action:
           type: string
-          enum:
-            - add
-            - remove
-            - renew
-            - abort
+          enum: [add, remove, renew, abort]
+        dataset:
+          type: object
+          minProperties: 1
+          additionalProperties:
+            $ref: '#/components/schemas/initial-load-params'
+    dataset-update-legacy:
+      deprecated: true
+      type: object
+      required: [action, datasetIds]
+      properties:
+        action:
+          type: string
+          enum: [add, remove, renew, abort]
         datasetIds:
           type: array
+          description: List of dataset IDs to affect.
           uniqueItems: true
           items:
             type: string
             minLength: 1
         loadParameters:
-          type: object
           $ref: '#/components/schemas/initial-load-params'
-      required:
-        - action
-        - datasetIds
     error-message:
       title: error-message
       type: object
