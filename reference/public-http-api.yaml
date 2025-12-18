@@ -865,6 +865,17 @@ paths:
                         inBand:
                           state: staging
                           at: 0
+                    semanticModels:
+                      - jobId: 123-456
+                        sourceId: the-source
+                        useCase: Sales go brrr?
+                        datasetIds:
+                          - ds-1
+                          - ds-2
+                        status:
+                          state: modeling
+                          at: 1766097092134
+                        
         '401':
           description: Unauthorized
         '404':
@@ -1741,6 +1752,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/dataset-status'
+        semanticModels:
+          type: array
+          items:
+            $ref: '#/components/schemas/semantic-modeling-summary'
       required:
         - pipelineId
         - datasets
@@ -2178,6 +2193,51 @@ components:
       title: epoch-millis
       minimum: 0
       example: 1742922912239
+    semantic-modeling-summary:
+      title: Semantic Modeling Status
+      description: 'Provides details and lifecycle information about a semantic modeling process.'
+      type: object
+      properties:
+        jobId:
+          description: "Unique identifier of the job responsible for this model."
+          type: string
+          minLength: 1
+        sourceId:
+          type: string
+          minLength: 1
+        useCase:
+          type: string
+          minLength: 1
+        datasetIds:
+          type: array
+          items:
+            type: string
+            minLength: 1
+        status:
+          $ref: '#/components/schemas/semantic-modeling-status'
+      required:
+        - jobId
+        - sourceId
+        - useCase
+        - datasetIds
+        - status
+    semantic-modeling-status:
+      type: object
+      title: Semantic Modeling Status
+      properties:
+        state:
+          type: string
+          enum:
+            - accepted
+            - modeling
+            - canceled
+            - errored
+            - succeeded
+        at:
+          $ref: '#/components/schemas/epoch-millis'
+      required:
+        - state
+        - at
   responses: {}
   securitySchemes:
     BearerAuth:
