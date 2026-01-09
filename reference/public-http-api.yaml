@@ -2228,7 +2228,7 @@ components:
         state:
           type: string
           enum:
-            - accepted
+            - pending
             - modeling
             - canceled
             - errored
