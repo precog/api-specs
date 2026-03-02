@@ -978,6 +978,166 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/pipeline-name'
+  '/pipelines/{pipeline-id}/semantic-contexts':
+    parameters:
+      - schema:
+          type: string
+        name: pipeline-id
+        in: path
+        required: true
+    get:
+      operationId: get-pipelines-pipeline-id-semantic-contexts
+      summary: Get existing semantic contexts of this pipeline
+      responses:
+        '200':
+          description: List of semantic contexts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/semantic-context'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Pipeline not found
+        '422':
+          description: Semantic error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
+    post:
+      operationId: post-pipelines-pipeline-id-semantic-contexts
+      summary: Add a semantic context to the pipeline
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/semantic-context-request'
+      responses:
+        '201':
+          description: Semantic context created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  semanticContextId:
+                    type: string
+                    description: ID generated for the newly created semantic context
+                    minLength: 1
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Pipeline not found
+        '422':
+          description: Semantic error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
+  
+  '/pipelines/{pipeline-id}/semantic-contexts/{semantic-context-id}':
+    parameters:
+      - schema:
+          type: string
+        name: pipeline-id
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: semantic-context-id
+        in: path
+        required: true
+    get:
+      operationId: get-pipelines-pipeline-id-semantic-contexts-semantic-context-id
+      summary: Get the details of the particular semantic context
+      responses:
+        '200':
+          description: Semantic context retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/semantic-contest'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Semantic context with this pipeline ID/semantic context ID combination not found
+        '422':
+          description: Semantic error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
+    put:
+      operationId: put-pipelines-pipeline-id-semantic-contexts-semantic-context-id
+      summary: Replace details of a semantic context
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/semantic-context-request'
+      responses:
+        '200':
+          description: Semantic context updated
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Semantic context with this pipeline ID/semantic context ID combination not found
+        '422':
+          description: Semantic error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
+    delete:
+      operationId: delete-pipelines-pipeline-id-semantic-contexts-semantic-context-id
+      summary: Delete the semantic context
+      responses:
+        '200':
+          description: Semantic context deleted
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Semantic context with this pipeline ID/semantic context ID combination not found
+        '422':
+          description: Semantic error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
+  
   '/pipelines/{pipeline-id}/schedule':
     parameters:
       - schema:
@@ -2193,6 +2353,35 @@ components:
       title: epoch-millis
       minimum: 0
       example: 1742922912239
+
+    semantic-context:
+      title: Pipeline semantic context
+      description: 'Provides details about a semantic context'
+      type: object
+      properties:
+        id:
+          description: ID that uniquely identifies this semantic context
+          type: string
+          minLength: 1
+        pipeline:
+          description: ID of the pipeline that this semantic context describes
+          type: string
+          minLength: 1
+        useCase:
+          description: Use case which determines how the semantic model is generated under this semantic context
+          type: string
+          minLength: 1
+
+    semantic-context-request:
+      title: Semantic context request
+      description: 'Describes the parameters to requests creating/modifying semantic contexts'
+      type: object
+      properties:
+        useCase:
+          description: Use case which determines how the semantic model is generated under this semantic context
+          type: string
+          minLength: 1
+
     semantic-modeling-summary:
       title: Semantic Modeling Status
       description: 'Provides details and lifecycle information about a semantic modeling process.'
@@ -2202,7 +2391,7 @@ components:
           description: "Unique identifier of the job responsible for this model."
           type: string
           minLength: 1
-        sourceId:
+        contextId:
           type: string
           minLength: 1
         useCase:
