@@ -702,6 +702,29 @@ paths:
         '404':
           description: Not Found
       description: Deletes the given pipeline
+  '/pipelines/{pipeline-id}/metrics':
+    parameters:
+      - schema:
+          type: string
+        name: pipeline-id
+        in: path
+        required: true
+    get:
+      summary: Get the pipeline metrics
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/aggregated-pipeline-metrics'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Pipeline not found.
+      description: Get the metrics from a pipeline
+
   '/pipelines/{pipeline-id}/datasets':
     parameters:
       - schema:
@@ -875,7 +898,7 @@ paths:
                         status:
                           state: modeling
                           at: 1766097092134
-                        
+
         '401':
           description: Unauthorized
         '404':
@@ -1049,7 +1072,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error-message'
-  
+
   '/pipelines/{pipeline-id}/semantic-contexts/{semantic-context-id}':
     parameters:
       - schema:
@@ -1071,7 +1094,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/semantic-contest'
+                $ref: '#/components/schemas/semantic-context'
         '400':
           description: Bad Request
           content:
@@ -1137,7 +1160,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error-message'
-  
+
   '/pipelines/{pipeline-id}/schedule':
     parameters:
       - schema:
@@ -1805,6 +1828,20 @@ components:
         - id
         - name
         - destinationId
+    simple-pipeline-metric:
+      type: object
+      properties:
+        rows:
+          type: number
+          readOnly: true
+        bytes:
+          type: number
+          readOnly: true
+    aggregated-pipeline-metrics:
+      type: object
+      properties:
+        lastWeek:
+           $ref: '#/components/schemas/simple-pipeline-metric'
     dataset:
       title: ''
       type: object
