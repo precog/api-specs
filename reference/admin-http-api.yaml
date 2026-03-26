@@ -160,7 +160,7 @@ components:
         - schema
       description: |-
         The domain a job override applies to.
-        Currently either "reader" or "schema".
+        Currently "reader", "schema", "transactor", "writer", or "discovery.
 
     applies-to:
       type: object
