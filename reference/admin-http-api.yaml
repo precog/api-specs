@@ -131,6 +131,13 @@ paths:
           enum:
             - reader
             - schema
+            - transactor
+            - discovery
+            - writer
+            - statistic
+            - statistic-verifier
+            - theta-sketch-compute
+            - snowflake-semantic-model-publisher
         name: domain
         in: path
         required: true
@@ -158,9 +165,15 @@ components:
       enum:
         - reader
         - schema
+        - transactor
+        - discovery
+        - writer
+        - statistic
+        - statistic-verifier
+        - theta-sketch-compute
+        - snowflake-semantic-model-publisher
       description: |-
         The domain a job override applies to.
-        Currently "reader", "schema", "transactor", "writer", or "discovery.
 
     applies-to:
       type: object
