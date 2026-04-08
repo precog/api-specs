@@ -152,6 +152,18 @@ components:
                   - string
         maxObservedStringLength:
           type: integer
+        piiHandling:
+          description: >-
+            Optional PII handling strategy for this column. When omitted, the column
+            is treated as non-PII (passthrough). Possible values:
+            - hash: replace values with a deterministic HMAC-SHA256 digest
+            - omit: exclude the column from output entirely
+            - nullify: replace values with empty strings
+          type: string
+          enum:
+            - hash
+            - omit
+            - nullify
   securitySchemes:
     BearerAuth:
       type: http
