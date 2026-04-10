@@ -586,12 +586,17 @@ paths:
                   value:
                     - id: '1'
                       name: Ecommerce
+                      driftedDatasetIds: []
                     - id: '2'
                       name: Internal
+                      driftedDatasetIds:
+                        - 'ds-42'
                     - id: '3'
                       name: Staging environment
+                      driftedDatasetIds: []
                     - id: '4'
                       name: Test environment
+                      driftedDatasetIds: []
         '401':
           description: Unauthorized
       operationId: get-pipelines
@@ -686,6 +691,7 @@ paths:
                     name: Ecommerce
                     columnNameStrategy:
                       tableNamePostfix: true
+                    driftedDatasetIds: []
         '401':
           description: Unauthorized
         '404':
@@ -1799,6 +1805,12 @@ components:
         name:
           type: string
           minLength: 1
+        driftedDatasetIds:
+          type: array
+          readOnly: true
+          description: The set of dataset IDs within this pipeline that have drifted from their initial schema.
+          items:
+            type: string
       required:
         - id
         - name
@@ -1824,6 +1836,12 @@ components:
           properties:
             tableNamePostfix:
               type: boolean
+        driftedDatasetIds:
+          type: array
+          readOnly: true
+          description: The set of dataset IDs within this pipeline that have drifted from their initial schema.
+          items:
+            type: string
       required:
         - id
         - name
