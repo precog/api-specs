@@ -1267,6 +1267,28 @@ paths:
         '404':
           description: Pipeline not found
       description: Get email addresses associated with the pipeline.
+  '/loads/{load-id}/metrics':
+    parameters:
+      - schema:
+          type: string
+        name: load-id
+        in: path
+        required: true
+    get:
+      summary: Get per-dataset, per-table metrics for a specific load
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/load-metrics-response'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Load not found
+      description: Returns metrics for a specific pipeline load, grouped by dataset and table.
   /log:
     post:
       summary: Log a message
@@ -1842,6 +1864,32 @@ components:
       properties:
         lastWeek:
            $ref: '#/components/schemas/simple-pipeline-metric'
+    dataset-load-metrics:
+      type: object
+      properties:
+        metrics:
+          type: object
+          description: Per-table metrics keyed by table name
+          additionalProperties:
+            $ref: '#/components/schemas/simple-pipeline-metric'
+        total:
+          $ref: '#/components/schemas/simple-pipeline-metric'
+      required:
+        - metrics
+        - total
+    load-metrics-response:
+      type: object
+      properties:
+        metrics:
+          type: object
+          description: Per-dataset metrics keyed by dataset ID
+          additionalProperties:
+            $ref: '#/components/schemas/dataset-load-metrics'
+        total:
+          $ref: '#/components/schemas/simple-pipeline-metric'
+      required:
+        - metrics
+        - total
     dataset:
       title: ''
       type: object
