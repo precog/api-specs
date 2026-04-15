@@ -2,7 +2,6 @@ openapi: 3.1.0
 info:
   title: public-http-api
   version: '1.0'
-  summary: The Precog public HTTP REST API.
   description: The Precog public HTTP REST API.
   contact:
     url: 'https://precog.com'
@@ -155,6 +154,7 @@ paths:
                     status:
                       type: ready
                       at: 42
+                    useCase: 'Shop analytics'
         '401':
           description: Unauthorized
         '404':
@@ -226,6 +226,16 @@ paths:
         '422':
           description: 'if force = false: source is used in other pipeline.'
       parameters:
+        - schema:
+            type: string
+          name: source-id
+          in: path
+          required: true
+        - schema:
+            type: string
+          name: pipeline-id
+          in: path
+          required: true
         - schema:
             type: boolean
           in: query
@@ -698,6 +708,29 @@ paths:
         '404':
           description: Not Found
       description: Deletes the given pipeline
+  '/pipelines/{pipeline-id}/metrics':
+    parameters:
+      - schema:
+          type: string
+        name: pipeline-id
+        in: path
+        required: true
+    get:
+      summary: Get the pipeline metrics
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/aggregated-pipeline-metrics'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Pipeline not found.
+      description: Get the metrics from a pipeline
+
   '/pipelines/{pipeline-id}/datasets':
     parameters:
       - schema:
@@ -861,6 +894,17 @@ paths:
                         inBand:
                           state: staging
                           at: 0
+                    semanticModels:
+                      - jobId: 123-456
+                        sourceId: the-source
+                        useCase: Sales go brrr?
+                        datasetIds:
+                          - ds-1
+                          - ds-2
+                        status:
+                          state: modeling
+                          at: 1766097092134
+
         '401':
           description: Unauthorized
         '404':
@@ -963,6 +1007,166 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/pipeline-name'
+  '/pipelines/{pipeline-id}/semantic-contexts':
+    parameters:
+      - schema:
+          type: string
+        name: pipeline-id
+        in: path
+        required: true
+    get:
+      operationId: get-pipelines-pipeline-id-semantic-contexts
+      summary: Get existing semantic contexts of this pipeline
+      responses:
+        '200':
+          description: List of semantic contexts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/semantic-context'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Pipeline not found
+        '422':
+          description: Semantic error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
+    post:
+      operationId: post-pipelines-pipeline-id-semantic-contexts
+      summary: Add a semantic context to the pipeline
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/semantic-context-request'
+      responses:
+        '201':
+          description: Semantic context created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  semanticContextId:
+                    type: string
+                    description: ID generated for the newly created semantic context
+                    minLength: 1
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Pipeline not found
+        '422':
+          description: Semantic error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
+
+  '/pipelines/{pipeline-id}/semantic-contexts/{semantic-context-id}':
+    parameters:
+      - schema:
+          type: string
+        name: pipeline-id
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: semantic-context-id
+        in: path
+        required: true
+    get:
+      operationId: get-pipelines-pipeline-id-semantic-contexts-semantic-context-id
+      summary: Get the details of the particular semantic context
+      responses:
+        '200':
+          description: Semantic context retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/semantic-context'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Semantic context with this pipeline ID/semantic context ID combination not found
+        '422':
+          description: Semantic error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
+    put:
+      operationId: put-pipelines-pipeline-id-semantic-contexts-semantic-context-id
+      summary: Replace details of a semantic context
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/semantic-context-request'
+      responses:
+        '200':
+          description: Semantic context updated
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Semantic context with this pipeline ID/semantic context ID combination not found
+        '422':
+          description: Semantic error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
+    delete:
+      operationId: delete-pipelines-pipeline-id-semantic-contexts-semantic-context-id
+      summary: Delete the semantic context
+      responses:
+        '200':
+          description: Semantic context deleted
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Semantic context with this pipeline ID/semantic context ID combination not found
+        '422':
+          description: Semantic error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
+
   '/pipelines/{pipeline-id}/schedule':
     parameters:
       - schema:
@@ -1069,6 +1273,28 @@ paths:
         '404':
           description: Pipeline not found
       description: Get email addresses associated with the pipeline.
+  '/loads/{load-id}/metrics':
+    parameters:
+      - schema:
+          type: string
+        name: load-id
+        in: path
+        required: true
+    get:
+      summary: Get per-dataset, per-table metrics for a specific load
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/load-metrics-response'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Load not found
+      description: Returns metrics for a specific pipeline load, grouped by dataset and table.
   /log:
     post:
       summary: Log a message
@@ -1419,6 +1645,8 @@ components:
           type: string
           minLength: 1
           readOnly: true
+        useCase:
+          type: string
         auth:
           $ref: '#/components/schemas/auth'
           writeOnly: true
@@ -1640,6 +1868,46 @@ components:
         - id
         - name
         - destinationId
+    simple-pipeline-metric:
+      type: object
+      properties:
+        rows:
+          type: number
+          readOnly: true
+        bytes:
+          type: number
+          readOnly: true
+    aggregated-pipeline-metrics:
+      type: object
+      properties:
+        lastWeek:
+           $ref: '#/components/schemas/simple-pipeline-metric'
+    dataset-load-metrics:
+      type: object
+      properties:
+        metrics:
+          type: object
+          description: Per-table metrics keyed by table name
+          additionalProperties:
+            $ref: '#/components/schemas/simple-pipeline-metric'
+        total:
+          $ref: '#/components/schemas/simple-pipeline-metric'
+      required:
+        - metrics
+        - total
+    load-metrics-response:
+      type: object
+      properties:
+        metrics:
+          type: object
+          description: Per-dataset metrics keyed by dataset ID
+          additionalProperties:
+            $ref: '#/components/schemas/dataset-load-metrics'
+        total:
+          $ref: '#/components/schemas/simple-pipeline-metric'
+      required:
+        - metrics
+        - total
     dataset:
       title: ''
       type: object
@@ -1747,6 +2015,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/dataset-status'
+        semanticModels:
+          type: array
+          items:
+            $ref: '#/components/schemas/semantic-modeling-summary'
       required:
         - pipelineId
         - datasets
@@ -1845,8 +2117,7 @@ components:
           type: boolean
           default: false
         reusePreviousPrimaryKey:
-          type: boolean
-          default: false
+          $ref: '#/components/schemas/reuse-previous-primary-key'
         sampleParameters:
           $ref: '#/components/schemas/initial-load-params-message-limit'
       required:
@@ -1859,6 +2130,58 @@ components:
           type: number
       required:
         - maxMessages
+    primary-key-property:
+      description: Primary key for a given dataset
+      type: object
+      title: pipeline dataset properties
+      properties:
+        primaryKey:
+          type: object
+          description: A primary key property
+          properties:
+            type:
+              oneOf:
+                - type: string
+                  enum: [strict, optional]
+                  description: Indicates whether the key is strict or optional
+            components:
+              type: array
+              title: Primary key components
+              items:
+                type: string
+                minLength: 1
+          required: [type, components]
+      required: [primaryKey]
+      additionalProperties: false
+    reuse-previous-primary-key:
+      description: Legacy boolean or new strategy object.
+      oneOf:
+        - type: object
+          required: [type]
+          properties:
+            type:
+              type: string
+              enum: [detect-anew]
+        - type: object
+          required: [type]
+          properties:
+            type:
+              type: string
+              enum: [reuse-previous]
+        - type: object
+          required: [type, primaryKey]
+          properties:
+            type:
+              type: string
+              enum: [use-provided]
+            primaryKey:
+              $ref: '#/components/schemas/primary-key-property'
+        - type: boolean
+      examples:
+        - { "type": "detect-anew" }
+        - { "type": "reuse-previous" }
+        - { "type": "use-provided", "primaryKey": { "type": "strict", "components": ["$.path.to.id"] } }
+        - true
     pipeline-details:
       title: pipeline-details
       type: object
@@ -1977,27 +2300,38 @@ components:
         - notifications
     dataset-update:
       title: dataset-update
+      oneOf:
+        - $ref: '#/components/schemas/dataset-update-new'
+        - $ref: '#/components/schemas/dataset-update-legacy'
+    dataset-update-new:
       type: object
+      required: [action, dataset]
       properties:
         action:
           type: string
-          enum:
-            - add
-            - remove
-            - renew
-            - abort
+          enum: [add, remove, renew, abort]
+        dataset:
+          type: object
+          minProperties: 1
+          additionalProperties:
+            $ref: '#/components/schemas/initial-load-params'
+    dataset-update-legacy:
+      deprecated: true
+      type: object
+      required: [action, datasetIds]
+      properties:
+        action:
+          type: string
+          enum: [add, remove, renew, abort]
         datasetIds:
           type: array
+          description: List of dataset IDs to affect.
           uniqueItems: true
           items:
             type: string
             minLength: 1
         loadParameters:
-          type: object
           $ref: '#/components/schemas/initial-load-params'
-      required:
-        - action
-        - datasetIds
     error-message:
       title: error-message
       type: object
@@ -2122,6 +2456,80 @@ components:
       title: epoch-millis
       minimum: 0
       example: 1742922912239
+
+    semantic-context:
+      title: Pipeline semantic context
+      description: 'Provides details about a semantic context'
+      type: object
+      properties:
+        id:
+          description: ID that uniquely identifies this semantic context
+          type: string
+          minLength: 1
+        pipeline:
+          description: ID of the pipeline that this semantic context describes
+          type: string
+          minLength: 1
+        useCase:
+          description: Use case which determines how the semantic model is generated under this semantic context
+          type: string
+          minLength: 1
+
+    semantic-context-request:
+      title: Semantic context request
+      description: 'Describes the parameters to requests creating/modifying semantic contexts'
+      type: object
+      properties:
+        useCase:
+          description: Use case which determines how the semantic model is generated under this semantic context
+          type: string
+          minLength: 1
+
+    semantic-modeling-summary:
+      title: Semantic Modeling Status
+      description: 'Provides details and lifecycle information about a semantic modeling process.'
+      type: object
+      properties:
+        jobId:
+          description: "Unique identifier of the job responsible for this model."
+          type: string
+          minLength: 1
+        contextId:
+          type: string
+          minLength: 1
+        useCase:
+          type: string
+          minLength: 1
+        datasetIds:
+          type: array
+          items:
+            type: string
+            minLength: 1
+        status:
+          $ref: '#/components/schemas/semantic-modeling-status'
+      required:
+        - jobId
+        - sourceId
+        - useCase
+        - datasetIds
+        - status
+    semantic-modeling-status:
+      type: object
+      title: Semantic Modeling Status
+      properties:
+        state:
+          type: string
+          enum:
+            - pending
+            - modeling
+            - canceled
+            - errored
+            - succeeded
+        at:
+          $ref: '#/components/schemas/epoch-millis'
+      required:
+        - state
+        - at
   responses: {}
   securitySchemes:
     BearerAuth:

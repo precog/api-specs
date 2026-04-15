@@ -12,118 +12,275 @@ servers:
 security:
   - BearerAuth: []
 paths:
-  /admin/tenants/{tenant-id}/pipelines/{pipeline-id}/actionRequired:
-    parameters:
-      - schema:
-          type: string
-        name: tenant-id
-        in: path
-        required: true
-      - schema:
-          type: string
-        name: pipeline-id
-        in: path
-        required: true
+  /admin/overrides:
     post:
-      summary: Notify that action is required for one or more datasets of a pipeline.
-      description: 
-        Notify that action is required for one or more datasets of a pipeline
-        by transitioning specified dataset statuses to "error". 
-
-        The supplied message will be assigned to the primary dataset. 
-        If the transitioning of the primary dataset fails then the complete operation will fail accordingly.
-
-        The secondary datasets will be transitioned on a "best effort" basis; they won't fail the complete operation
-        if any of them fails to transition for some reason. Also secondary datasets will not have any message assigned to them.
-      tags: []
-      operationId: action-required
-      responses:
-        '204':
-          description: Status of primary dataset has been transitioned successfully
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error-message'
-        '401':
-          description: Unauthorized
-        '422':
-          description: Semantic error.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error-message'
-
+      summary: Create a new job override.
+      description: |-
+        Create a new job override entry.
+        Allocates a fresh JobOverridesId and persists a new override with the given
+        domain, appliesTo predicate, and toOverride patch.
+      operationId: create-job-overrides
       requestBody:
+        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/action-required'
+              $ref: '#/components/schemas/overrides-request'
+      responses:
+        '201':
+          description: Override created successfully. Returns the new JobOverridesId.
+          content:
+            application/json:
+              schema:
+                type: string
+                description: The newly created JobOverridesId.
+        '401':
+          description: Unauthorized
 
-  /admin/tenants/{tenant-id}/pipelines/{pipeline-id}/datasets/{dataset-id}/rediscover:
+  /admin/overrides/{id}:
     parameters:
       - schema:
           type: string
-        name: tenant-id
+        name: id
         in: path
         required: true
-      - schema:
-          type: string
-        name: pipeline-id
-        in: path
-        required: true
-      - schema:
-          type: string
-        name: dataset-id
-        in: path
-        required: true
-    post:
-      summary: Rediscover the schema of a dataset.
-      description: 
-        Rediscover the schema of a dataset
-        by transitioning specified dataset status of a pipeline to "accepted".
-      tags: []
-      operationId: rediscover
+        description: The JobOverridesId.
+    get:
+      summary: Fetch a single job override by id.
+      description: Fetch a single job override entry by its JobOverridesId.
+      operationId: get-job-overrides
       responses:
-        '204':
-          description: Status of dataset has been transitioned successfully
-        '400':
-          description: Bad Request
+        '200':
+          description: The job override entry.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error-message'
+                $ref: '#/components/schemas/job-overrides'
         '401':
           description: Unauthorized
-        '422':
-          description: Semantic error.
+        '404':
+          description: No override entry with the given id exists.
+    put:
+      summary: Replace an existing job override.
+      description: |-
+        Full replacement of the override entry identified by id.
+        The domain, appliesTo, and toOverride fields are all overwritten.
+      operationId: replace-job-overrides
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/overrides-request'
+      responses:
+        '200':
+          description: Override replaced successfully.
+        '401':
+          description: Unauthorized
+        '404':
+          description: No override entry with the given id exists.
+    delete:
+      summary: Delete a job override.
+      description: Delete the override entry identified by id.
+      operationId: delete-job-overrides
+      responses:
+        '204':
+          description: Override deleted successfully.
+        '401':
+          description: Unauthorized
+        '404':
+          description: No override entry with the given id exists.
+
+  /admin/overrides/{id}/applies-to:
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: The JobOverridesId.
+    post:
+      summary: Append applicability constraints to an existing override.
+      description: |-
+        The stored entry's appliesTo is updated by set-union of selectors (per-field),
+        i.e. values in appliesTo are added to the existing selector sets.
+      operationId: append-applies-to
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - appliesTo
+              properties:
+                appliesTo:
+                  $ref: '#/components/schemas/applies-to'
+      responses:
+        '200':
+          description: AppliesTo appended successfully.
+        '401':
+          description: Unauthorized
+        '404':
+          description: No override entry with the given id exists.
+
+  /admin/overrides/domain/{domain}:
+    parameters:
+      - schema:
+          type: string
+          enum:
+            - reader
+            - schema
+            - transactor
+            - discovery
+            - writer
+            - statistic
+            - statistic-verifier
+            - theta-sketch-compute
+            - snowflake-semantic-model-publisher
+        name: domain
+        in: path
+        required: true
+        description: The job domain to list overrides for.
+    get:
+      summary: List all job overrides for a domain.
+      description: Stream all override entries for the given JobDomain.
+      operationId: list-job-overrides-for-domain
+      responses:
+        '200':
+          description: A JSON array of job override entries.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error-message'
+                type: array
+                items:
+                  $ref: '#/components/schemas/job-overrides'
+        '401':
+          description: Unauthorized
 
 components:
   schemas:
-    action-required:
-      description: ''
+    job-domain:
+      type: string
+      enum:
+        - reader
+        - schema
+        - transactor
+        - discovery
+        - writer
+        - statistic
+        - statistic-verifier
+        - theta-sketch-compute
+        - snowflake-semantic-model-publisher
+      description: |-
+        The domain a job override applies to.
+
+    applies-to:
       type: object
-      title: ''
-      properties: 
-        primaryDataset:
-          type: string
-          minLength: 1
-        secondaryDatasets:
+      description: |-
+        Defines whether an override is applicable to a certain k8s job.
+        Matches when any populated field matches.
+        Fields are checked in priority order: datasetIds (highest), pipelineIds,
+        sourceIds, destinationIds, datasetPaths, sourceKindNames,
+        destinationKindNames, and tenantIds (lowest).
+      properties:
+        datasetIds:
           type: array
-          uniqueItems: true
-          items:  
+          items:
             type: string
-        message:
+        pipelineIds:
+          type: array
+          items:
+            type: string
+        sourceIds:
+          type: array
+          items:
+            type: string
+        destinationIds:
+          type: array
+          items:
+            type: string
+        datasetPaths:
+          type: array
+          items:
+            type: string
+        sourceKindNames:
+          type: array
+          items:
+            type: string
+        destinationKindNames:
+          type: array
+          items:
+            type: string
+        tenantIds:
+          type: array
+          items:
+            type: string
+
+    job-args-to-override:
+      type: object
+      description: |-
+        Concrete job arguments to patch into k8s jobs.
+        Overrides are applied per entry: if a key is present it is set
+        (replacing or adding), missing keys leave the original untouched.
+      properties:
+        envVars:
+          type: object
+          additionalProperties:
+            type: string
+        limits:
+          type: object
+          additionalProperties:
+            type: string
+        requests:
+          type: object
+          additionalProperties:
+            type: string
+        nodeSelector:
+          type: object
+          additionalProperties:
+            type: string
+        podSpecFields:
+          type: object
+          description: Simple PodSpec string fields (currently only priorityClassName is supported).
+          additionalProperties:
+            type: string
+
+    job-overrides:
+      type: object
+      description: |-
+        A complete job override entry identified by id and constrained to a job domain.
+      required:
+        - id
+        - domain
+        - appliesTo
+        - toOverride
+      properties:
+        id:
           type: string
-          minLength: 1
-        required:
-          - primaryDataset
-          - message
+          description: The JobOverridesId.
+        domain:
+          $ref: '#/components/schemas/job-domain'
+        appliesTo:
+          $ref: '#/components/schemas/applies-to'
+        toOverride:
+          $ref: '#/components/schemas/job-args-to-override'
+
+    overrides-request:
+      type: object
+      description: Request body for creating or replacing a job override.
+      required:
+        - domain
+        - appliesTo
+        - toOverride
+      properties:
+        domain:
+          $ref: '#/components/schemas/job-domain'
+        appliesTo:
+          $ref: '#/components/schemas/applies-to'
+        toOverride:
+          $ref: '#/components/schemas/job-args-to-override'
+
     error-message:
       title: error-message
       type: object
