@@ -1,0 +1,278 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://precog.com/schemas/foundation_semantic_model.schema.json",
+  "title": "Foundation Semantic Model",
+  "description": "JSON Schema for a foundation semantic model describing the complete data model produced by a SaaS application: its tables, dimensions, time dimensions, facts, metrics, filters, and inter-table relationships, together with the metadata needed to ground analytical and natural-language queries against the underlying warehouse.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "metadata", "model"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "description": "Schema version, e.g. '1.0'.",
+      "examples": ["1.0"]
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_id", "build_timestamp"],
+      "properties": {
+        "source_id": { "type": "string" },
+        "build_timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO-8601 timestamp."
+        }
+      }
+    },
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "description", "tables", "relationships", "custom_instructions"],
+      "properties": {
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "tables": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/table" }
+        },
+        "relationships": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/relationship" }
+        },
+        "custom_instructions": {
+          "type": ["string", "null"],
+          "description": "Flat text, or null."
+        }
+      }
+    }
+  },
+  "$defs": {
+    "table": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "description",
+        "base_table",
+        "primary_key",
+        "dimensions",
+        "time_dimensions",
+        "facts",
+        "metrics",
+        "filters"
+      ],
+      "properties": {
+        "name": { "type": "string" },
+        "grain": {
+          "type": "string",
+          "description": "Optional. What one row represents."
+        },
+        "business_domain": {
+          "type": "string",
+          "description": "Optional, e.g. 'contact_engagement'.",
+          "examples": ["contact_engagement"]
+        },
+        "description": { "type": "string" },
+        "common_questions": {
+          "type": "array",
+          "description": "Optional analytical questions relevant to this table.",
+          "items": { "type": "string" }
+        },
+        "base_table": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["database", "schema", "table"],
+          "properties": {
+            "database": { "type": "string" },
+            "schema": { "type": "string" },
+            "table": { "type": "string" }
+          }
+        },
+        "primary_key": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["columns"],
+          "properties": {
+            "columns": {
+              "type": "array",
+              "minItems": 1,
+              "items": { "type": "string" }
+            }
+          }
+        },
+        "dimensions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/dimension" }
+        },
+        "time_dimensions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/timeDimension" }
+        },
+        "facts": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/fact" }
+        },
+        "metrics": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/namedExpression" }
+        },
+        "filters": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/namedExpression" }
+        }
+      }
+    },
+    "dimension": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "description", "expr", "data_type"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "description": { "type": "string" },
+        "expr": {
+          "type": "string",
+          "description": "SQL expression or column reference."
+        },
+        "data_type": {
+          "type": "string",
+          "description": "Snowflake-style data type, e.g. TEXT, NUMBER, BOOLEAN.",
+          "examples": ["TEXT", "NUMBER", "BOOLEAN"]
+        },
+        "synonyms": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "unique": { "type": "boolean" },
+        "sample_values": {
+          "type": "array",
+          "description": "Reserved for future use.",
+          "items": { "type": "string" }
+        },
+        "is_enum": {
+          "type": "boolean",
+          "description": "Reserved for future use."
+        }
+      }
+    },
+    "timeDimension": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "description", "expr", "data_type"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "description": { "type": "string" },
+        "expr": { "type": "string" },
+        "data_type": {
+          "type": "string",
+          "description": "Temporal data type, e.g. DATE, TIMESTAMP_TZ, TIMESTAMP_NTZ.",
+          "examples": ["DATE", "TIMESTAMP_TZ", "TIMESTAMP_NTZ"]
+        },
+        "synonyms": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "sample_values": {
+          "type": "array",
+          "description": "Reserved for future use.",
+          "items": { "type": "string" }
+        },
+        "is_enum": {
+          "type": "boolean",
+          "description": "Reserved for future use."
+        }
+      }
+    },
+    "fact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "description", "expr", "data_type", "default_aggregation"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "description": { "type": "string" },
+        "expr": {
+          "type": "string",
+          "description": "SQL expression."
+        },
+        "data_type": {
+          "type": "string",
+          "const": "NUMBER",
+          "description": "Always NUMBER for facts."
+        },
+        "default_aggregation": {
+          "type": "string",
+          "enum": ["sum", "avg", "count", "min", "max"]
+        },
+        "synonyms": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "sample_values": {
+          "type": "array",
+          "description": "Reserved for future use.",
+          "items": { "type": "string" }
+        },
+        "is_enum": {
+          "type": "boolean",
+          "description": "Reserved for future use."
+        }
+      }
+    },
+    "namedExpression": {
+      "description": "Used for metrics (aggregate SQL over facts) and filters (boolean SQL).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "description", "expr"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "description": { "type": "string" },
+        "expr": { "type": "string" }
+      }
+    },
+    "relationship": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "left_table", "right_table", "relationship_columns"],
+      "properties": {
+        "name": { "type": "string" },
+        "left_table": {
+          "type": "string",
+          "description": "FK (many) side."
+        },
+        "right_table": {
+          "type": "string",
+          "description": "PK (one) side."
+        },
+        "relationship_columns": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["left_column", "right_column"],
+            "properties": {
+              "left_column": {
+                "type": "string",
+                "description": "FK column on left_table."
+              },
+              "right_column": {
+                "type": "string",
+                "description": "PK column on right_table."
+              }
+            }
+          }
+        },
+        "relationship_type": {
+          "type": "string",
+          "default": "many_to_one",
+          "enum": ["many_to_one", "one_to_one", "one_to_many", "many_to_many"]
+        },
+        "join_type": {
+          "type": "string",
+          "default": "left_outer",
+          "enum": ["inner", "left_outer", "right_outer", "full_outer"]
+        }
+      }
+    }
+  }
+}
