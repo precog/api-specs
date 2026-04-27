@@ -586,21 +586,12 @@ paths:
                   value:
                     - id: '1'
                       name: Ecommerce
-                      driftedDatasets: []
                     - id: '2'
                       name: Internal
-                      driftedDatasets:
-                        - datasetId: 'ds-42'
-                          driftedAt: '2026-04-10T12:00:00Z'
-                          offset:
-                            type: num
-                            value: 150
                     - id: '3'
                       name: Staging environment
-                      driftedDatasets: []
                     - id: '4'
                       name: Test environment
-                      driftedDatasets: []
         '401':
           description: Unauthorized
       operationId: get-pipelines
@@ -688,14 +679,30 @@ paths:
               schema:
                 $ref: '#/components/schemas/pipeline'
               examples:
-                example-1:
+                example-no-drift:
                   value:
-                    destinationId: '1'
                     id: '1'
                     name: Ecommerce
+                    destinationId: '1'
                     columnNameStrategy:
                       tableNamePostfix: true
-                    driftedDatasets: []
+                    datasetIds:
+                      - 'source-1:path/to/dataset'
+                example-with-drift:
+                  value:
+                    id: '2'
+                    name: Internal
+                    destinationId: '2'
+                    columnNameStrategy:
+                      tableNamePostfix: false
+                    datasetIds:
+                      - 'source-1:path/to/dataset'
+                    driftedDatasets:
+                      - datasetId: 'source-1:path/to/dataset'
+                        driftedAt: '2026-04-10T12:00:00Z'
+                        offset:
+                          type: num
+                          value: 150
         '401':
           description: Unauthorized
         '404':
@@ -1831,12 +1838,6 @@ components:
         name:
           type: string
           minLength: 1
-        driftedDatasets:
-          type: array
-          readOnly: true
-          description: Enriched drift information for each dataset within this pipeline that has drifted from its initial schema.
-          items:
-            $ref: '#/components/schemas/drifted-dataset'
       required:
         - id
         - name
@@ -1862,10 +1863,15 @@ components:
           properties:
             tableNamePostfix:
               type: boolean
+        datasetIds:
+          type: array
+          readOnly: true
+          items:
+            type: string
         driftedDatasets:
           type: array
           readOnly: true
-          description: Enriched drift information for each dataset within this pipeline that has drifted from its initial schema.
+          description: Enriched drift information for each dataset within this pipeline that has drifted from its initial schema. Only present when non-empty.
           items:
             $ref: '#/components/schemas/drifted-dataset'
       required:
