@@ -679,13 +679,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/pipeline'
               examples:
-                example-1:
+                example:
                   value:
-                    destinationId: '1'
                     id: '1'
                     name: Ecommerce
+                    destinationId: '1'
                     columnNameStrategy:
                       tableNamePostfix: true
+                    datasetIds:
+                      - 'source-1:path/to/dataset'
         '401':
           description: Unauthorized
         '404':
@@ -1985,6 +1987,11 @@ components:
           properties:
             tableNamePostfix:
               type: boolean
+        datasetIds:
+          type: array
+          readOnly: true
+          items:
+            type: string
         piiConfig:
           type: object
           properties:
@@ -2005,6 +2012,38 @@ components:
         - id
         - name
         - destinationId
+    drifted-dataset:
+      title: ''
+      type: object
+      description: Drift information for a single dataset.
+      properties:
+        datasetId:
+          type: string
+          description: The ID of the drifted dataset.
+        driftedAt:
+          type: string
+          format: date-time
+          description: When the schema drift was detected.
+        offset:
+          type: object
+          nullable: true
+          description: The offset at which schema drift was detected.
+          properties:
+            type:
+              type: string
+              enum:
+                - num
+                - str
+            value:
+              oneOf:
+                - type: number
+                - type: string
+          required:
+            - type
+            - value
+      required:
+        - datasetId
+        - driftedAt
     simple-pipeline-metric:
       type: object
       properties:
@@ -2108,6 +2147,12 @@ components:
           minLength: 1
         status:
           $ref: '#/components/schemas/pipeline-load-state'
+        driftedDatasets:
+          type: array
+          readOnly: true
+          description: Datasets within this pipeline that have drifted from their initial schema. Only present when non-empty.
+          items:
+            $ref: '#/components/schemas/drifted-dataset'
       required:
         - pipelineId
         - status
@@ -2156,6 +2201,12 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/semantic-modeling-summary'
+        driftedDatasets:
+          type: array
+          readOnly: true
+          description: Datasets within this pipeline that have drifted from their initial schema. Only present when non-empty.
+          items:
+            $ref: '#/components/schemas/drifted-dataset'
       required:
         - pipelineId
         - datasets
