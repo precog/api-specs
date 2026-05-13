@@ -608,7 +608,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/id'
         '400':
-          description: Bad Request
+          description: >-
+            Bad Request. Includes the case where `vectorize: true` is set
+            on a pipeline whose destination does not support the Snowflake
+            VECTOR column type (LD15) — only Snowflake-family destinations
+            are vector-capable.
           content:
             application/json:
               schema:
@@ -1040,6 +1044,65 @@ paths:
                   description: The PII handling policy to apply.
               required:
                 - type
+  '/pipelines/{pipeline-id}/vectorize':
+    parameters:
+      - schema:
+          type: string
+        name: pipeline-id
+        in: path
+        required: true
+    put:
+      summary: Set the vectorization opt-in flag for a pipeline.
+      tags: []
+      operationId: put-pipelines-pipeline-id-vectorize
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: >-
+            Destination does not support vectors. Returned when `vectorize`
+            is `true` and the pipeline's destination is not vector-capable
+            (LD15 — Snowflake-family destinations only).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Pipeline not found
+      description: >-
+        Set the vectorization opt-in flag for a pipeline
+        (vectorization-spec-v4 / LD13).
+
+        Semantics:
+          - `null` or omitted, or `false` → the pipeline does not vectorize;
+            its loads are byte-identical to a pipeline created before this
+            feature existed.
+          - `true` → subsequent loads of datasets in this pipeline produce
+            per-row embeddings (IBM Granite-30M, 384-dim) landed in
+            `<destination_database>.<pipeline-name>.PRETEXT` on the
+            pipeline's destination, in addition to the normal writer output.
+
+        Flipping the flag is **not retroactive**. See the `vectorize` field
+        on the `pipeline` schema for the full semantics.
+
+        Setting `true` is only valid on Snowflake-family destinations
+        (LD15); attempts on any other destination are rejected with 400.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                vectorize:
+                  type: boolean
+                  nullable: true
+                  description: >-
+                    The new value of the vectorize flag. `null` and `false`
+                    are equivalent: the pipeline does not vectorize.
+              required:
+                - vectorize
   '/pipelines/{pipeline-id}/semantic-contexts':
     parameters:
       - schema:
@@ -2008,6 +2071,31 @@ components:
             Policy applied to detected PII columns. Optional — when absent,
             passthrough is assumed (PII columns are not transformed). Omitted
             from responses when passthrough.
+        vectorize:
+          type: boolean
+          nullable: true
+          description: >-
+            vectorization-spec-v4 / LD13. When `true`, loads of datasets in
+            this pipeline will additionally produce per-row text embeddings
+            (IBM Granite-30M, 384-dim) landed in a sibling
+            `<destination_database>.<pipeline-name>.PRETEXT` table on the
+            pipeline's destination, alongside the normal writer output.
+
+            Absent or `false` preserves pre-feature behaviour: no embeddings
+            are produced, no `PRETEXT` table is touched, and the destination
+            output is byte-identical to a pipeline created before this field
+            existed.
+
+            Only Snowflake-family destinations support `true` (LD15); the
+            destination must expose a `VECTOR(FLOAT, 384)` column type.
+            Attempts to set `true` on a non-vector-capable destination are
+            rejected with HTTP 400.
+
+            Flipping `false`/absent → `true` is **not retroactive**: rows
+            loaded before the flip remain un-embedded; reloads after the
+            flip will be embedded. Flipping `true` → `false` means
+            subsequent loads stop embedding; existing `PRETEXT` rows remain
+            until an operator deletes them by hand.
       required:
         - id
         - name
