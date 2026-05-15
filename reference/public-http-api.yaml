@@ -2722,11 +2722,18 @@ components:
       description: |
         A scored candidate join between two columns in different sources within a
         pipeline's destination.
+
+        The two sides are identified as `referrer` (the referencing side) and `referent`
+        (the referenced side). For symmetric relationship types (`oneToOne`, `manyToMany`)
+        the assignment is arbitrary. For `oneToMany`, `referrer` is the "one" side and
+        `referent` is the "many" side.
       type: object
       properties:
-        left:
+        referrer:
+          description: The referencing side of the relationship.
           $ref: '#/components/schemas/column-ref'
-        right:
+        referent:
+          description: The referenced side of the relationship.
           $ref: '#/components/schemas/column-ref'
         score:
           description: |
@@ -2737,10 +2744,19 @@ components:
           format: double
           minimum: 0
           maximum: 1
+        relationshipType:
+          description: |
+            The directionality and dimensionality of the candidate relationship.
+          type: string
+          enum:
+            - oneToOne
+            - oneToMany
+            - manyToMany
       required:
-        - left
-        - right
+        - referrer
+        - referent
         - score
+        - relationshipType
 
     column-ref:
       title: Column reference
