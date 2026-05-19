@@ -1131,6 +1131,58 @@ paths:
               schema:
                 $ref: '#/components/schemas/error-message'
 
+  /data-model/relationship-candidates:
+    get:
+      operationId: get-data-model-relationship-candidates
+      summary: Get cross-source relationship candidates
+      description: |
+        Returns scored candidate join columns across the requested sources within a
+        pipeline. Each candidate pairs two fully-qualified destination columns with a
+        score indicating the likelihood that the join is useful.
+
+        Candidates are ordered by score descending. Scores are ordinal within a single
+        response and should not be compared across calls.
+      parameters:
+        - name: pipeline
+          in: query
+          required: true
+          description: ID of the pipeline whose destination layout is used to resolve column references.
+          schema:
+            type: string
+            minLength: 1
+        - name: sources
+          in: query
+          required: true
+          description: |
+            Comma-separated list of source IDs to consider. At least two sources must be
+            provided.
+          schema:
+            type: string
+            minLength: 1
+      responses:
+        '200':
+          description: Relationship candidates computed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/relationship-candidate-list'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Pipeline not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
+        '422':
+          description: |
+            One or more sources are not part of the pipeline, or the pipeline's destination
+            is not a supported warehouse kind.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
+
   '/pipelines/{pipeline-id}/schedule':
     parameters:
       - schema:
@@ -2653,6 +2705,86 @@ components:
       required:
         - state
         - since
+    relationship-candidate-list:
+      title: Relationship candidate list
+      description: A list of scored cross-source join column candidates.
+      type: object
+      properties:
+        candidates:
+          type: array
+          items:
+            $ref: '#/components/schemas/relationship-candidate'
+      required:
+        - candidates
+
+    relationship-candidate:
+      title: Relationship candidate
+      description: |
+        A scored candidate join between two columns in different sources within a
+        pipeline's destination.
+
+        The two sides are identified as `referrer` (the referencing side) and `referent`
+        (the referenced side). For symmetric relationship types (`oneToOne`, `manyToMany`)
+        the assignment is arbitrary. For `oneToMany`, `referrer` is the "one" side and
+        `referent` is the "many" side.
+      type: object
+      properties:
+        referrer:
+          description: The referencing side of the relationship.
+          $ref: '#/components/schemas/column-ref'
+        referent:
+          description: The referenced side of the relationship.
+          $ref: '#/components/schemas/column-ref'
+        score:
+          description: |
+            Candidate quality score in the range [0, 1]. Higher is better. Scores are
+            ordinal within a single response and must not be compared across calls or
+            after configuration changes.
+          type: number
+          format: double
+          minimum: 0
+          maximum: 1
+        relationshipType:
+          description: |
+            The directionality and dimensionality of the candidate relationship.
+          type: string
+          enum:
+            - oneToOne
+            - oneToMany
+            - manyToMany
+      required:
+        - referrer
+        - referent
+        - score
+        - relationshipType
+
+    column-ref:
+      title: Column reference
+      description: Fully qualified reference to a column in a destination warehouse.
+      type: object
+      properties:
+        database:
+          description: Database name in the destination warehouse.
+          type: string
+          minLength: 1
+        schema:
+          description: Schema name in the destination warehouse.
+          type: string
+          minLength: 1
+        table:
+          description: Table name in the destination warehouse.
+          type: string
+          minLength: 1
+        column:
+          description: Column name in the destination warehouse.
+          type: string
+          minLength: 1
+      required:
+        - database
+        - schema
+        - table
+        - column
+
   responses: {}
   securitySchemes:
     BearerAuth:
