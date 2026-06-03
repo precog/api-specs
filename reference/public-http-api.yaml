@@ -1442,7 +1442,10 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/pipeline-schedule'
-        description: A list of cron expressions. An empty list means that the pipeline will not be loaded on a schedule.
+        description: >-
+          A list of cron expressions, optionally paired with calendar windows during which the
+          schedule must not fire. An empty `schedule` list means that the pipeline will not be
+          loaded on a schedule, and any skipped windows are ignored.
     get:
       summary: Get the pipeline schedule
       tags: []
@@ -2253,8 +2256,39 @@ components:
           type: array
           items:
             type: string
+        skippedWindows:
+          type: array
+          description: >-
+            Calendar windows during which the schedule must not fire, even when one of the cron
+            expressions in `schedule` would otherwise trigger. Day-of-month membership is
+            evaluated in UTC. When omitted on a request, the schedule has no skipped windows. 
+            The field is also omitted from a response when there are none.
+          items:
+            $ref: '#/components/schemas/skipped-window'
       required:
         - schedule
+    skipped-window:
+      title: ''
+      type: object
+      description: >-
+        A calendar window, relative to each month, during which a scheduled load must not fire.
+      properties:
+        type:
+          type: string
+          description: >-
+            The kind of window. `last-days-of-month` skips the final `count` days of every month;
+            `first-days-of-month` skips the initial `count` days of every month.
+          enum:
+            - last-days-of-month
+            - first-days-of-month
+        count:
+          type: integer
+          description: The number of days the window spans.
+          minimum: 1
+          maximum: 31
+      required:
+        - type
+        - count
     pipeline-notification:
       title: ''
       type: object
