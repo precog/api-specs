@@ -1,0 +1,11 @@
+extends:
+  - "spectral:oas"
+
+rules:
+  # Downgrade some noisy rules to warnings for now
+  info-contact: warn
+  info-description: warn
+  operation-description: warn
+  operation-operationId: warn
+  operation-tags: warn
+  oas3-api-servers: warn
