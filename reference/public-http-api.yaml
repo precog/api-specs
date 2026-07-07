@@ -1104,22 +1104,10 @@ paths:
       tags: []
       operationId: post-pipelines-pipeline-id-encode
       description: >-
-        Embed a piece of text using the same sentence-transformers
-        all-mpnet-base-v2 model that vectorized the pipeline's PRETEXT
-        corpus. The returned 768-dimensional vector is L2-normalized and
-        exact-parity with `PRETEXT.vec`, so the caller can plug it into a
-        `VECTOR_COSINE_SIMILARITY` scan against the same destination
-        without any re-normalization.
-
-        Intended for query-side embedding from external clients (e.g. an
-        MCP server's semantic_search tool) so they don't have to load the
-        model themselves. Tenant auth applies as on every other
-        `/pipelines/{id}/*` route: the caller must be able to see the
-        pipeline.
-
-        Internally a thin proxy to the in-cluster vectorizer-encoder
-        service; a 502 indicates the encoder service is unreachable or
-        returned non-2xx.
+        Embed a piece of text using the pipeline's vector model. The
+        returned vector is directly comparable with those stored in the
+        pipeline's PRETEXT destination table, making it suitable for
+        cosine-similarity queries against the corpus.
       requestBody:
         content:
           application/json:
@@ -1168,17 +1156,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error-message'
+                type: object
+                properties:
+                  error:
+                    type: string
+                required:
+                  - error
         '401':
           description: Unauthorized
         '404':
           description: Pipeline not found
-        '502':
-          description: Upstream encoder service returned a non-success response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error-message'
   '/pipelines/{pipeline-id}/semantic-contexts':
     parameters:
       - schema:
