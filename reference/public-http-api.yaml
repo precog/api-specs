@@ -322,6 +322,41 @@ paths:
           description: The provided dataset does not exist in the system
       description: Abort the loading of the given dataset in all loads
       operationId: abort-loading-for-dataset
+  /connectivity/source:
+    post:
+      summary: Test Source Connectivity
+      tags: []
+      operationId: post-connectivity-source
+      description: Test whether a given configuration can successfully connect to a specified source kind.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/test-connectivity-request'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/connectivity-result-connected'
+                  - $ref: '#/components/schemas/connectivity-result-failed'
+                  - $ref: '#/components/schemas/connectivity-result-errored'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
+        '401':
+          description: Unauthorized
+        '502':
+          description: Problematic Request to External Server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
   /destinations:
     get:
       summary: Get Destinations
@@ -3109,6 +3144,75 @@ components:
         - schema
         - table
         - column
+    test-connectivity-request:
+      title: ''
+      type: object
+      description: Request body for testing source connectivity
+      properties:
+        kindId:
+          type: string
+          minLength: 1
+          description: The source kind ID to test connectivity against
+        config:
+          $ref: '#/components/schemas/connector-config'
+      required:
+        - kindId
+        - config
+    connectivity-result-connected:
+      title: ''
+      type: object
+      description: Successful connectivity test result
+      properties:
+        connected:
+          type: object
+          properties:
+            sourceValidationId:
+              type: string
+              description: ID of the verified source validation
+            expiresAt:
+              type: string
+              format: date-time
+              description: When the validation expires
+          required:
+            - sourceValidationId
+            - expiresAt
+      required:
+        - connected
+    connectivity-result-failed:
+      title: ''
+      type: object
+      description: Connectivity test failed for a known reason
+      properties:
+        failed:
+          type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - input-required
+                - user-action
+            message:
+              type: string
+            action:
+              $ref: '#/components/schemas/action'
+          required:
+            - type
+      required:
+        - failed
+    connectivity-result-errored:
+      title: ''
+      type: object
+      description: Connectivity test failed for an unknown reason
+      properties:
+        errored:
+          type: object
+          properties:
+            message:
+              type: string
+          required:
+            - message
+      required:
+        - errored
 
   responses: {}
   securitySchemes:
