@@ -1090,6 +1090,12 @@ paths:
                   description: >-
                     The new value of the vectorize flag. `null` and `false`
                     are equivalent: the pipeline does not vectorize.
+                sentimentAnalysis:
+                  type: boolean
+                  nullable: true
+                  description: >-
+                    Enables sentiment analysis on the pipeline. Requires vectorization
+                    to also be on, otherwise a 400 will be returned.
               required:
                 - vectorize
   '/pipelines/{pipeline-id}/encode':
@@ -2200,6 +2206,12 @@ components:
             flip will be embedded. Flipping `true` → `false` means
             subsequent loads stop embedding; existing `PRETEXT` rows remain
             until an operator deletes them by hand.
+        sentimentAnalysis:
+          type: boolean
+          nullable: true
+          description: >-
+            Enables sentiment analysis on the pipeline. Requires vectorization
+            to also be on, otherwise a 400 will be returned.
       required:
         - id
         - name
