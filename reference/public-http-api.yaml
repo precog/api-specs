@@ -322,41 +322,6 @@ paths:
           description: The provided dataset does not exist in the system
       description: Abort the loading of the given dataset in all loads
       operationId: abort-loading-for-dataset
-  /connectivity/source:
-    post:
-      summary: Test Source Connectivity
-      tags: []
-      operationId: post-connectivity-source
-      description: Test whether a given configuration can successfully connect to a specified source kind.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/test-connectivity-request'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/connectivity-result-connected'
-                  - $ref: '#/components/schemas/connectivity-result-failed'
-                  - $ref: '#/components/schemas/connectivity-result-errored'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error-message'
-        '401':
-          description: Unauthorized
-        '502':
-          description: Problematic Request to External Server
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error-message'
   /destinations:
     get:
       summary: Get Destinations
@@ -571,6 +536,41 @@ paths:
           description: Unauthorized
       operationId: get-kinds-source
       description: Retrieve the available kinds of sources.
+  /kinds/source/validations:
+    post:
+      summary: Validate source configuration
+      tags: []
+      operationId: post-source-validations
+      description: Test whether a given configuration can successfully connect to a specified source kind.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/test-connectivity-request'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/connectivity-result-connected'
+                  - $ref: '#/components/schemas/connectivity-result-failed'
+                  - $ref: '#/components/schemas/connectivity-result-errored'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
+        '401':
+          description: Unauthorized
+        '502':
+          description: Problematic Request to External Server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
   /kinds/destination:
     get:
       summary: Get destination kinds
@@ -3144,15 +3144,15 @@ components:
         - schema
         - table
         - column
-    test-connectivity-request:
+    source-validation-request:
       title: ''
       type: object
-      description: Request body for testing source connectivity
+      description: Request body for validating source configuration
       properties:
         kindId:
           type: string
           minLength: 1
-          description: The source kind ID to test connectivity against
+          description: The source kind ID to validate connectivity against
         config:
           $ref: '#/components/schemas/connector-config'
       required:
