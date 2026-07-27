@@ -1,0 +1,17 @@
+extends:
+  - recommended
+
+rules:
+  no-ambiguous-paths: off
+  no-http-verbs-in-paths: warn
+  no-identical-paths: error
+  no-undefined-server-variable: error
+  operation-4xx-response: warn
+  path-not-include-query: error
+
+  # Relax some recommended rules that may be too strict initially
+  info-contact: warn
+  info-license: off
+  operation-operationId-unique: error
+  operation-operationId: warn
+  tag-description: warn

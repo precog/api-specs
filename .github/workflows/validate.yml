@@ -1,0 +1,35 @@
+name: Validate API Specs
+
+on:
+  pull_request:
+    paths:
+      - "reference/**"
+      - "redocly.yaml"
+      - "package.json"
+  push:
+    branches: [main]
+    paths:
+      - "reference/**"
+      - "redocly.yaml"
+      - "package.json"
+
+jobs:
+  validate:
+    name: Lint & Validate
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Lint OpenAPI specs
+        run: npm run lint:openapi
+
+      - name: Validate JSON schemas
+        run: npm run lint:schemas
