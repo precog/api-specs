@@ -546,7 +546,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/test-connectivity-request'
+              $ref: '#/components/schemas/source-validation-request'
       responses:
         '200':
           description: OK
