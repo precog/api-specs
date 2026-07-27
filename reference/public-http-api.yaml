@@ -1121,13 +1121,11 @@ paths:
               properties:
                 vectorize:
                   type: boolean
-                  nullable: true
                   description: >-
                     The new value of the vectorize flag. `null` and `false`
                     are equivalent: the pipeline does not vectorize.
                 sentimentAnalysis:
                   type: boolean
-                  nullable: true
                   description: >-
                     Enables sentiment analysis on the pipeline. Requires vectorization
                     to also be on, otherwise a 400 will be returned.
@@ -2216,7 +2214,6 @@ components:
           $ref: '#/components/schemas/pii-config'
         vectorize:
           type: boolean
-          nullable: true
           description: >-
             vectorization-spec-v4 / LD13. When `true`, loads of datasets in
             this pipeline will additionally produce per-row text embeddings
@@ -2241,7 +2238,6 @@ components:
             until an operator deletes them by hand.
         sentimentAnalysis:
           type: boolean
-          nullable: true
           description: >-
             Enables sentiment analysis on the pipeline. Requires vectorization
             to also be on, otherwise a 400 will be returned.
@@ -2276,7 +2272,6 @@ components:
           description: When the schema drift was detected.
         offset:
           type: object
-          nullable: true
           description: The offset at which schema drift was detected.
           properties:
             type:
