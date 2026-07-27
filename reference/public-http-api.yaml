@@ -2173,8 +2173,23 @@ components:
       required:
         - id
         - name
-    pipeline:
-      title: ''
+    pii-config:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - passthrough
+            - hash
+            - omit
+            - nullify
+      required:
+        - type
+      description: >-
+        Policy applied to detected PII columns. Optional — when absent,
+        passthrough is assumed (PII columns are not transformed). Omitted
+        from responses when passthrough.
+    pipeline-core:
       type: object
       properties:
         id:
@@ -2184,38 +2199,21 @@ components:
         name:
           type: string
           minLength: 1
-        destinationId:
-          type: string
-          minLength: 1
         columnNameStrategy:
           type: object
-          minLength: 1
           required:
             - tableNamePostfix
           properties:
             tableNamePostfix:
               type: boolean
-        datasetIds:
-          type: array
-          readOnly: true
-          items:
-            type: string
+      required:
+        - id
+        - name
+    pipeline-processing-config:
+      type: object
+      properties:
         piiConfig:
-          type: object
-          properties:
-            type:
-              type: string
-              enum:
-                - passthrough
-                - hash
-                - omit
-                - nullify
-          required:
-            - type
-          description: >-
-            Policy applied to detected PII columns. Optional — when absent,
-            passthrough is assumed (PII columns are not transformed). Omitted
-            from responses when passthrough.
+          $ref: '#/components/schemas/pii-config'
         vectorize:
           type: boolean
           nullable: true
@@ -2247,10 +2245,23 @@ components:
           description: >-
             Enables sentiment analysis on the pipeline. Requires vectorization
             to also be on, otherwise a 400 will be returned.
-      required:
-        - id
-        - name
-        - destinationId
+    pipeline:
+      title: ''
+      allOf:
+        - $ref: '#/components/schemas/pipeline-core'
+        - $ref: '#/components/schemas/pipeline-processing-config'
+        - type: object
+          properties:
+            destinationId:
+              type: string
+              minLength: 1
+            datasetIds:
+              type: array
+              readOnly: true
+              items:
+                type: string
+          required:
+            - destinationId
     drifted-dataset:
       title: ''
       type: object
@@ -2610,25 +2621,12 @@ components:
       type: object
       properties:
         pipeline:
-          type: object
-          required:
-            - id
-            - name
-            - columnNameStrategy
-          properties:
-            id:
-              type: string
-              minLength: 1
-            name:
-              type: string
-              minLength: 1
-            columnNameStrategy:
-              type: object
+          allOf:
+            - $ref: '#/components/schemas/pipeline-core'
+            - $ref: '#/components/schemas/pipeline-processing-config'
+            - type: object
               required:
-                - tableNamePostfix
-              properties:
-                tableNamePostfix:
-                  type: boolean
+                - columnNameStrategy
         destination:
           type: object
           required:
