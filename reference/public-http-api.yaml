@@ -1600,7 +1600,7 @@ paths:
                 - returnUrl
       description: Create a Stripe customer portal session
     parameters: []
-  /issues/:
+  /issues:
     post:
       summary: Create issue
       operationId: post-issues
