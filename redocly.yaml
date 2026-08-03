@@ -3,6 +3,7 @@ extends:
 
 rules:
   no-ambiguous-paths: off
+  no-server-example.com: off
   no-http-verbs-in-paths: warn
   no-identical-paths: error
   no-undefined-server-variable: error

@@ -733,7 +733,7 @@ paths:
       operationId: get-pipelines-pipeline-id
       description: Get a particular pipeline.
     delete:
-      summary: ''
+      summary: Deletes the given pipeline
       tags: []
       operationId: delete-pipelines-pipeline-id
       responses:
@@ -741,7 +741,6 @@ paths:
           description: No Content
         '404':
           description: Not Found
-      description: Deletes the given pipeline
   '/pipelines/{pipeline-id}/metrics':
     parameters:
       - schema:
@@ -763,6 +762,7 @@ paths:
           description: Unauthorized
         '404':
           description: Pipeline not found.
+      operationId: get-pipelines-pipeline-id-metrics
       description: Get the metrics from a pipeline
 
   '/pipelines/{pipeline-id}/datasets':
@@ -791,7 +791,7 @@ paths:
       operationId: get-pipelines-pipeline-id-datasets
       description: Get the datasets in the provided pipeline.
     patch:
-      summary: ''
+      summary: Add/remove/reload datasets for the provided pipeline.
       tags: []
       operationId: patch-pipelines-pipeline-id-datasets
       responses:
@@ -813,7 +813,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error-message'
-      description: Add (or remove) datasets to (or from) the provided pipeline.
       requestBody:
         content:
           application/json:
@@ -1477,6 +1476,7 @@ paths:
           description: Unauthorized
         '404':
           description: Load not found
+      operationId: get-loads-load-id-metrics
       description: Returns metrics for a specific pipeline load, grouped by dataset and table.
   /log:
     post:
@@ -2404,24 +2404,17 @@ components:
       type: object
       title: pipeline dataset properties
       properties:
-        primaryKey:
-          type: object
-          description: A primary key property
-          properties:
-            type:
-              oneOf:
-                - type: string
-                  enum: [strict, optional]
-                  description: Indicates whether the key is strict or optional
-            components:
-              type: array
-              title: Primary key components
-              items:
-                type: string
-                minLength: 1
-          required: [type, components]
-      required: [primaryKey]
-      additionalProperties: false
+        type:
+          type: string
+          enum: [strict, optional]
+          description: Indicates whether the key is strict or optional
+        components:
+          type: array
+          title: Primary key components
+          items:
+            type: string
+            minLength: 1
+      required: [type, components]
     reuse-previous-primary-key:
       description: Legacy boolean or new strategy object.
       oneOf:

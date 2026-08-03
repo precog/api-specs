@@ -280,24 +280,6 @@ components:
           $ref: '#/components/schemas/applies-to'
         toOverride:
           $ref: '#/components/schemas/job-args-to-override'
-
-    error-message:
-      title: error-message
-      type: object
-      properties:
-        error:
-          type: object
-          required:
-            - type
-            - details
-          properties:
-            type:
-              type: string
-              minLength: 1
-            details:
-              type: string
-      required:
-        - error
   securitySchemes:
     BearerAuth:
       type: http

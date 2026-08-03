@@ -47,8 +47,8 @@ paths:
                             primaryKey: [ id_example, array_index ]
                             foreignKeys: 
                               example: 
-                                - local: [ id_example ]
-                                - reference: [ id ]
+                                local: [ id_example ]
+                                reference: [ id ]
                             columns:
                               - columnName: id_example
                                 columnType: string
@@ -244,24 +244,17 @@ components:
       type: object
       title: pipeline dataset properties
       properties:
-        primaryKey:
-          type: object
-          description: A primary key property
-          properties:
-            type:
-              oneOf:
-                - type: string
-                  enum: [strict, optional]
-                  description: Indicates whether the key is strict or optional
-            components:
-              type: array
-              title: Primary key components
-              items:
-                type: string
-                minLength: 1
-          required: [type, components]
-      required: [primaryKey]
-      additionalProperties: false
+        type:
+          type: string
+          enum: [strict, optional]
+          description: Indicates whether the key is strict or optional
+        components:
+          type: array
+          title: Primary key components
+          items:
+            type: string
+            minLength: 1
+      required: [type, components]
 
   securitySchemes:
     BearerAuth:
