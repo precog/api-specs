@@ -1,0 +1,16 @@
+{
+  "name": "api-specs",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Precog API specifications",
+  "scripts": {
+    "lint": "npm run lint:openapi && npm run lint:schemas",
+    "lint:openapi": "redocly lint reference/*.yaml",
+    "lint:schemas": "node scripts/validate-json-schemas.mjs"
+  },
+  "devDependencies": {
+    "@redocly/cli": "^2.41.0",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1"
+  }
+}

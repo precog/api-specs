@@ -733,7 +733,7 @@ paths:
       operationId: get-pipelines-pipeline-id
       description: Get a particular pipeline.
     delete:
-      summary: ''
+      summary: Deletes the given pipeline
       tags: []
       operationId: delete-pipelines-pipeline-id
       responses:
@@ -741,7 +741,6 @@ paths:
           description: No Content
         '404':
           description: Not Found
-      description: Deletes the given pipeline
   '/pipelines/{pipeline-id}/metrics':
     parameters:
       - schema:
@@ -763,6 +762,7 @@ paths:
           description: Unauthorized
         '404':
           description: Pipeline not found.
+      operationId: get-pipelines-pipeline-id-metrics
       description: Get the metrics from a pipeline
 
   '/pipelines/{pipeline-id}/datasets':
@@ -791,7 +791,7 @@ paths:
       operationId: get-pipelines-pipeline-id-datasets
       description: Get the datasets in the provided pipeline.
     patch:
-      summary: ''
+      summary: Add/remove/reload datasets for the provided pipeline.
       tags: []
       operationId: patch-pipelines-pipeline-id-datasets
       responses:
@@ -813,7 +813,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error-message'
-      description: Add (or remove) datasets to (or from) the provided pipeline.
       requestBody:
         content:
           application/json:
@@ -1121,13 +1120,11 @@ paths:
               properties:
                 vectorize:
                   type: boolean
-                  nullable: true
                   description: >-
                     The new value of the vectorize flag. `null` and `false`
                     are equivalent: the pipeline does not vectorize.
                 sentimentAnalysis:
                   type: boolean
-                  nullable: true
                   description: >-
                     Enables sentiment analysis on the pipeline. Requires vectorization
                     to also be on, otherwise a 400 will be returned.
@@ -1198,166 +1195,6 @@ paths:
           description: Unauthorized
         '404':
           description: Pipeline not found
-  '/pipelines/{pipeline-id}/semantic-contexts':
-    parameters:
-      - schema:
-          type: string
-        name: pipeline-id
-        in: path
-        required: true
-    get:
-      operationId: get-pipelines-pipeline-id-semantic-contexts
-      summary: Get existing semantic contexts of this pipeline
-      responses:
-        '200':
-          description: List of semantic contexts
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/semantic-context'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error-message'
-        '401':
-          description: Unauthorized
-        '404':
-          description: Pipeline not found
-        '422':
-          description: Semantic error.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error-message'
-    post:
-      operationId: post-pipelines-pipeline-id-semantic-contexts
-      summary: Add a semantic context to the pipeline
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/semantic-context-request'
-      responses:
-        '201':
-          description: Semantic context created
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  semanticContextId:
-                    type: string
-                    description: ID generated for the newly created semantic context
-                    minLength: 1
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error-message'
-        '401':
-          description: Unauthorized
-        '404':
-          description: Pipeline not found
-        '422':
-          description: Semantic error.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error-message'
-
-  '/pipelines/{pipeline-id}/semantic-contexts/{semantic-context-id}':
-    parameters:
-      - schema:
-          type: string
-        name: pipeline-id
-        in: path
-        required: true
-      - schema:
-          type: string
-        name: semantic-context-id
-        in: path
-        required: true
-    get:
-      operationId: get-pipelines-pipeline-id-semantic-contexts-semantic-context-id
-      summary: Get the details of the particular semantic context
-      responses:
-        '200':
-          description: Semantic context retrieved
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/semantic-context'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error-message'
-        '401':
-          description: Unauthorized
-        '404':
-          description: Semantic context with this pipeline ID/semantic context ID combination not found
-        '422':
-          description: Semantic error.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error-message'
-    put:
-      operationId: put-pipelines-pipeline-id-semantic-contexts-semantic-context-id
-      summary: Replace details of a semantic context
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/semantic-context-request'
-      responses:
-        '200':
-          description: Semantic context updated
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error-message'
-        '401':
-          description: Unauthorized
-        '404':
-          description: Semantic context with this pipeline ID/semantic context ID combination not found
-        '422':
-          description: Semantic error.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error-message'
-    delete:
-      operationId: delete-pipelines-pipeline-id-semantic-contexts-semantic-context-id
-      summary: Delete the semantic context
-      responses:
-        '200':
-          description: Semantic context deleted
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error-message'
-        '401':
-          description: Unauthorized
-        '404':
-           description: Semantic context with this pipeline ID/semantic context ID combination not found
-        '422':
-          description: Semantic error.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error-message'
-
   /semantic-model/generation-jobs:
     post:
       operationId: post-semantic-model-generation-jobs
@@ -1639,6 +1476,7 @@ paths:
           description: Unauthorized
         '404':
           description: Load not found
+      operationId: get-loads-load-id-metrics
       description: Returns metrics for a specific pipeline load, grouped by dataset and table.
   /log:
     post:
@@ -1762,7 +1600,7 @@ paths:
                 - returnUrl
       description: Create a Stripe customer portal session
     parameters: []
-  /issues/:
+  /issues:
     post:
       summary: Create issue
       operationId: post-issues
@@ -2173,8 +2011,23 @@ components:
       required:
         - id
         - name
-    pipeline:
-      title: ''
+    pii-config:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - passthrough
+            - hash
+            - omit
+            - nullify
+      required:
+        - type
+      description: >-
+        Policy applied to detected PII columns. Optional — when absent,
+        passthrough is assumed (PII columns are not transformed). Omitted
+        from responses when passthrough.
+    pipeline-core:
       type: object
       properties:
         id:
@@ -2184,41 +2037,23 @@ components:
         name:
           type: string
           minLength: 1
-        destinationId:
-          type: string
-          minLength: 1
         columnNameStrategy:
           type: object
-          minLength: 1
           required:
             - tableNamePostfix
           properties:
             tableNamePostfix:
               type: boolean
-        datasetIds:
-          type: array
-          readOnly: true
-          items:
-            type: string
+      required:
+        - id
+        - name
+    pipeline-processing-config:
+      type: object
+      properties:
         piiConfig:
-          type: object
-          properties:
-            type:
-              type: string
-              enum:
-                - passthrough
-                - hash
-                - omit
-                - nullify
-          required:
-            - type
-          description: >-
-            Policy applied to detected PII columns. Optional — when absent,
-            passthrough is assumed (PII columns are not transformed). Omitted
-            from responses when passthrough.
+          $ref: '#/components/schemas/pii-config'
         vectorize:
           type: boolean
-          nullable: true
           description: >-
             vectorization-spec-v4 / LD13. When `true`, loads of datasets in
             this pipeline will additionally produce per-row text embeddings
@@ -2243,14 +2078,26 @@ components:
             until an operator deletes them by hand.
         sentimentAnalysis:
           type: boolean
-          nullable: true
           description: >-
             Enables sentiment analysis on the pipeline. Requires vectorization
             to also be on, otherwise a 400 will be returned.
-      required:
-        - id
-        - name
-        - destinationId
+    pipeline:
+      title: ''
+      allOf:
+        - $ref: '#/components/schemas/pipeline-core'
+        - $ref: '#/components/schemas/pipeline-processing-config'
+        - type: object
+          properties:
+            destinationId:
+              type: string
+              minLength: 1
+            datasetIds:
+              type: array
+              readOnly: true
+              items:
+                type: string
+          required:
+            - destinationId
     drifted-dataset:
       title: ''
       type: object
@@ -2265,7 +2112,6 @@ components:
           description: When the schema drift was detected.
         offset:
           type: object
-          nullable: true
           description: The offset at which schema drift was detected.
           properties:
             type:
@@ -2558,24 +2404,17 @@ components:
       type: object
       title: pipeline dataset properties
       properties:
-        primaryKey:
-          type: object
-          description: A primary key property
-          properties:
-            type:
-              oneOf:
-                - type: string
-                  enum: [strict, optional]
-                  description: Indicates whether the key is strict or optional
-            components:
-              type: array
-              title: Primary key components
-              items:
-                type: string
-                minLength: 1
-          required: [type, components]
-      required: [primaryKey]
-      additionalProperties: false
+        type:
+          type: string
+          enum: [strict, optional]
+          description: Indicates whether the key is strict or optional
+        components:
+          type: array
+          title: Primary key components
+          items:
+            type: string
+            minLength: 1
+      required: [type, components]
     reuse-previous-primary-key:
       description: Legacy boolean or new strategy object.
       oneOf:
@@ -2610,25 +2449,12 @@ components:
       type: object
       properties:
         pipeline:
-          type: object
-          required:
-            - id
-            - name
-            - columnNameStrategy
-          properties:
-            id:
-              type: string
-              minLength: 1
-            name:
-              type: string
-              minLength: 1
-            columnNameStrategy:
-              type: object
+          allOf:
+            - $ref: '#/components/schemas/pipeline-core'
+            - $ref: '#/components/schemas/pipeline-processing-config'
+            - type: object
               required:
-                - tableNamePostfix
-              properties:
-                tableNamePostfix:
-                  type: boolean
+                - columnNameStrategy
         destination:
           type: object
           required:
