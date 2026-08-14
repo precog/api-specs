@@ -1,0 +1,57 @@
+name: Validate API Specs
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'reference/**'
+      - '.spectral.yaml'
+      - '.github/workflows/validate-specs.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'reference/**'
+      - '.spectral.yaml'
+      - '.github/workflows/validate-specs.yml'
+
+jobs:
+  lint-openapi:
+    name: Lint OpenAPI Specs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Spectral
+        run: npm install -g @stoplight/spectral-cli
+
+      - name: Lint admin-http-api.yaml
+        run: spectral lint reference/admin-http-api.yaml --ruleset .spectral.yaml
+
+      - name: Lint metadata-http-api.yaml
+        run: spectral lint reference/metadata-http-api.yaml --ruleset .spectral.yaml
+
+      - name: Lint public-http-api.yaml
+        run: spectral lint reference/public-http-api.yaml --ruleset .spectral.yaml
+
+  validate-json-schemas:
+    name: Validate JSON Schemas
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install ajv-cli
+        run: npm install -g ajv-cli ajv-formats
+
+      - name: Validate foundation_semantic_model.schema.json is valid JSON Schema
+        run: |
+          ajv compile \
+            --spec=draft2020 \
+            -s reference/schemas/foundation_semantic_model.schema.json

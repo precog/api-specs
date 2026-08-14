@@ -242,6 +242,60 @@ paths:
           required: false
       operationId: delete-sources-source-id-pipelines-pipeline-id
       description: 'Delete the specified source and remove datasets using this source from specified pipeline. If force = true, then remove datasets using this source from all pipelines.'
+  '/sources/{source-id}/verify':
+    parameters:
+      - schema:
+          type: string
+        name: source-id
+        in: path
+        required: true
+    post:
+      summary: Verify source credentials
+      tags: []
+      operationId: post-sources-source-id-verify
+      responses:
+        '200':
+          description: Verification completed. Inspect the result to determine per-dataset outcomes.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/source-verification-result'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Source not found.
+        '502':
+          description: Problematic Request to External Server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
+      description: |
+        Verify that the credentials configured on a source are working correctly.
+
+        When `datasetIds` is provided, the verification checks that the source can
+        access each of the specified datasets individually. If access to a particular
+        dataset fails, the error is reported against that dataset so the user can
+        identify and fix the specific permission issue.
+
+        When `datasetIds` is omitted or empty, a basic connectivity check is performed
+        against the source (e.g. authentication succeeds and the API is reachable)
+        without verifying access to any specific dataset.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                datasetIds:
+                  type: array
+                  description: |
+                    Optional list of dataset IDs to verify access for. When omitted or
+                    empty, only a basic connectivity check is performed.
+                  items:
+                    type: string
+                    minLength: 1
+        description: ''
   '/sources/{source-id}/datasets':
     parameters:
       - schema:
@@ -459,6 +513,39 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/connector'
+  '/destinations/{destination-id}/verify':
+    parameters:
+      - schema:
+          type: string
+        name: destination-id
+        in: path
+        required: true
+    post:
+      summary: Verify destination credentials
+      tags: []
+      operationId: post-destinations-destination-id-verify
+      responses:
+        '200':
+          description: Verification completed successfully. The destination is writable.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/destination-verification-result'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Destination not found.
+        '502':
+          description: Problematic Request to External Server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-message'
+      description: |
+        Verify that the credentials configured on a destination are working correctly
+        and that data can be written to it. This performs a lightweight write-access
+        check against the destination (e.g. verifying the warehouse credentials allow
+        creating or writing to tables).
   '/kinds/{kind-id}':
     parameters:
       - schema:
@@ -2705,6 +2792,91 @@ components:
       title: epoch-millis
       minimum: 0
       example: 1742922912239
+
+    source-verification-result:
+      title: source-verification-result
+      description: |
+        Result of a source credential verification. The top-level `status` indicates the
+        overall outcome. When datasets were requested, `datasets` contains per-dataset
+        results so the user can identify which specific datasets have access issues.
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - success
+            - partial
+            - failed
+          description: |
+            Overall verification outcome:
+              - `success`: basic connectivity passed and all requested datasets are accessible.
+              - `partial`: basic connectivity passed but one or more datasets could not be accessed.
+              - `failed`: the basic connectivity check itself failed (e.g. invalid credentials).
+        message:
+          type: string
+          description: Human-readable summary of the verification outcome. Present when status is `failed`.
+        datasets:
+          type: array
+          description: |
+            Per-dataset verification results. Only present when `datasetIds` was provided
+            in the request.
+          items:
+            $ref: '#/components/schemas/dataset-verification-result'
+      required:
+        - status
+
+    dataset-verification-result:
+      title: dataset-verification-result
+      description: Verification result for a single dataset.
+      type: object
+      properties:
+        datasetId:
+          type: string
+          minLength: 1
+          description: The ID of the dataset that was checked.
+        status:
+          type: string
+          enum:
+            - success
+            - failed
+          description: Whether the source credentials can access this dataset.
+        error:
+          type: object
+          description: Error details when the dataset check failed. Only present when status is `failed`.
+          properties:
+            type:
+              type: string
+              minLength: 1
+              description: Machine-readable error type (e.g. `permission-denied`, `not-found`, `rate-limited`).
+            details:
+              type: string
+              description: Human-readable description of what went wrong and how to fix it.
+          required:
+            - type
+            - details
+      required:
+        - datasetId
+        - status
+
+    destination-verification-result:
+      title: destination-verification-result
+      description: Result of a destination credential verification.
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - success
+            - failed
+          description: |
+            Overall verification outcome:
+              - `success`: the destination credentials are valid and write access is confirmed.
+              - `failed`: the destination is not writable with the current credentials.
+        message:
+          type: string
+          description: Human-readable description of the outcome. Present when status is `failed`.
+      required:
+        - status
 
     semantic-model-generation-job-start-request:
       title: Semantic-model generation job start request
