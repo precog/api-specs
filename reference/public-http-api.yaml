@@ -1820,6 +1820,21 @@ paths:
         filename. Files are stored under the calling tenant only; uploading
         the same filename twice creates two independent files with distinct
         ids.
+      parameters:
+        - name: postUploadPipeline
+          in: query
+          required: false
+          description: >-
+            Optional pipeline id. Validated against the calling tenant's
+            pipelines before the file is stored (404, and nothing is stored,
+            when unknown). Once the upload is durably stored, a load of that
+            pipeline is started exactly as `POST /pipelines/{pipeline-id}/loads`
+            would — so a pipeline reading this tenant's file store picks the
+            new file up immediately. The upload response is unchanged: 201
+            with the file record, whether the load was scheduled or was a
+            no-op (no in-band datasets).
+          schema:
+            type: string
       requestBody:
         required: true
         content:
@@ -1843,6 +1858,10 @@ paths:
           description: Bad Request — no form part named `file`
         '401':
           description: Unauthorized
+        '404':
+          description: >-
+            Not Found — `postUploadPipeline` names a pipeline unknown to the
+            calling tenant. Nothing is stored.
     get:
       summary: List Files
       operationId: get-files
