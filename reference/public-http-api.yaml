@@ -1895,16 +1895,20 @@ paths:
         `includeDeleted=true` and keep the maximum `updatedAt` seen as a
         watermark; on each subsequent pass query
         `updatedSince=<watermark>&includeDeleted=true` — the server returns
-        only files uploaded or tombstoned strictly after the watermark, and a
-        returned record with `deleted: true` is a delete signal. Page forward
+        files uploaded or tombstoned at or after the watermark (the boundary
+        record repeats; dedupe by `id`), and a returned record with
+        `deleted: true` is a delete signal. Page forward
         while `count == limit`, adding `count` to `offset`; keep
         `updatedSince` fixed within one pass.
       parameters:
         - name: updatedSince
           in: query
           description: >-
-            Epoch milliseconds, exclusive lower bound on `updatedAt`. Pass the
-            last sync watermark to receive only what changed after it.
+            Epoch milliseconds, inclusive lower bound on `updatedAt`. Pass the
+            last sync watermark to receive everything at or after it; the
+            boundary record is re-listed, and consumers dedupe by `id`
+            (upsert), so nothing is ever missed — including two records
+            sharing a millisecond.
           schema:
             type: integer
             format: int64
