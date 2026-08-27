@@ -1885,6 +1885,15 @@ paths:
           description: >-
             Not Found — `postUploadPipeline` names a pipeline unknown to the
             calling tenant. Nothing is stored.
+        '413':
+          description: >-
+            Payload Too Large — the upload exceeds the deployment's byte
+            limit. Nothing is stored.
+        '422':
+          description: >-
+            Unprocessable Content — `returnRows` was requested but the named
+            pipeline's destination cannot serve deterministic rows. Nothing
+            is stored.
     get:
       summary: List Files
       operationId: get-files
