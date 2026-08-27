@@ -1808,6 +1808,178 @@ paths:
         '401':
           description: Unauthorized
       description: Marks an issue resolution as accepted by the customer.
+  /files:
+    post:
+      summary: Upload File
+      operationId: post-files
+      description: >-
+        Uploads one file as multipart/form-data. The file goes in a form part
+        named `file`; the stored filename comes from the part's filename and
+        the MIME type from the part's `Content-Type` (falling back to
+        `application/octet-stream`). The extension is derived from the
+        filename. Files are stored under the calling tenant only; uploading
+        the same filename twice creates two independent files with distinct
+        ids.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+              required:
+                - file
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/file-record'
+        '400':
+          description: Bad Request — no form part named `file`
+        '401':
+          description: Unauthorized
+    get:
+      summary: List Files
+      operationId: get-files
+      description: >-
+        Lists the calling tenant's files, ordered by `updatedAt` ascending
+        then `id` — a stable order designed for incremental consumers.
+        Delta-loading recipe: on the initial sync pass
+        `includeDeleted=true` and keep the maximum `updatedAt` seen as a
+        watermark; on each subsequent pass query
+        `updatedSince=<watermark>&includeDeleted=true` — the server returns
+        only files uploaded or tombstoned strictly after the watermark, and a
+        returned record with `deleted: true` is a delete signal. Page forward
+        while `count == limit`, adding `count` to `offset`; keep
+        `updatedSince` fixed within one pass.
+      parameters:
+        - name: updatedSince
+          in: query
+          description: >-
+            Epoch milliseconds, exclusive lower bound on `updatedAt`. Pass the
+            last sync watermark to receive only what changed after it.
+          schema:
+            type: integer
+            format: int64
+        - name: mimeType
+          in: query
+          description: >-
+            Exact MIME type match, e.g. `application/pdf`. (MIME rather than
+            extension — it is declared and normalized at upload; the extension
+            is still stored on each record.)
+          schema:
+            type: string
+        - name: includeDeleted
+          in: query
+          description: >-
+            Include tombstoned files. Delta consumers should pass `true` so
+            deletes propagate.
+          schema:
+            type: boolean
+            default: false
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            format: int64
+            default: 0
+        - name: limit
+          in: query
+          description: Page size, clamped to 1–1000.
+          schema:
+            type: integer
+            default: 1000
+            minimum: 1
+            maximum: 1000
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/file-list-page'
+        '401':
+          description: Unauthorized
+  '/files/{fileId}':
+    parameters:
+      - name: fileId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: Get File Metadata
+      operationId: get-files-file-id
+      description: >-
+        Returns the file record, including for tombstoned files (metadata
+        outlives content access). 404 when the id is unknown to the calling
+        tenant — including when it belongs to a different tenant.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/file-record'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+    delete:
+      summary: Tombstone File
+      operationId: delete-files-file-id
+      description: >-
+        Deletes by tombstone: sets `deletedAt` and deliberately bumps
+        `updatedAt`, so the deletion rides the delta stream and downstream
+        consumers learn about it through the same `updatedSince` query as
+        everything else. Idempotent — deleting twice returns the record
+        unchanged. The stored bytes are retained, but content access answers
+        410 from then on.
+      responses:
+        '200':
+          description: OK — the updated (tombstoned) file record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/file-record'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+  '/files/{fileId}/content':
+    parameters:
+      - name: fileId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: Get File Content
+      operationId: get-files-file-id-content
+      description: >-
+        Streams the file bytes with the stored MIME type as the response
+        `Content-Type`.
+      responses:
+        '200':
+          description: The bytes, exactly as uploaded
+          content:
+            '*/*':
+              schema:
+                type: string
+                format: binary
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+        '410':
+          description: Gone — the file is tombstoned
 components:
   schemas:
     connector:
@@ -3040,6 +3212,79 @@ components:
       required:
         - errored
 
+    file-record:
+      title: file-record
+      description: >-
+        A file in the tenant's file store. `updatedAt` is the delta watermark
+        (equal to `uploadedAt` until the file is tombstoned); `deleted` is
+        always present.
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        filename:
+          type: string
+          example: report.pdf
+        mimeType:
+          type: string
+          example: application/pdf
+        extension:
+          type:
+            - string
+            - 'null'
+          description: Derived from the filename at upload; null when the filename has none.
+          example: pdf
+        sizeBytes:
+          type: integer
+          format: int64
+          minimum: 0
+        uploadedAt:
+          $ref: '#/components/schemas/epoch-millis'
+        updatedAt:
+          $ref: '#/components/schemas/epoch-millis'
+        deletedAt:
+          oneOf:
+            - $ref: '#/components/schemas/epoch-millis'
+            - type: 'null'
+        deleted:
+          type: boolean
+      required:
+        - id
+        - filename
+        - mimeType
+        - sizeBytes
+        - uploadedAt
+        - updatedAt
+        - deleted
+    file-list-page:
+      title: file-list-page
+      description: One page of a file listing.
+      type: object
+      properties:
+        files:
+          type: array
+          items:
+            $ref: '#/components/schemas/file-record'
+        count:
+          type: integer
+          description: Records in this page.
+        totalCount:
+          type: integer
+          format: int64
+          description: Records matching the query.
+        offset:
+          type: integer
+          format: int64
+        limit:
+          type: integer
+      required:
+        - files
+        - count
+        - totalCount
+        - offset
+        - limit
   responses: {}
   securitySchemes:
     BearerAuth:
