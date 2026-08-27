@@ -1835,6 +1835,23 @@ paths:
             no-op (no in-band datasets).
           schema:
             type: string
+        - name: returnRows
+          in: query
+          required: false
+          description: >-
+            Only valid together with `postUploadPipeline` (400 without it).
+            When true, the request waits (bounded; ~60s default) for the
+            triggered load to complete and the 201 body becomes
+            `file-upload-with-load`: the file record plus, for every dataset
+            in the pipeline, the rows this upload produced, read back from
+            the pipeline's destination. `load.status` reports what actually
+            happened — `written`, `declined` (no in-band datasets),
+            `timeout`, or `failed` — with whatever rows were readable.
+            Currently supported for PostgreSQL destinations only (422
+            otherwise).
+          schema:
+            type: boolean
+            default: false
       requestBody:
         required: true
         content:
@@ -1849,13 +1866,19 @@ paths:
                 - file
       responses:
         '201':
-          description: Created
+          description: >-
+            Created. Plain `file-record` without `returnRows`;
+            `file-upload-with-load` with it.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/file-record'
+                oneOf:
+                  - $ref: '#/components/schemas/file-record'
+                  - $ref: '#/components/schemas/file-upload-with-load'
         '400':
-          description: Bad Request — no form part named `file`
+          description: >-
+            Bad Request — no form part named `file`, or `returnRows` without
+            `postUploadPipeline`
         '401':
           description: Unauthorized
         '404':
@@ -3277,6 +3300,61 @@ components:
         - uploadedAt
         - updatedAt
         - deleted
+    file-upload-with-load:
+      title: file-upload-with-load
+      description: >-
+        The 201 body of POST /files when `returnRows=true`: the stored file
+        plus the rows this upload produced in each of the pipeline's
+        datasets, read back from the destination after the triggered load.
+      type: object
+      properties:
+        file:
+          $ref: '#/components/schemas/file-record'
+        load:
+          type: object
+          properties:
+            pipelineId:
+              type: string
+            status:
+              type: string
+              enum:
+                - written
+                - declined
+                - timeout
+                - failed
+              description: >-
+                written = the load completed and rows were read; declined =
+                no in-band datasets, nothing to wait for; timeout/failed =
+                reported honestly, with whatever rows were readable.
+            datasets:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  rows:
+                    type: array
+                    description: >-
+                      Rows keyed to this upload (destination key equals the
+                      file id or starts with `<fileId>/`), as column-name to
+                      value objects. Datasets fed by other sources return
+                      empty arrays.
+                    items:
+                      type: object
+                required:
+                  - id
+                  - name
+                  - rows
+          required:
+            - pipelineId
+            - status
+            - datasets
+      required:
+        - file
+        - load
     file-list-page:
       title: file-list-page
       description: One page of a file listing.
