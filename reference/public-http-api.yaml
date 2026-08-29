@@ -2415,12 +2415,11 @@ components:
         - sourceId
     id:
       title: ''
-      type: object
-      properties:
-        id:
-          type: string
-      required:
-        - id
+      description: >-
+        A bare JSON string holding the created resource's id. The live API
+        returns the id alone, not wrapped in an object (verified against
+        POST /pipelines on staging, 2026-08-29).
+      type: string
     pipeline-name:
       title: ''
       type: object
@@ -2568,7 +2567,10 @@ components:
           enum:
             - discovered
             - staging
+            - scheming
             - writing
+            - initial-writing
+            - initial-writing-completed
             - waiting
             - written
             - failed
