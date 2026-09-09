@@ -2040,14 +2040,19 @@ paths:
       summary: Extract Document
       operationId: post-document-extractions
       description: >-
-        Synchronous single-document extraction: OCRs one PDF and answers one
-        value per prompt, in the same request. The document goes in a form
+        Synchronous single-document extraction: OCRs one PDF and answers the
+        requested fields, in the same request. The document goes in a form
         part named `file` (its part `Content-Type` must be
-        `application/pdf`); the prompts go in a form part named `prompts` — a
-        JSON object mapping each field to emit to the question answering it,
-        with at least one field. The 200 body is a JSON object holding
-        exactly the prompted fields, `null` where the document does not
-        answer. Nothing is stored: the document does not enter the tenant
+        `application/pdf`), accompanied by exactly one of two shapes: a
+        `prompts` part — a JSON object mapping each field to emit to the
+        question answering it, with at least one field, answered as a JSON
+        object holding exactly the prompted fields with `null` where the
+        document does not answer — or a `schema` part — a JSON Schema for an
+        object with at least one property, whose `description`s carry the
+        questions, answered with a JSON object conforming to that schema
+        (enforced by the extraction model's strict structured-output mode).
+        The schema shape makes the endpoint request-compatible with the
+        studio document-extractions contract. Nothing is stored: the document does not enter the tenant
         file store, no pipeline is involved, and the same document can be
         re-sent with different prompts — repeated extraction of identical
         content skips re-OCR via a content-checksum cache, so re-asking is
@@ -2073,10 +2078,20 @@ paths:
                     answering it, e.g.
                     `{"total_amount": "What is the total amount due?"}`.
                     Every value must be a string; at least one field is
+                    required. Exactly one of `prompts` and `schema` is
                     required.
+                schema:
+                  type: string
+                  description: >-
+                    JSON Schema (serialized, at most 5000 bytes) for an
+                    object with at least one property; property
+                    `description`s carry the extraction questions and the
+                    response conforms to this schema. Exactly one of
+                    `prompts` and `schema` is required. Deployments without
+                    a structured-output provider configured answer schema
+                    requests with 502.
               required:
                 - file
-                - prompts
       responses:
         '200':
           description: >-
@@ -2096,9 +2111,11 @@ paths:
                     execution_date: null
         '400':
           description: >-
-            Bad Request — a form part is missing, the `prompts` part is not a
-            JSON object of string questions, or it names no fields; the body
-            names the problem.
+            Bad Request — a form part is missing, both or neither of
+            `prompts` and `schema` were sent, the `prompts` part is not a
+            JSON object of string questions or names no fields, or the
+            `schema` part is not a JSON Schema for a non-empty object or
+            exceeds 5000 bytes; the body names the problem.
         '401':
           description: Unauthorized
         '413':
@@ -2111,8 +2128,9 @@ paths:
             `application/pdf`.
         '502':
           description: >-
-            Bad Gateway — the OCR or extraction service failed; the body
-            carries the reason.
+            Bad Gateway — the OCR or extraction service failed, or a
+            `schema` request reached a deployment with no structured-output
+            provider configured; the body carries the reason.
 components:
   schemas:
     connector:
