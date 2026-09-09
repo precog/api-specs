@@ -2035,6 +2035,84 @@ paths:
           description: Not Found
         '410':
           description: Gone — the file is tombstoned
+  /document-extractions:
+    post:
+      summary: Extract Document
+      operationId: post-document-extractions
+      description: >-
+        Synchronous single-document extraction: OCRs one PDF and answers one
+        value per prompt, in the same request. The document goes in a form
+        part named `file` (its part `Content-Type` must be
+        `application/pdf`); the prompts go in a form part named `prompts` — a
+        JSON object mapping each field to emit to the question answering it,
+        with at least one field. The 200 body is a JSON object holding
+        exactly the prompted fields, `null` where the document does not
+        answer. Nothing is stored: the document does not enter the tenant
+        file store, no pipeline is involved, and the same document can be
+        re-sent with different prompts — repeated extraction of identical
+        content skips re-OCR via a content-checksum cache, so re-asking is
+        fast. Documents that should feed a destination on every upload
+        belong in `POST /files` with a pipeline instead. The size bound is
+        the same one uploads get, so a document extractable here is also
+        uploadable and vice versa.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The PDF to extract from.
+                prompts:
+                  type: string
+                  description: >-
+                    JSON object mapping each field to emit to the question
+                    answering it, e.g.
+                    `{"total_amount": "What is the total amount due?"}`.
+                    Every value must be a string; at least one field is
+                    required.
+              required:
+                - file
+                - prompts
+      responses:
+        '200':
+          description: >-
+            The extracted values, one per prompted field, `null` where the
+            document does not answer.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+              examples:
+                example-1:
+                  value:
+                    invoice_number: INV-2026-0342
+                    vendor: Meridian Cooling Services Ltd
+                    total_amount: USD 4,875.50
+                    execution_date: null
+        '400':
+          description: >-
+            Bad Request — a form part is missing, the `prompts` part is not a
+            JSON object of string questions, or it names no fields; the body
+            names the problem.
+        '401':
+          description: Unauthorized
+        '413':
+          description: >-
+            Payload Too Large — the document exceeds the deployment's upload
+            byte limit.
+        '415':
+          description: >-
+            Unsupported Media Type — the `file` part's `Content-Type` is not
+            `application/pdf`.
+        '502':
+          description: >-
+            Bad Gateway — the OCR or extraction service failed; the body
+            carries the reason.
 components:
   schemas:
     connector:
